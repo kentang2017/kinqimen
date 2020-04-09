@@ -199,9 +199,9 @@ def zhifu_zhishi(jieqi, daygangzhi, hourgangzhi):
         try:
             result = [{"值符":[star_dict.get(zhifu_zhishi_num), zhifugong, shun(hourgangzhi)], "直使":[new_list(eight_door2, eight_door2[zhifu_zhishi_num+1])[0], zhishigong ]}]
         except IndexError:
-            result = [{"值符":[star_dict.get(zhifu_zhishi_num), zhifugong, shun(hourgangzhi)], "直使":[new_list(eight_door2, eight_door2[9-zhifu_lokgong])[0], zhishigong ]}]
+            result = [{"值符":[star_dict.get(zhifu_zhishi_num), zhifugong, shun(hourgangzhi)], "直使":[door_dict.get(zhifu_zhishi_num), zhishigong ]}]
     elif gong_dict.get(zhifu_lokgong) != "中":
-        result = [{"值符":[star_dict.get(zhifu_zhishi_num), zhifugong, shun(hourgangzhi)], "直使":[new_list(eight_door2, eight_door2[zhifu_zhishi_num-7])[1], zhishigong ]}]
+        result = [{"值符":[star_dict.get(zhifu_zhishi_num), zhifugong, shun(hourgangzhi)], "直使":[door_dict.get(zhifu_zhishi_num), zhishigong ]}]
     return result
 
 def qimen(jieqi, daygangzhi, hourgangzhi):
@@ -311,6 +311,6 @@ def qimen(jieqi, daygangzhi, hourgangzhi):
     return {"排局": [qimen_ju, jieqi, daygangzhi+"日", hourgangzhi+"時"], "空亡":daykong_shikong(daygangzhi,hourgangzhi) , "值符":zhifu_zhishi1[0]["值符"], "直使":zhifu_zhishi1[0]["直使"], "天乙":tianyi, "天地盤":{ "地盤":earth_pan, "天盤":sky_pan}, "八星":star_new_dict, "八門":door_new_dict, "八神":god_new_dict}, d, d1
 
 #print(qimen("大暑", "庚午", "甲申"))
-#print(qimen("清明", "壬午", "辛亥"))
+#print(qimen("穀雨", "甲午", "乙亥"))
 #print(qimen("夏至", "戊戌", "乙卯"))
 #print(shun( "辛未"))
