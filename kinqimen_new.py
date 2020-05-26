@@ -73,7 +73,7 @@ class Qimen:
         if self.qimen_ju_name()[0] == "陽":
             star = star_dict.get(gan_dict.get(self.gangzhi()[3][0]))    
         elif self.qimen_ju_name()[0] == "陰":
-            if kok_num == gan_num:
+            if kok_num <= gan_num:
                 star = star_dict.get(extra_value+ gan_dict.get(self.hourganghzi_zhifu()[2]) - kok_num + extra_value)
             else:
                 star = star_dict.get(cnum_dict.get(self.qimen_ju_name()[2]))  
@@ -157,6 +157,6 @@ class Qimen:
     def pan(self):
         return {"干支":self.gangzhi()[0]+"年"+self.gangzhi()[1]+"月"+self.gangzhi()[2]+"日"+self.gangzhi()[3]+"時" , "排局":self.qimen_ju_name(), "節氣":self.find_jieqi(), "天盤":self.pan_sky(), "地盤":self.find_pan_earth()[0], "值符":self.zhifu(), "值使":self.zhishi()}
 
-print( Qimen(2019, 11, 20, 18).pan())
+print( Qimen(2019, 11, 20, 20).pan())
         
 #print( Qimen(2020, 5, 25, 21).zhifu())
