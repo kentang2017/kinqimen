@@ -29,13 +29,11 @@ def new_list(olist, o):
         zhihead_code = zhihead_code + 1
     return res1
 
-
 def multi_key_dict_get(d, k):
     for keys, v in d.items():
         if k in keys:
             return v
     return None
-
 
 def qimen_ju_day(daygangzhi):
     ju_day_dict = {"甲":"甲己日", "己":"甲己日", "乙":"乙庚日", "庚":"乙庚日", "丙":"丙辛日", "辛":"丙辛日","丁":"丁壬日", "壬":"丁壬日", "戊":"戊癸日", "癸":"戊癸日"}
@@ -139,20 +137,26 @@ hidden_jia = {'甲子':'戊', '甲戌':'己','甲申':'庚','甲午':'辛','甲�
 
 eight_door = list("休死傷杜中開驚生景")
 eight_door2 = list("休死傷杜開驚生景")
-eight_door_code2 = dict(zip(range(1,9), eight_door2))
-eight_door_code = dict(zip(range(1,10), eight_door))
+
+#eight_door_code = dict(zip(range(1,10), eight_door))
+
+door_code = {"陽遁":dict(zip(range(1,9), eight_door2)),"陰遁":dict(zip(range(1,9), list(reversed(eight_door2))))}
 nine_god = {"陽遁":list("符蛇陰合勾常朱地天"),"陰遁":list("符蛇陰合虎常玄地天")}
 sanqiliuyi_dict = dict(zip(list("戊己庚辛壬癸丁丙乙"), range(1,10)))
 sanqiliuyi_dict2 = dict(zip(list("癸壬辛庚己戊丁丙乙"), range(1,10)))
 nine_star = list("蓬芮沖輔禽心柱任英")
+
 star_dict = dict(zip(list(range(1,10)), nine_star))
+r_star_dict = dict(zip(list(range(1,10)), list(reversed(nine_star))))
+
 eight_gua = list("坎坤震巽中乾兌艮離")
 eight_gua_code = dict(zip(range(1,10), eight_gua))
-gong_dict = {0:"離", 1:"坎", 2:"坤", 3:"震", 4:"巽", 5:"中", 6:"乾", 7:"兌", 8:"艮", 9:"離"}
 odd_even = {tuple(list("坎震五兌離")):"單", tuple(list("坤巽乾艮")):"雙"}
 Gan_oe = {tuple(list("甲乙丙戊庚壬")):"單", tuple(list("丁己辛癸")):"雙"}
 liujiashun_dict = {tuple(jiazi()[0:10]):'甲子', tuple(jiazi()[10:20]):"甲戌", tuple(jiazi()[20:30]):"甲申", tuple(jiazi()[30:40]):"甲午", tuple(jiazi()[40:50]):"甲辰",  tuple(jiazi()[50:60]):"甲寅"  }
 liujiashun_dict2 = {tuple(jiazi()[0:10]):'甲子戊', tuple(jiazi()[10:20]):"甲戌己", tuple(jiazi()[20:30]):"甲申庚", tuple(jiazi()[30:40]):"甲午辛", tuple(jiazi()[40:50]):"甲辰壬",  tuple(jiazi()[50:60]):"甲寅癸"  }
+jiaji_extra_plus_minus = {"甲子":-1, "甲戌":0, "甲申":1, "甲午":2, "甲辰":3, "甲寅":4}
+
 
 findyuen_dict = {tuple(jiazi()[0:5]): "上元", 
                 tuple(jiazi()[15:20]):"上元", 
@@ -184,7 +188,7 @@ cnum_dict = dict(zip(cnumber_order, range(1,9)))
 r_eight_door_code = dict(zip(eight_door, range(1,10)))
 
 
-gan_dict = {"甲":1, "乙":2, "丙":3, "丁":4, "戊":5, "己":6, "庚":7, "辛":8, "壬":9, "癸":10}
+gan_dict = dict(zip( list("甲乙丙丁戊己庚辛壬癸"), range(1,10)))
 gong_dict = dict(zip(range(1,9), list("坎坤震巽中乾兌艮離")))
 r_gong_dict = dict(zip( list("坎坤震巽中乾兌艮離"), range(1,9)))
 
@@ -228,3 +232,4 @@ def unZipSolarTermsList(data,rangeEndNum=24,charCountLen=2):
     
 def getTheYearAllSolarTermsList(year):
     return unZipSolarTermsList(solarTermsData[year-START_YEAR])
+
