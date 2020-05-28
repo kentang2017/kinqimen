@@ -35,11 +35,6 @@ def multi_key_dict_get(d, k):
             return v
     return None
 
-def qimen_ju_day(daygangzhi):
-    ju_day_dict = {"甲":"甲己日", "己":"甲己日", "乙":"乙庚日", "庚":"乙庚日", "丙":"丙辛日", "辛":"丙辛日","丁":"丁壬日", "壬":"丁壬日", "戊":"戊癸日", "癸":"戊癸日"}
-    ju_day = ju_day_dict.get(daygangzhi[0])
-    return ju_day
-
 def ganzhiyear(year):
     year_gan_code = year%10 -3 +10
     if year_gan_code > 10:
@@ -135,8 +130,11 @@ hourgang_dict = dict(zip(Gan, list(range(1,11))))
 Zhi = list("子丑寅卯辰巳午未申酉戌亥")
 hidden_jia = {'甲子':'戊', '甲戌':'己','甲申':'庚','甲午':'辛','甲辰':'壬','甲寅':'癸' }
 
+
+nine_star = list("蓬芮沖輔禽心柱任英")
 eight_door = list("休死傷杜中開驚生景")
 eight_door2 = list("休死傷杜開驚生景")
+eight_gua = list("坎坤震巽中乾兌艮離")
 
 #eight_door_code = dict(zip(range(1,10), eight_door))
 
@@ -144,13 +142,14 @@ door_code = {"陽遁":dict(zip(range(1,9), eight_door2)),"陰遁":dict(zip(range
 nine_god = {"陽遁":list("符蛇陰合勾常朱地天"),"陰遁":list("符蛇陰合虎常玄地天")}
 sanqiliuyi_dict = dict(zip(list("戊己庚辛壬癸丁丙乙"), range(1,10)))
 sanqiliuyi_dict2 = dict(zip(list("癸壬辛庚己戊丁丙乙"), range(1,10)))
-nine_star = list("蓬芮沖輔禽心柱任英")
+
 
 star_dict = dict(zip(list(range(1,10)), nine_star))
 r_star_dict = dict(zip(list(range(1,10)), list(reversed(nine_star))))
 
-eight_gua = list("坎坤震巽中乾兌艮離")
+
 eight_gua_code = dict(zip(range(1,10), eight_gua))
+r_eight_gua_code = dict(zip(eight_gua, range(1,10)))
 odd_even = {tuple(list("坎震五兌離")):"單", tuple(list("坤巽乾艮")):"雙"}
 Gan_oe = {tuple(list("甲乙丙戊庚壬")):"單", tuple(list("丁己辛癸")):"雙"}
 liujiashun_dict = {tuple(jiazi()[0:10]):'甲子', tuple(jiazi()[10:20]):"甲戌", tuple(jiazi()[20:30]):"甲申", tuple(jiazi()[30:40]):"甲午", tuple(jiazi()[40:50]):"甲辰",  tuple(jiazi()[50:60]):"甲寅"  }
@@ -189,7 +188,7 @@ r_eight_door_code = dict(zip(eight_door, range(1,10)))
 
 
 gan_dict = dict(zip( list("甲乙丙丁戊己庚辛壬癸"), range(1,10)))
-gong_dict = dict(zip(range(1,9), list("坎坤震巽中乾兌艮離")))
+gong_dict = dict(zip(range(1,10), list("坎坤震巽中乾兌艮離")))
 r_gong_dict = dict(zip( list("坎坤震巽中乾兌艮離"), range(1,9)))
 
 # 采集压缩用
