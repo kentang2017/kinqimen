@@ -5,6 +5,7 @@ Created on Thu Jan 16 09:49:35 2020
 """
 from config import *
 import sxtwl
+import itertools
 
 
 class Qimen:
@@ -13,7 +14,7 @@ class Qimen:
         self.month = month
         self.day = day
         self.hour = hour
-                                            
+                                 
     def find_jieqi(self):
         jieqi_list = twentyfourjieqi(self.year)
         s_date = list(jieqi_list.keys())
@@ -68,77 +69,7 @@ class Qimen:
     def hourganghzi_zhifu(self):
         return multi_key_dict_get(liujiashun_dict2, self.gangzhi()[3])
 
-    def zhifu(self): 
-        extra_value = jiaji_extra_plus_minus.get(multi_key_dict_get(liujiashun_dict , self.gangzhi()[3]))
-        kok_num = cnum_dict.get(self.qimen_ju_name()[2]) 
-        gan_num  = gan_dict.get(self.gangzhi()[3][0]) 
-        hourgangzhihead = self.gangzhi()[3][0]
-        if hourgangzhihead != "甲":
-            zhifu = self.find_pan_earth()[1].get(self.gangzhi()[3][0])
-        else:
-            zhifu = self.find_pan_earth()[1].get(self.hourganghzi_zhifu()[2])
-            if zhifu == "中":
-                zhifu = self.hourganghzi_zhifu()[2]
-        if self.qimen_ju_name()[0] == "陽":
-            star = star_dict.get(gan_dict.get(self.gangzhi()[3][0]))    
-        elif self.qimen_ju_name()[0] == "陰":
-            if self.gangzhi()[3][0] == "甲":
-                star = star_dict.get(r_eight_gua_code.get(zhifu))
-            elif self.gangzhi()[3][0] != "甲" and kok_num != 5:
-                star = star_dict.get(gan_dict.get(self.gangzhi()[3][0])+extra_value)
-            elif self.gangzhi()[3][0] != "甲" and kok_num == 5:
-                star = star_dict.get(gan_dict.get(self.hourganghzi_zhifu()[2]) - kok_num + extra_value)
-        return {"宮":zhifu, "星": star, "補數": extra_value}
-    
-    def zhishi(self):
-        extra_value = jiaji_extra_plus_minus.get(multi_key_dict_get(liujiashun_dict , self.gangzhi()[3]))
-        kok_num = cnum_dict.get(self.qimen_ju_name()[2]) 
-        gan_num  = gan_dict.get(self.gangzhi()[3][0]) 
-        if self.qimen_ju_name()[0] == "陽":
-            zhishi_num = gan_num + extra_value + kok_num
-            if zhishi_num == 10:
-                zhishi_num = 1
-            elif zhishi_num > 10:
-                zhishi_num = zhishi_num - 9
-                if zhishi_num == 10:
-                    zhishi_num = 1
-            elif gan_num == kok_num:
-                zhishi_num = gan_dict.get(self.hourganghzi_zhifu()[2])  - kok_num
-            elif self.gangzhi()[3][0] == "甲":
-                zhishi_num = gan_dict.get(self.hourganghzi_zhifu()[2])
-        elif self.qimen_ju_name()[0] == "陰":
-            if kok_num == 5 and gan_num == 5:
-                zhishi_num = gan_dict.get(self.hourganghzi_zhifu()[2]) + extra_value
-                zhishi_door =  door_code.get(self.qimen_ju_name()[0:2]).get(r_gong_dict.get(self.zhifu().get("宮")) + extra_value)
-            elif kok_num != 5 and gan_num == 5:
-                zhishi_num = 5
-                zhishi_door =  door_code.get(self.qimen_ju_name()[0:2]).get(r_gong_dict.get(self.zhifu().get("宮")) - extra_value)
-            elif kok_num != 5 and gan_num != 5 and gan_num != gan_dict.get(self.hourganghzi_zhifu()[2]) :
-                zhishi_num =  gan_dict.get(self.gangzhi()[3][0]) - r_gong_dict.get(self.zhifu().get("宮"))
-                if zhishi_num == 0:
-                    zhishi_num = gan_dict.get(self.gangzhi()[3][0]) + gan_dict.get(self.hourganghzi_zhifu()[2])
-                elif zhishi_num < 0:
-                    zhishi_num = r_gong_dict.get(self.zhifu().get("宮"))
-            elif kok_num == 5 and gan_num != 5 and gan_num == gan_dict.get(self.hourganghzi_zhifu()[2]) :
-                zhishi_num =  gan_dict.get(self.hourganghzi_zhifu()[2] + extra_value)
-              
-            elif kok_num == 5 and gan_num != 5 and gan_num != gan_dict.get(self.hourganghzi_zhifu()[2]):
-                zhishi_num =  gan_dict.get(self.hourganghzi_zhifu()[2])
-                if zhishi_num > 10:
-                    zhishi_num = zhishi_num - 9
-                
-        if self.gangzhi()[3][0] == "甲":
-            zhishi_door = door_code.get(self.qimen_ju_name()[0:2]).get(kok_num + extra_value)
-        elif self.gangzhi()[3][0] != "甲":
-            if gan_num > kok_num and gan_num != 5:
-                zhishi_door = door_code.get(self.qimen_ju_name()[0:2]).get(gan_dict.get(self.hourganghzi_zhifu()[2])-extra_value)
-            elif gan_num < kok_num and gan_num != 5:
-                zhishi_door = door_code.get(self.qimen_ju_name()[0:2]).get(kok_num + extra_value)
-            elif gan_num == kok_num and gan_num != 5:
-                zhishi_door =  door_code.get(self.qimen_ju_name()[0:2]).get(gan_dict.get(self.hourganghzi_zhifu()[2]) - zhishi_num)
-        return { "門":zhishi_door, "宮":gong_dict.get(zhishi_num), "宮值":zhishi_num}
-        
-    def find_pan_earth(self):
+    def pan_earth(self):
         kok = self.qimen_ju_name()[2]
         kok_yingyang = self.qimen_ju_name()[0:2]
         cnum_to_gua = dict(zip(cnumber_order, eight_gua))
@@ -151,31 +82,83 @@ class Qimen:
     
     def pan_sky(self):
         fu_head = self.hourganghzi_zhifu()[2]
-        hourgangzhihead = self.gangzhi()[3][0]
-        fu_head_location = self.find_pan_earth()[1].get(self.hourganghzi_zhifu()[2])
-        zhifu = self.zhifu()
-        fu_head_order_next = new_list( yingyang_order.get(self.qimen_ju_name()[0:2]), fu_head)[1]
-        if zhifu.get("宮") != "中":
-            next_location = new_list(clockwise_eightgua, zhifu.get("宮"))
-        else:
-            next_location = new_list(clockwise_eightgua, new_list(clockwise_eightgua, "離")[1])
-        earth_pan = new_list(self.find_pan_earth()[2], fu_head)
-        result = dict(zip(next_location, earth_pan))
-        r_result = dict(zip(earth_pan, next_location))
-        return [result, r_result]
+        fu_head_location = self.zhifu_n_zhishi().get("值符星宮")[1]
+        earth_order = self.pan_earth()
+        rotate = {"陽":clockwise_eightgua, "陰":anti_clockwise_eightgua }.get(self.qimen_ju_name()[0])
+        gan_reorder = new_list([self.pan_earth()[0].get(i) for i in list(rotate)], fu_head)
+        gong_reorder = new_list(rotate, fu_head_location)
+        return dict(zip(gong_reorder,gan_reorder))
     
     def pan_door(self):
-        if self.qimen_ju_name()[0] == "陽":
-            starting_door = self.zhishi().get("門")
-            starting_gong_order = new_list(eight_door2, starting_door)
-        elif self.qimen_ju_name()[0] == "陰":
-            starting_door = self.zhishi().get("門")
-            starting_gong_order = new_list(list(reversed(eight_door2)), starting_door)
-        return starting_gong_order
+        starting_door = self.zhifu_n_zhishi().get("值使門宮")[0]
+        starting_gong = self.zhifu_n_zhishi().get("值使門宮")[1]
+        rotate = {"陽":clockwise_eightgua, "陰":anti_clockwise_eightgua }.get(self.qimen_ju_name()[0])
+        door_reorder = {"陽":new_list(door_r, starting_door), "陰":new_list(list(reversed(door_r)), starting_door)}.get(self.qimen_ju_name()[0])
+        gong_reorder = new_list(rotate, starting_gong)
+        return dict(zip(gong_reorder,door_reorder))
+    
+    def pan_star(self):
+        starting_star = self.zhifu_n_zhishi().get("值符星宮")[0]
+        starting_gong = self.zhifu_n_zhishi().get("值符星宮")[1]
+        rotate = {"陽":clockwise_eightgua, "陰":anti_clockwise_eightgua }.get(self.qimen_ju_name()[0])
+        star_reorder = {"陽":new_list(star_r, starting_star), "陰":new_list(list(reversed(star_r)), starting_star)}.get(self.qimen_ju_name()[0])
+        gong_reorder = new_list(rotate, starting_gong)
+        return dict(zip(gong_reorder,star_reorder))
+    
+    def pan_god(self):
+        god_order = god_dict.get(self.qimen_ju_name()[0])
+        starting_gong = self.zhifu_n_zhishi().get("值符星宮")[1]
+        rotate = {"陽":clockwise_eightgua, "陰":anti_clockwise_eightgua }.get(self.qimen_ju_name()[0])
+        gong_reorder = new_list(rotate, starting_gong)
+        return dict(zip(gong_reorder,god_order))
     
     def pan(self):
-        return {"干支":self.gangzhi()[0]+"年"+self.gangzhi()[1]+"月"+self.gangzhi()[2]+"日"+self.gangzhi()[3]+"時", "局日":self.qimen_ju_day() , "排局":self.qimen_ju_name(), "節氣":self.find_jieqi(), "天盤":self.pan_sky(), "地盤":self.find_pan_earth()[0], "值符":self.zhifu(), "值使":self.zhishi()}
+        return {"干支":self.gangzhi()[0]+"年"+self.gangzhi()[1]+"月"+self.gangzhi()[2]+"日"+self.gangzhi()[3]+"時", "局日":self.qimen_ju_day() , "排局":self.qimen_ju_name(), "節氣":self.find_jieqi(), "天盤":self.pan_sky(), "地盤":self.pan_earth()[0], "門":self.pan_door(),"星":self.pan_star(), "神":self.pan_god() ,"值符值使":self.zhifu_n_zhishi()}
 
-print( Qimen(2019, 11, 25, 4).pan())
-        
-#print( Qimen(2020, 5, 25, 21).zhifu())
+    def zhifu_pai(self):
+        yinyang = self.qimen_ju_name()[0]
+        kook = self.qimen_ju_name()[2]
+        paiyinyang = {
+        "陽":{
+        "一":"九八七一二三四五六",
+        "二":"一九八二三四五六七",
+        "三":"二一九三四五六七八",
+        "四":"三二一四五六七八九",
+        "五":"四三二五六七八九一",
+        "六":"五四三六七八九一二",
+        "七":"六五四七八九一二三",
+        "八":"七六五八九一二三四",
+        "九":"八七六九一二三四五"},
+        "陰":{
+        "九":"一二三九八七六五四",
+        "八":"九一二八七六五四三",
+        "七":"八九一七六五四三二",
+        "六":"七八九六五四三二一",
+        "五":"六七八五四三二一九",
+        "四":"五六七四三二一九八",
+        "三":"四五六三二一九八七",
+        "二":"三四五二一九八七六",
+        "一":"二三四一九八七六五"}}
+        pai = paiyinyang.get(yinyang).get(kook)
+        return {"陰":dict(zip(liushun, [i+pai for i in new_list_r(cnumber, kook)[0:6]])), "陽":dict(zip(liushun, [i+pai for i in new_list(cnumber, kook)[0:6]]))}.get(yinyang)
+   
+    def zhishi_pai(self):
+        yinyang = self.qimen_ju_name()[0]
+        kook = self.qimen_ju_name()[2]
+        yanglist = "".join(new_list(cnumber, kook))+"".join(new_list(cnumber, kook))+"".join(new_list(cnumber, kook))
+        yinlist =  "".join(new_list_r(cnumber, kook))+"".join(new_list_r(cnumber, kook))+"".join(new_list_r(cnumber, kook))
+        yangpai = dict(zip(liushun, [i+ yanglist[yanglist.index(i)+1:][0:11] for i in new_list(cnumber, kook)[0:6]]))
+        yinpai = dict(zip(liushun, [i+ yinlist[yinlist.index(i)-1:][0:11] for i in new_list_r(cnumber, kook)[0:6]]))
+        return {"陰":yinpai, "陽":yangpai}.get(yinyang)
+    
+    def zhifu_n_zhishi(self):
+        hgan = gans_code.get(self.gangzhi()[3][0])
+        chour = multi_key_dict_get(liujiashun_dict, self.gangzhi()[3])
+        star = dict(zip(list(self.zhifu_pai().keys()), [stars_code.get(i[0]) for i in list(self.zhifu_pai().values())])).get(chour)
+        door = dict(zip(list(self.zhishi_pai().keys()), [doors_code.get(i[0]) for i in list(self.zhishi_pai().values())])).get(chour)
+        zhifu_gong = dict(zip(list(self.zhifu_pai().keys()), [gongs_code.get(i[hgan]) for i in list(self.zhifu_pai().values())])).get(chour)
+        zhishi_gong = dict(zip(list(self.zhishi_pai().keys()), [gongs_code.get(i[hgan]) for i in list(self.zhishi_pai().values())])).get(chour)
+        return {"值符星宮":[star,zhifu_gong], "值使門宮":[door,zhishi_gong]}
+
+print( Qimen(2020,5,31, 2).pan())
+

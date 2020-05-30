@@ -6,6 +6,8 @@ Created on Sat Jan 18 11:32:50 2020
 """
 
 from datetime import datetime
+import re
+import itertools
 
 def jiazi():
     tiangan = '甲乙丙丁戊己庚辛壬癸'
@@ -18,7 +20,7 @@ def new_list_r(olist, o):
     res1 = []
     for i in range(len(olist)):
         res1.append( olist[zhihead_code % len(olist)])
-        zhihead_code = zhihead_code + 1
+        zhihead_code = zhihead_code - 1
     return res1
 
 def new_list(olist, o):
@@ -74,7 +76,6 @@ jieqidun_code = {
 ("寒露", "立冬"): "六九三",
 "大雪":"四七一"}
 
-
 # 1901-2100年二十节气最小公差数序列 向量压缩法
 encryptionVectorList=[4, 19, 3, 18, 4, 19, 4, 19, 4, 20, 4, 20, 6, 22, 6, 22, 6, 22, 7, 22, 6, 21, 6, 21]
 # 1901-2100年二十节气数据 每个元素的存储格式如下：
@@ -129,32 +130,27 @@ rhourgang_dict = dict(zip(rGan, list(range(1,11))))
 hourgang_dict = dict(zip(Gan, list(range(1,11))))
 Zhi = list("子丑寅卯辰巳午未申酉戌亥")
 hidden_jia = {'甲子':'戊', '甲戌':'己','甲申':'庚','甲午':'辛','甲辰':'壬','甲寅':'癸' }
+liushun = re.findall('..',"甲子甲戌甲申甲午甲辰甲寅")
 
-
+cnumber = list("一二三四五六七八九")
 nine_star = list("蓬芮沖輔禽心柱任英")
 eight_door = list("休死傷杜中開驚生景")
 eight_door2 = list("休死傷杜開驚生景")
 eight_gua = list("坎坤震巽中乾兌艮離")
+god_dict = {"陽":list("符蛇陰合勾雀地天"),"陰":list("符蛇陰合虎玄地天")}
 
-#eight_door_code = dict(zip(range(1,10), eight_door))
+gans_code = dict(zip(Gan,range(0,11)))
+stars_code = dict(zip(cnumber, nine_star))
+doors_code = dict(zip(cnumber, eight_door))
+gongs_code = dict(zip(cnumber, eight_gua))
+
+
+clockwise_eightgua = list("坎艮震巽離坤兌乾")
+anti_clockwise_eightgua = list(reversed(clockwise_eightgua))
+door_r = list("休生傷杜景死驚開")
+star_r = list("蓬任沖輔英禽柱心")
 
 door_code = {"陽遁":dict(zip(range(1,9), eight_door2)),"陰遁":dict(zip(range(1,9), list(reversed(eight_door2))))}
-nine_god = {"陽遁":list("符蛇陰合勾常朱地天"),"陰遁":list("符蛇陰合虎常玄地天")}
-sanqiliuyi_dict = dict(zip(list("戊己庚辛壬癸丁丙乙"), range(1,10)))
-sanqiliuyi_dict2 = dict(zip(list("癸壬辛庚己戊丁丙乙"), range(1,10)))
-
-
-star_dict = dict(zip(list(range(1,10)), nine_star))
-r_star_dict = dict(zip(list(range(1,10)), list(reversed(nine_star))))
-
-
-eight_gua_code = dict(zip(range(1,10), eight_gua))
-r_eight_gua_code = dict(zip(eight_gua, range(1,10)))
-odd_even = {tuple(list("坎震五兌離")):"單", tuple(list("坤巽乾艮")):"雙"}
-Gan_oe = {tuple(list("甲乙丙戊庚壬")):"單", tuple(list("丁己辛癸")):"雙"}
-liujiashun_dict = {tuple(jiazi()[0:10]):'甲子', tuple(jiazi()[10:20]):"甲戌", tuple(jiazi()[20:30]):"甲申", tuple(jiazi()[30:40]):"甲午", tuple(jiazi()[40:50]):"甲辰",  tuple(jiazi()[50:60]):"甲寅"  }
-liujiashun_dict2 = {tuple(jiazi()[0:10]):'甲子戊', tuple(jiazi()[10:20]):"甲戌己", tuple(jiazi()[20:30]):"甲申庚", tuple(jiazi()[30:40]):"甲午辛", tuple(jiazi()[40:50]):"甲辰壬",  tuple(jiazi()[50:60]):"甲寅癸"  }
-jiaji_extra_plus_minus = {"甲子":-1, "甲戌":0, "甲申":1, "甲午":2, "甲辰":3, "甲寅":4}
 
 
 findyuen_dict = {tuple(jiazi()[0:5]): "上元", 
@@ -170,26 +166,15 @@ findyuen_dict = {tuple(jiazi()[0:5]): "上元",
                 tuple(jiazi()[40:45]):"下元" , 
                 tuple(jiazi()[55:60]):"下元" }
 
-
 guxu = {'甲子':{'孤':'戌亥', '虛':'辰巳'}, '甲戌':{'孤':'申酉', '虛':'寅卯'},'甲申':{'孤':'午未', '虛':'子丑'},'甲午':{'孤':'辰巳', '虛':'戌亥'},'甲辰':{'孤':'寅卯', '虛':'申酉'},'甲寅':{'孤':'子丑', '虛':'午未'} }
 shunlist = {0:"戊", 10:"己", 8:"庚", 6:"辛", 4:"壬", 2:"癸"}
-
 jieqi_all = new_list([stc[i:i+2] for i in range(0, len(stc), 2)], "冬至")
 yingyang_dun = {tuple(jieqi_all[0:12]):"陽遁",tuple(jieqi_all[13:24]):"陰遁" }
-
-
 yingyang_order = {"陽遁":list("戊己庚辛壬癸丁丙乙"),"陰遁":list("戊乙丙丁癸壬辛庚己")}
 cnumber_order = list("一二三四五六七八九")
-clockwise_eightgua = list("坎艮震巽離坤兌乾")
-anti_clockwise_eightgua = list(reversed(clockwise_eightgua))
 clockwise_cnum = list("一八三四九二七六")
 cnum_dict = dict(zip(cnumber_order, range(1,9)))
-r_eight_door_code = dict(zip(eight_door, range(1,10)))
 
-
-gan_dict = dict(zip( list("甲乙丙丁戊己庚辛壬癸"), range(1,10)))
-gong_dict = dict(zip(range(1,10), list("坎坤震巽中乾兌艮離")))
-r_gong_dict = dict(zip( list("坎坤震巽中乾兌艮離"), range(1,9)))
 
 # 采集压缩用
 def zipSolarTermsList(inputList,charCountLen=2):
