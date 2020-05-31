@@ -1,6 +1,8 @@
 # **Python Qimendunjia Kinqimen Python 奇門遁甲 堅奇門**
 
 A simple Qimendunjia hour-based system for prediction.
+
+[![Downloads](https://img.shields.io/pypi/dd/kinqimen)](https://pypi.org/project/kinqimen/)
 [![PIP](https://img.shields.io/pypi/v/kinqimen)](https://pypi.org/project/kinqimen/)
 [![TG](https://img.shields.io/badge/chat-on%20telegram-blue)](https://t.me/gnatnek)
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg?logo=paypal&style=flat-square)](https://www.paypal.me/kinyeah)&nbsp;
