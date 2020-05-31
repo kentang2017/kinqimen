@@ -5,7 +5,6 @@ Created on Thu Jan 16 09:49:35 2020
 """
 from config import *
 import sxtwl
-import itertools
 
 
 class Qimen:
@@ -86,7 +85,10 @@ class Qimen:
         earth_order = self.pan_earth()
         rotate = {"陽":clockwise_eightgua, "陰":anti_clockwise_eightgua }.get(self.qimen_ju_name()[0])
         gan_reorder = new_list([self.pan_earth()[0].get(i) for i in list(rotate)], fu_head)
-        gong_reorder = new_list(rotate, fu_head_location)
+        if fu_head_location == "中":
+            gong_reorder = new_list(rotate, "坤")
+        else:
+            gong_reorder = new_list(rotate,  fu_head_location)
         return dict(zip(gong_reorder,gan_reorder))
     
     def pan_door(self):
@@ -102,43 +104,25 @@ class Qimen:
         starting_gong = self.zhifu_n_zhishi().get("值符星宮")[1]
         rotate = {"陽":clockwise_eightgua, "陰":anti_clockwise_eightgua }.get(self.qimen_ju_name()[0])
         star_reorder = {"陽":new_list(star_r, starting_star), "陰":new_list(list(reversed(star_r)), starting_star)}.get(self.qimen_ju_name()[0])
-        gong_reorder = new_list(rotate, starting_gong)
+        if starting_gong == "中":
+            gong_reorder = new_list(rotate, "坤")
+        else:
+            gong_reorder = new_list(rotate, starting_gong)
         return dict(zip(gong_reorder,star_reorder))
     
     def pan_god(self):
         god_order = god_dict.get(self.qimen_ju_name()[0])
         starting_gong = self.zhifu_n_zhishi().get("值符星宮")[1]
         rotate = {"陽":clockwise_eightgua, "陰":anti_clockwise_eightgua }.get(self.qimen_ju_name()[0])
-        gong_reorder = new_list(rotate, starting_gong)
+        if starting_gong == "中":
+            gong_reorder = new_list(rotate, "坤")
+        else:
+            gong_reorder = new_list(rotate, starting_gong)
         return dict(zip(gong_reorder,god_order))
     
-    def pan(self):
-        return {"干支":self.gangzhi()[0]+"年"+self.gangzhi()[1]+"月"+self.gangzhi()[2]+"日"+self.gangzhi()[3]+"時", "局日":self.qimen_ju_day() , "排局":self.qimen_ju_name(), "節氣":self.find_jieqi(), "天盤":self.pan_sky(), "地盤":self.pan_earth()[0], "門":self.pan_door(),"星":self.pan_star(), "神":self.pan_god() ,"值符值使":self.zhifu_n_zhishi()}
-
     def zhifu_pai(self):
         yinyang = self.qimen_ju_name()[0]
         kook = self.qimen_ju_name()[2]
-        paiyinyang = {
-        "陽":{
-        "一":"九八七一二三四五六",
-        "二":"一九八二三四五六七",
-        "三":"二一九三四五六七八",
-        "四":"三二一四五六七八九",
-        "五":"四三二五六七八九一",
-        "六":"五四三六七八九一二",
-        "七":"六五四七八九一二三",
-        "八":"七六五八九一二三四",
-        "九":"八七六九一二三四五"},
-        "陰":{
-        "九":"一二三九八七六五四",
-        "八":"九一二八七六五四三",
-        "七":"八九一七六五四三二",
-        "六":"七八九六五四三二一",
-        "五":"六七八五四三二一九",
-        "四":"五六七四三二一九八",
-        "三":"四五六三二一九八七",
-        "二":"三四五二一九八七六",
-        "一":"二三四一九八七六五"}}
         pai = paiyinyang.get(yinyang).get(kook)
         return {"陰":dict(zip(liushun, [i+pai for i in new_list_r(cnumber, kook)[0:6]])), "陽":dict(zip(liushun, [i+pai for i in new_list(cnumber, kook)[0:6]]))}.get(yinyang)
    
@@ -148,7 +132,7 @@ class Qimen:
         yanglist = "".join(new_list(cnumber, kook))+"".join(new_list(cnumber, kook))+"".join(new_list(cnumber, kook))
         yinlist =  "".join(new_list_r(cnumber, kook))+"".join(new_list_r(cnumber, kook))+"".join(new_list_r(cnumber, kook))
         yangpai = dict(zip(liushun, [i+ yanglist[yanglist.index(i)+1:][0:11] for i in new_list(cnumber, kook)[0:6]]))
-        yinpai = dict(zip(liushun, [i+ yinlist[yinlist.index(i)-1:][0:11] for i in new_list_r(cnumber, kook)[0:6]]))
+        yinpai = dict(zip(liushun, [i+ yinlist[yinlist.index(i)+1:][0:11] for i in new_list_r(cnumber, kook)[0:6]]))
         return {"陰":yinpai, "陽":yangpai}.get(yinyang)
     
     def zhifu_n_zhishi(self):
@@ -159,6 +143,16 @@ class Qimen:
         zhifu_gong = dict(zip(list(self.zhifu_pai().keys()), [gongs_code.get(i[hgan]) for i in list(self.zhifu_pai().values())])).get(chour)
         zhishi_gong = dict(zip(list(self.zhishi_pai().keys()), [gongs_code.get(i[hgan]) for i in list(self.zhishi_pai().values())])).get(chour)
         return {"值符星宮":[star,zhifu_gong], "值使門宮":[door,zhishi_gong]}
+    
+    def tianyi(self):
+        try:
+            star_location = stars_gong_code.get(self.zhifu_n_zhishi().get("值符星宮")[1])
+        except IndexError:
+            star_location = "禽"
+        return star_location
+    
+    def pan(self):
+        return {"干支":self.gangzhi()[0]+"年"+self.gangzhi()[1]+"月"+self.gangzhi()[2]+"日"+self.gangzhi()[3]+"時", "局日":self.qimen_ju_day(), "排局":self.qimen_ju_name(), "節氣":self.find_jieqi(), "值符值使":self.zhifu_n_zhishi(), "天乙":self.tianyi(), "天盤":self.pan_sky(), "地盤":self.pan_earth()[0], "門":self.pan_door(),"星":self.pan_star(), "神":self.pan_god()}
 
-print( Qimen(2020,5,31, 2).pan())
+
 

@@ -7,7 +7,6 @@ Created on Sat Jan 18 11:32:50 2020
 
 from datetime import datetime
 import re
-import itertools
 
 def jiazi():
     tiangan = '甲乙丙丁戊己庚辛壬癸'
@@ -140,16 +139,42 @@ eight_gua = list("坎坤震巽中乾兌艮離")
 god_dict = {"陽":list("符蛇陰合勾雀地天"),"陰":list("符蛇陰合虎玄地天")}
 
 gans_code = dict(zip(Gan,range(0,11)))
+gans_code2 = dict(zip(Gan,range(1,11)))
+cnumber_code = dict(zip(cnumber,range(1,11)))
 stars_code = dict(zip(cnumber, nine_star))
 doors_code = dict(zip(cnumber, eight_door))
 gongs_code = dict(zip(cnumber, eight_gua))
+stars_gong_code = dict(zip(eight_gua, nine_star))
 
+paiyinyang = {
+        "陽":{
+        "一":"九八七一二三四五六",
+        "二":"一九八二三四五六七",
+        "三":"二一九三四五六七八",
+        "四":"三二一四五六七八九",
+        "五":"四三二五六七八九一",
+        "六":"五四三六七八九一二",
+        "七":"六五四七八九一二三",
+        "八":"七六五八九一二三四",
+        "九":"八七六九一二三四五"},
+        "陰":{
+        "九":"一二三九八七六五四",
+        "八":"九一二八七六五四三",
+        "七":"八九一七六五四三二",
+        "六":"七八九六五四三二一",
+        "五":"六七八五四三二一九",
+        "四":"五六七四三二一九八",
+        "三":"四五六三二一九八七",
+        "二":"三四五二一九八七六",
+        "一":"二三四一九八七六五"}}
 
 clockwise_eightgua = list("坎艮震巽離坤兌乾")
 anti_clockwise_eightgua = list(reversed(clockwise_eightgua))
 door_r = list("休生傷杜景死驚開")
 star_r = list("蓬任沖輔英禽柱心")
 
+liujiashun_dict = {tuple(jiazi()[0:10]):"甲子", tuple(jiazi()[10:20]):"甲戌", tuple(jiazi()[20:30]):"甲申", tuple(jiazi()[30:40]):"甲午", tuple(jiazi()[40:50]):"甲辰", tuple(jiazi()[50:60]):"甲寅"}
+liujiashun_dict2 = {tuple(jiazi()[0:10]):"甲子戊", tuple(jiazi()[10:20]):"甲戌己", tuple(jiazi()[20:30]):"甲申庚", tuple(jiazi()[30:40]):"甲午辛", tuple(jiazi()[40:50]):"甲辰壬", tuple(jiazi()[50:60]):"甲寅癸"}
 door_code = {"陽遁":dict(zip(range(1,9), eight_door2)),"陰遁":dict(zip(range(1,9), list(reversed(eight_door2))))}
 
 
