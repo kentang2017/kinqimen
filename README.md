@@ -1,4 +1,4 @@
-# **Python Qimendunjia Kinqimen Python 奇門遁甲 堅奇門**
+﻿# **Python Qimendunjia Kinqimen Python 奇門遁甲 堅奇門**
 
 簡單時家奇門起盤 A simple Qimendunjia in Chinese hour-based system for prediction.
 
@@ -25,8 +25,8 @@ Qimen Dunjia is based on astronomical observations, and consists of various aspe
 
 ## **3. 起課方式 Quickstart**
 ```python
-	from kinqimen import kinqimen
-	Qimen.pan(year, month, day, hour)
+	from kinqimen import Qimen
+	Qimen(year, month, day, hour).pan()
 	
 ```
 
