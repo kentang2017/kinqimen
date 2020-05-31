@@ -1,6 +1,6 @@
 # **Python Qimendunjia Kinqimen Python 奇門遁甲 堅奇門**
 
-簡單時家奇門起盤 A simple Qimendunjia hour-based system for prediction.
+簡單時家奇門起盤 A simple Qimendunjia in Chinese hour-based system for prediction.
 
 [![Downloads](https://img.shields.io/pypi/dd/kinqimen)](https://pypi.org/project/kinqimen/)
 [![PIP](https://img.shields.io/pypi/v/kinqimen)](https://pypi.org/project/kinqimen/)
