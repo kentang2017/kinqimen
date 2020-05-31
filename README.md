@@ -8,7 +8,7 @@
 [![TG](https://img.shields.io/badge/chat-on%20telegram-blue)](https://t.me/gnatnek)
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg?logo=paypal&style=flat-square)](https://www.paypal.me/kinyeah)&nbsp;
 
-![alt text](https://upload.wikimedia.org/wikipedia/commons/e/e7/Imperial_Encyclopaedia_-_Skilled_Occupation_or_Profession_-_pic2490_-_%E9%99%B0%E9%81%81%E5%85%AD%E5%8D%81%E8%8A%B1%E7%94%B2%E5%AD%90%E7%9B%A4%E5%9C%96.png "陰遁六十花甲子盤圖")
+![alt text](https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/CADAL06056497_%E9%81%81%E7%94%B2%E6%BC%94%E7%BE%A9%C2%B7%E5%8D%B7%E4%B8%89~%E5%8D%B7%E5%9B%9B.djvu/page123-452px-CADAL06056497_%E9%81%81%E7%94%B2%E6%BC%94%E7%BE%A9%C2%B7%E5%8D%B7%E4%B8%89~%E5%8D%B7%E5%9B%9B.djvu.jpg "陰遁六十花甲子盤圖")
 
 
 ## **1. 導讀 Introduction**︰
