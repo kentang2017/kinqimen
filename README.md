@@ -8,8 +8,7 @@
 [![TG](https://img.shields.io/badge/chat-on%20telegram-blue)](https://t.me/gnatnek)
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg?logo=paypal&style=flat-square)](https://www.paypal.me/kinyeah)&nbsp;
 
-![alt text](https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/CADAL06056497_%E9%81%81%E7%94%B2%E6%BC%94%E7%BE%A9%C2%B7%E5%8D%B7%E4%B8%89~%E5%8D%B7%E5%9B%9B.djvu/page123-452px-CADAL06056497_%E9%81%81%E7%94%B2%E6%BC%94%E7%BE%A9%C2%B7%E5%8D%B7%E4%B8%89~%E5%8D%B7%E5%9B%9B.djvu.jpg "陰遁六十花甲子盤圖")
-
+![alt text](https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/CADAL06056497_%E9%81%81%E7%94%B2%E6%BC%94%E7%BE%A9%C2%B7%E5%8D%B7%E4%B8%89~%E5%8D%B7%E5%9B%9B.djvu/page123-452px-CADAL06056497_%E9%81%81%E7%94%B2%E6%BC%94%E7%BE%A9%C2%B7%E5%8D%B7%E4%B8%89~%E5%8D%B7%E5%9B%9B.djvu.jpg "遁甲演義陰遁七局排盤")
 
 ## **1. 導讀 Introduction**︰
 奇門遁甲與大六壬、太乙神數並稱三式。為中國神秘學中預測學的一個特有門類。乃利用洛書軌跡，九宮八卦以及五行相生相剋的道理，來預測地理方向的優劣，進而規劃一個人的行程，最終達到對自己最有利的目的，為算命相術所兼用。奇門遁甲以乙、丙、丁稱為三奇；以開、休、生、傷、杜、景、驚、死稱為八門，故名「奇門」。天干中「甲」最尊貴而不顯露，六甲(甲子、甲戌、甲申、甲午、甲辰、甲寅)常隱藏於「戊、己、庚、辛、壬、癸」六儀之內，三奇、六儀分布九宮，而甲不獨占一宮，故名「遁甲」。在古代民間流傳只有帝王附近如軍師、欽天監、國師等重要大臣才通曉奇門遁甲之術。
