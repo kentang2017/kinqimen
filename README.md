@@ -3,7 +3,7 @@
 簡單時家奇門起盤 A simple Qimendunjia in Chinese hour-based system for prediction.
 
 [![Python](https://img.shields.io/pypi/pyversions/kinqimen)](https://pypi.org/project/kinqimen/)
-[![Downloads](https://img.shields.io/pypi/dd/kinqimen)](https://pypi.org/project/kinqimen/)
+[![Downloads](https://img.shields.io/pypi/dm/kinqimen)](https://pypi.org/project/kinqimen/)
 [![PIP](https://img.shields.io/pypi/v/kinqimen)](https://pypi.org/project/kinqimen/)
 [![TG](https://img.shields.io/badge/chat-on%20telegram-blue)](https://t.me/gnatnek)
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg?logo=paypal&style=flat-square)](https://www.paypal.me/kinyeah)&nbsp;
