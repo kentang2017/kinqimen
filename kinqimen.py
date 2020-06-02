@@ -3,9 +3,8 @@
 Created on Thu Jan 16 09:49:35 2020
 @author: kentang
 """
-from config import *
+from kinqimen.config import *
 import sxtwl
-
 
 class Qimen:
     def __init__(self, year, month, day, hour):
@@ -100,7 +99,7 @@ class Qimen:
         return dict(zip(gong_reorder,door_reorder))
     
     def pan_star(self):
-        starting_star = self.zhifu_n_zhishi().get("值符星宮")[0]
+        starting_star = self.zhifu_n_zhishi().get("值符星宮")[0].replace("芮", "禽")
         starting_gong = self.zhifu_n_zhishi().get("值符星宮")[1]
         rotate = {"陽":clockwise_eightgua, "陰":anti_clockwise_eightgua }.get(self.qimen_ju_name()[0])
         star_reorder = {"陽":new_list(star_r, starting_star), "陰":new_list(list(reversed(star_r)), starting_star)}.get(self.qimen_ju_name()[0])
@@ -118,6 +117,7 @@ class Qimen:
             gong_reorder = new_list(rotate, "坤")
         else:
             gong_reorder = new_list(rotate, starting_gong)
+        
         return dict(zip(gong_reorder,god_order))
     
     def zhifu_pai(self):
@@ -154,5 +154,6 @@ class Qimen:
     def pan(self):
         return {"干支":self.gangzhi()[0]+"年"+self.gangzhi()[1]+"月"+self.gangzhi()[2]+"日"+self.gangzhi()[3]+"時", "局日":self.qimen_ju_day(), "排局":self.qimen_ju_name(), "節氣":self.find_jieqi(), "值符值使":self.zhifu_n_zhishi(), "天乙":self.tianyi(), "天盤":self.pan_sky(), "地盤":self.pan_earth()[0], "門":self.pan_door(),"星":self.pan_star(), "神":self.pan_god()}
 
-
+if __name__ == '__main__':
+    print(Qimen(2020,6,2,21).pan())
 
