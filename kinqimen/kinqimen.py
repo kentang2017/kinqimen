@@ -3,7 +3,7 @@
 Created on Thu Jan 16 09:49:35 2020
 @author: kentang
 """
-from kinqimen.config import *
+from config import *
 import sxtwl
 
 class Qimen:
@@ -95,7 +95,10 @@ class Qimen:
         starting_gong = self.zhifu_n_zhishi().get("值使門宮")[1]
         rotate = {"陽":clockwise_eightgua, "陰":anti_clockwise_eightgua }.get(self.qimen_ju_name()[0])
         door_reorder = {"陽":new_list(door_r, starting_door), "陰":new_list(list(reversed(door_r)), starting_door)}.get(self.qimen_ju_name()[0])
-        gong_reorder = new_list(rotate, starting_gong)
+        if starting_gong == "中":
+            gong_reorder = new_list(rotate, "坤")
+        else:
+            gong_reorder = new_list(rotate, starting_gong)
         return dict(zip(gong_reorder,door_reorder))
     
     def pan_star(self):
@@ -155,5 +158,5 @@ class Qimen:
         return {"干支":self.gangzhi()[0]+"年"+self.gangzhi()[1]+"月"+self.gangzhi()[2]+"日"+self.gangzhi()[3]+"時", "局日":self.qimen_ju_day(), "排局":self.qimen_ju_name(), "節氣":self.find_jieqi(), "值符值使":self.zhifu_n_zhishi(), "天乙":self.tianyi(), "天盤":self.pan_sky(), "地盤":self.pan_earth()[0], "門":self.pan_door(),"星":self.pan_star(), "神":self.pan_god()}
 
 if __name__ == '__main__':
-    print(Qimen(2020,6,2,21).pan())
+    print(Qimen(2020,6,18,9).pan_door())
 
