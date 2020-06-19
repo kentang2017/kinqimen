@@ -3,7 +3,7 @@
 Created on Thu Jan 16 09:49:35 2020
 @author: kentang
 """
-from config import *
+from kinqimen.config import *
 import sxtwl
 
 class Qimen:
@@ -83,7 +83,10 @@ class Qimen:
         fu_head_location = self.zhifu_n_zhishi().get("值符星宮")[1]
         earth_order = self.pan_earth()
         rotate = {"陽":clockwise_eightgua, "陰":anti_clockwise_eightgua }.get(self.qimen_ju_name()[0])
-        gan_reorder = new_list([self.pan_earth()[0].get(i) for i in list(rotate)], fu_head)
+        try:
+            gan_reorder = new_list([self.pan_earth()[0].get(i) for i in list(rotate)], fu_head)
+        except ValueError:
+            gan_reorder = new_list([self.pan_earth()[0].get(i) for i in list(rotate)], self.pan_earth()[0].get("乾"))
         if fu_head_location == "中":
             gong_reorder = new_list(rotate, "坤")
         else:
@@ -143,6 +146,8 @@ class Qimen:
         chour = multi_key_dict_get(liujiashun_dict, self.gangzhi()[3])
         star = dict(zip(list(self.zhifu_pai().keys()), [stars_code.get(i[0]) for i in list(self.zhifu_pai().values())])).get(chour)
         door = dict(zip(list(self.zhishi_pai().keys()), [doors_code.get(i[0]) for i in list(self.zhishi_pai().values())])).get(chour)
+        if door == "中":
+            door = "死"
         zhifu_gong = dict(zip(list(self.zhifu_pai().keys()), [gongs_code.get(i[hgan]) for i in list(self.zhifu_pai().values())])).get(chour)
         zhishi_gong = dict(zip(list(self.zhishi_pai().keys()), [gongs_code.get(i[hgan]) for i in list(self.zhishi_pai().values())])).get(chour)
         return {"值符星宮":[star,zhifu_gong], "值使門宮":[door,zhishi_gong]}
@@ -158,5 +163,5 @@ class Qimen:
         return {"干支":self.gangzhi()[0]+"年"+self.gangzhi()[1]+"月"+self.gangzhi()[2]+"日"+self.gangzhi()[3]+"時", "局日":self.qimen_ju_day(), "排局":self.qimen_ju_name(), "節氣":self.find_jieqi(), "值符值使":self.zhifu_n_zhishi(), "天乙":self.tianyi(), "天盤":self.pan_sky(), "地盤":self.pan_earth()[0], "門":self.pan_door(),"星":self.pan_star(), "神":self.pan_god()}
 
 if __name__ == '__main__':
-    print(Qimen(2020,6,18,9).pan_door())
+    print(Qimen(2020,6,19,9).pan())
 
