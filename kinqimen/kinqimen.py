@@ -162,6 +162,6 @@ class Qimen:
     def pan(self):
         return {"干支":self.gangzhi()[0]+"年"+self.gangzhi()[1]+"月"+self.gangzhi()[2]+"日"+self.gangzhi()[3]+"時", "局日":self.qimen_ju_day(), "排局":self.qimen_ju_name(), "節氣":self.find_jieqi(), "值符值使":self.zhifu_n_zhishi(), "天乙":self.tianyi(), "天盤":self.pan_sky(), "地盤":self.pan_earth()[0], "門":self.pan_door(),"星":self.pan_star(), "神":self.pan_god()}
 
-if __name__ == '__main__':
-    print(Qimen(2020,6,19,9).pan())
+#if __name__ == '__main__':
+    #print(Qimen(2020,6,22,9).qimen_ju_name())
 
