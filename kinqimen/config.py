@@ -49,13 +49,11 @@ def ganzhiyear(year):
         result = hidden_jia.get(year_ganzhi)
     return result, year_ganzhi
 
-
 START_YEAR = 1901
 month_DAY_BIT = 12
 month_NUM_BIT = 13
 stc= '小寒大寒立春雨水驚蛰春分清明穀雨立夏小滿芒種夏至小暑大暑立秋處暑白露秋分寒露霜降立冬小雪大雪冬至'
 solarTermsNameList=[stc[x * 2:(x + 1) * 2] for x in range(0, len(stc) // 2)]
-
 
 jieqidun_code = {
 ("冬至", "驚蟄"): "一七四", 
@@ -177,7 +175,6 @@ liujiashun_dict = {tuple(jiazi()[0:10]):"甲子", tuple(jiazi()[10:20]):"甲戌"
 liujiashun_dict2 = {tuple(jiazi()[0:10]):"甲子戊", tuple(jiazi()[10:20]):"甲戌己", tuple(jiazi()[20:30]):"甲申庚", tuple(jiazi()[30:40]):"甲午辛", tuple(jiazi()[40:50]):"甲辰壬", tuple(jiazi()[50:60]):"甲寅癸"}
 door_code = {"陽遁":dict(zip(range(1,9), eight_door2)),"陰遁":dict(zip(range(1,9), list(reversed(eight_door2))))}
 
-
 findyuen_dict = {tuple(jiazi()[0:5]): "上元", 
                 tuple(jiazi()[15:20]):"上元", 
                 tuple(jiazi()[30:35]):"上元", 
@@ -199,7 +196,6 @@ yingyang_order = {"陽遁":list("戊己庚辛壬癸丁丙乙"),"陰遁":list("�
 cnumber_order = list("一二三四五六七八九")
 clockwise_cnum = list("一八三四九二七六")
 cnum_dict = dict(zip(cnumber_order, range(1,9)))
-
 
 # 采集压缩用
 def zipSolarTermsList(inputList,charCountLen=2):
