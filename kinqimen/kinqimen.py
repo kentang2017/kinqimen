@@ -3,7 +3,7 @@
 Created on Thu Jan 16 09:49:35 2020
 @author: kentang
 """
-from kinqimen.config import *
+from config import *
 import sxtwl
 
 class Qimen:
@@ -91,7 +91,7 @@ class Qimen:
             gong_reorder = new_list(rotate, "坤")
         else:
             gong_reorder = new_list(rotate,  fu_head_location)
-        return dict(zip(gong_reorder,gan_reorder))
+        return dict(zip(gong_reorder,gan_reorder)), dict(zip(gan_reorder, gong_reorder))
     
     def pan_door(self):
         starting_door = self.zhifu_n_zhishi().get("值使門宮")[0]
@@ -160,20 +160,30 @@ class Qimen:
         return star_location
     
     def pan(self):
-        return {"干支":self.gangzhi()[0]+"年"+self.gangzhi()[1]+"月"+self.gangzhi()[2]+"日"+self.gangzhi()[3]+"時", "局日":self.qimen_ju_day(), "排局":self.qimen_ju_name(), "節氣":self.find_jieqi(), "值符值使":self.zhifu_n_zhishi(), "天乙":self.tianyi(), "天盤":self.pan_sky(), "地盤":self.pan_earth()[0], "門":self.pan_door(),"星":self.pan_star(), "神":self.pan_god()}
-
+        return {"干支":self.gangzhi()[0]+"年"+self.gangzhi()[1]+"月"+self.gangzhi()[2]+"日"+self.gangzhi()[3]+"時", "局日":self.qimen_ju_day(), "排局":self.qimen_ju_name(), "節氣":self.find_jieqi(), "值符值使":self.zhifu_n_zhishi(), "天乙":self.tianyi(), "天盤":self.pan_sky()[0], "地盤":self.pan_earth()[0], "門":self.pan_door(),"星":self.pan_star(), "神":self.pan_god()}
+    
+    def home_away(self):
+        sky = self.pan_sky()[0]
+        earth = self.pan_earth()[0]
+        zhifu_gong = self.zhifu_n_zhishi().get("值符星宮")[1]
+        home = sky.get(zhifu_gong) + earth.get(zhifu_gong)
+        awayl = self.pan_sky()[1].get("庚")
+        away = sky.get(awayl) + earth.get(awayl)
+        return {"主":[zhifu_gong, home], "客":[awayl, away]}
+    
     def pan_html(self):
         god = self.pan_god()
         door = self.pan_door()
         star = self.pan_star()
-        sky = self.pan_sky()
+        sky = self.pan_sky()[0]
         earth = self.pan_earth()[0]
-        a = "<tr>"+"".join(['''<td align="center">'''+sky.get(i)+god.get(i)+door.get(i) +"<br>"+ earth.get(i)+star.get(i)+ i+'''</td>''' for i in list("巽離坤")])+"</tr>"
+        zhifuzhishi = self.zhifu_n_zhishi()
+        a = ''' <div class="container"><table style="width:100%"><tr>'''+"".join(['''<td align="center">'''+sky.get(i)+god.get(i)+door.get(i) +"<br>"+ earth.get(i)+star.get(i)+ i+'''</td>''' for i in list("巽離坤")])+"</tr>"
         b = ['''<td align="center">'''+sky.get(i)+god.get(i)+door.get(i) +"<br>"+ earth.get(i)+star.get(i)+ i+'''</td>''' for i in list("震兌")]
         c = "<tr>"+b[0] + '''<td><br><br></td>'''+b[1]+"</tr>"
-        d = "<tr>"+"".join(['''<td align="center">'''+sky.get(i)+god.get(i)+door.get(i) +"<br>"+ earth.get(i)+star.get(i)+ i+'''</td>''' for i in list("艮坎乾")])+"</tr>"
+        d = "<tr>"+"".join(['''<td align="center">'''+sky.get(i)+god.get(i)+door.get(i) +"<br>"+ earth.get(i)+star.get(i)+ i+'''</td>''' for i in list("艮坎乾")])+"</tr></table>"
         return a+c+d
         
-#if __name__ == '__main__':
-    #print(Qimen(2020,6,22,9).qimen_ju_name())
+if __name__ == '__main__':
+    print(Qimen(2020,6,22,9).qimen_ju_name())
 
