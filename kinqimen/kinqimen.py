@@ -177,12 +177,13 @@ class Qimen:
         star = self.pan_star()
         sky = self.pan_sky()[0]
         earth = self.pan_earth()[0]
-        zhifuzhishi = self.zhifu_n_zhishi()
+        ha = '''' <div class="container"><table style="width:100%"><tr><td align="center" bgcolor="#f2f2f2" width="50%"><h3><strong>主 (值符)</strong></h3></td> <td align="center" bgcolor="#e6e6e6" width="50%"><h3><strong>客 (六庚)</strong></h3></td></tr>'''
+        ha2 = '''<tr><td align="center" bgcolor="#f2f2f2" width="50%">'''+self.home_away().get("主")[0]+"("+qimen_shigan.get(self.home_away().get("主")[1])[0] + "，"+qimen_shigan.get(self.home_away().get("主")[1])[1]+")"+'''</td><td align="center" bgcolor="#f2f2f2" width="50%">'''+self.home_away().get("客")[0]+"("+qimen_shigan.get(self.home_away().get("客")[1])[0] + "，"+qimen_shigan.get(self.home_away().get("客")[1])[1]+")"+'''</td></tr></table>'''
         a = ''' <div class="container"><table style="width:100%"><tr>'''+"".join(['''<td align="center">'''+sky.get(i)+god.get(i)+door.get(i) +"<br>"+ earth.get(i)+star.get(i)+ i+'''</td>''' for i in list("巽離坤")])+"</tr>"
         b = ['''<td align="center">'''+sky.get(i)+god.get(i)+door.get(i) +"<br>"+ earth.get(i)+star.get(i)+ i+'''</td>''' for i in list("震兌")]
         c = "<tr>"+b[0] + '''<td><br><br></td>'''+b[1]+"</tr>"
         d = "<tr>"+"".join(['''<td align="center">'''+sky.get(i)+god.get(i)+door.get(i) +"<br>"+ earth.get(i)+star.get(i)+ i+'''</td>''' for i in list("艮坎乾")])+"</tr></table>"
-        return a+c+d
+        return ha+ha2+a+c+d
         
 if __name__ == '__main__':
     print(Qimen(2020,6,22,9).qimen_ju_name())
