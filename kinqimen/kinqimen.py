@@ -161,8 +161,7 @@ class Qimen:
     
     def pan(self):
         return {"干支":self.gangzhi()[0]+"年"+self.gangzhi()[1]+"月"+self.gangzhi()[2]+"日"+self.gangzhi()[3]+"時", "局日":self.qimen_ju_day(), "排局":self.qimen_ju_name(), "節氣":self.find_jieqi(), "值符值使":self.zhifu_n_zhishi(), "天乙":self.tianyi(), "天盤":self.pan_sky()[0], "地盤":self.pan_earth()[0], "門":self.pan_door(),"星":self.pan_star(), "神":self.pan_god()}
-   
-   
+ 
     def home_away(self):
         sky = self.pan_sky()[0]
         earth = self.pan_earth()[0]
@@ -171,9 +170,11 @@ class Qimen:
             zhifu_gong = "坤"
         home = sky.get(zhifu_gong) + earth.get(zhifu_gong)
         awayl = self.pan_sky()[1].get("庚")
-        away = sky.get(awayl) + earth.get(awayl)
-        if away == "庚乙" or "庚丙" or "庚丁":
+        if sky.get(awayl) + earth.get(awayl) == "庚乙" or "庚丙" or "庚丁":
             away =  sky.get(self.pan_earth()[1].get(home[0])) + earth.get(self.pan_earth()[1].get(home[0]))
+            awayl =  self.pan_sky()[1].get(sky.get(self.pan_earth()[1].get(home[0])))
+        else:
+            away = sky.get(awayl) + earth.get(awayl)
         return {"主":[zhifu_gong, home], "客":[awayl, away]}
     
     def pan_html(self):
