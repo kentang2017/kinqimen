@@ -52,7 +52,7 @@ def ganzhiyear(year):
 START_YEAR = 1901
 month_DAY_BIT = 12
 month_NUM_BIT = 13
-stc= '小寒大寒立春雨水驚蛰春分清明穀雨立夏小滿芒種夏至小暑大暑立秋處暑白露秋分寒露霜降立冬小雪大雪冬至'
+stc= '小寒大寒立春雨水驚蟄春分清明穀雨立夏小滿芒種夏至小暑大暑立秋處暑白露秋分寒露霜降立冬小雪大雪冬至'
 solarTermsNameList=[stc[x * 2:(x + 1) * 2] for x in range(0, len(stc) // 2)]
 
 jieqidun_code = {
