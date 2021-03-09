@@ -6,13 +6,15 @@ Created on Thu Jan 16 09:49:35 2020
 from config import *
 import sxtwl
 
+#%% 主程式
 class Qimen:
     def __init__(self, year, month, day, hour):
         self.year = year
         self.month = month
         self.day = day
         self.hour = hour
-                                 
+                           
+    #找節氣
     def find_jieqi(self):
         jieqi_list = twentyfourjieqi(self.year)
         s_date = list(jieqi_list.keys())
@@ -21,6 +23,7 @@ class Qimen:
         test = {True:jieqi_list.get(s_date[s_date.index(closest) - 1]), False:jieqi_list.get(closest)}
         return test.get(closest>date)
     
+    #奇門排局
     def qimen_ju_name(self):
         find_yingyang = multi_key_dict_get(yingyang_dun, self.find_jieqi())
         findyuen = multi_key_dict_get(findyuen_dict, self.gangzhi()[2])
@@ -28,11 +31,13 @@ class Qimen:
         find_kok = {"上元":jieqicode[0], "中元":jieqicode[1], "下元":jieqicode[2]}
         return find_yingyang+find_kok.get(findyuen)+"局"+findyuen
     
+    #三元
     def find_yuen(self):
         find_yingyang = multi_key_dict_get(yingyang_dun, self.find_jieqi())
         findyuen = multi_key_dict_get(findyuen_dict, self.gangzhi()[2])
         return findyuen
     
+    #干支
     def gangzhi(self):
         lunar = sxtwl.Lunar()
         cdate = lunar.getDayBySolar(self.year, self.month, self.day)
@@ -41,6 +46,7 @@ class Qimen:
         new_hh = Gan[timegz.tg]+Zhi[timegz.dz]
         return yy_mm_dd[0], yy_mm_dd[1],  yy_mm_dd[2], new_hh
     
+    #旬
     def shun(self):
         gangzhi = self.gangzhi()[2]
         gangzhi_gang = dict(zip(Gan, list(range(1,11))))
@@ -52,6 +58,7 @@ class Qimen:
             shun_value = shun_value+12
         return shunlist.get(shun_value)
     
+    #奇門局日
     def qimen_ju_day(self):
         day_gangzhi = self.gangzhi()[2]
         ju_day_dict = {tuple(list("甲己")):"甲己日",  tuple(list("乙庚")):"乙庚日",  tuple(list("丙辛")):"丙辛日", tuple(list("丁壬")):"丁壬日", tuple(list("戊癸")):"戊癸日"}
@@ -61,12 +68,15 @@ class Qimen:
             find_d = multi_key_dict_get(ju_day_dict, day_gangzhi[1])
         return find_d
     
+    #日空時空
     def daykong_shikong(self):
         return {"日空":multi_key_dict_get(guxu, multi_key_dict_get(liujiashun_dict, self.gangzhi()[2])).get("孤"), "時空":multi_key_dict_get(guxu, multi_key_dict_get(liujiashun_dict, self.gangzhi()[3])).get("孤")}
 
+    #值符
     def hourganghzi_zhifu(self):
         return multi_key_dict_get(liujiashun_dict2, self.gangzhi()[3])
 
+    #地盤
     def pan_earth(self):
         kok = self.qimen_ju_name()[2]
         kok_yingyang = self.qimen_ju_name()[0:2]
@@ -78,6 +88,7 @@ class Qimen:
         clockwise_gan = [cnumngua.get(i) for i in  clockwise_cnum]
         return [earth, reverse_earth, clockwise_gan]
     
+    #天盤
     def pan_sky(self):
         fu_head = self.hourganghzi_zhifu()[2]
         fu_head_location = self.zhifu_n_zhishi().get("值符星宮")[1]
@@ -91,8 +102,9 @@ class Qimen:
             gong_reorder = new_list(rotate, "坤")
         else:
             gong_reorder = new_list(rotate,  fu_head_location)
-        return dict(zip(gong_reorder,gan_reorder)), dict(zip(gan_reorder, gong_reorder))
+        return dict(zip(gong_reorder,gan_reorder))
     
+    #八門
     def pan_door(self):
         starting_door = self.zhifu_n_zhishi().get("值使門宮")[0]
         starting_gong = self.zhifu_n_zhishi().get("值使門宮")[1]
@@ -104,6 +116,7 @@ class Qimen:
             gong_reorder = new_list(rotate, starting_gong)
         return dict(zip(gong_reorder,door_reorder))
     
+    #九星
     def pan_star(self):
         starting_star = self.zhifu_n_zhishi().get("值符星宮")[0].replace("芮", "禽")
         starting_gong = self.zhifu_n_zhishi().get("值符星宮")[1]
@@ -115,6 +128,7 @@ class Qimen:
             gong_reorder = new_list(rotate, starting_gong)
         return dict(zip(gong_reorder,star_reorder))
     
+    #八神
     def pan_god(self):
         god_order = god_dict.get(self.qimen_ju_name()[0])
         starting_gong = self.zhifu_n_zhishi().get("值符星宮")[1]
@@ -126,12 +140,14 @@ class Qimen:
         
         return dict(zip(gong_reorder,god_order))
     
+    #排值符
     def zhifu_pai(self):
         yinyang = self.qimen_ju_name()[0]
         kook = self.qimen_ju_name()[2]
         pai = paiyinyang.get(yinyang).get(kook)
         return {"陰":dict(zip(liushun, [i+pai for i in new_list_r(cnumber, kook)[0:6]])), "陽":dict(zip(liushun, [i+pai for i in new_list(cnumber, kook)[0:6]]))}.get(yinyang)
    
+    #排值使
     def zhishi_pai(self):
         yinyang = self.qimen_ju_name()[0]
         kook = self.qimen_ju_name()[2]
@@ -141,6 +157,7 @@ class Qimen:
         yinpai = dict(zip(liushun, [i+ yinlist[yinlist.index(i)+1:][0:11] for i in new_list_r(cnumber, kook)[0:6]]))
         return {"陰":yinpai, "陽":yangpai}.get(yinyang)
     
+    #找值符及值使
     def zhifu_n_zhishi(self):
         hgan = gans_code.get(self.gangzhi()[3][0])
         chour = multi_key_dict_get(liujiashun_dict, self.gangzhi()[3])
@@ -151,31 +168,36 @@ class Qimen:
         zhifu_gong = dict(zip(list(self.zhifu_pai().keys()), [gongs_code.get(i[hgan]) for i in list(self.zhifu_pai().values())])).get(chour)
         zhishi_gong = dict(zip(list(self.zhishi_pai().keys()), [gongs_code.get(i[hgan]) for i in list(self.zhishi_pai().values())])).get(chour)
         return {"值符星宮":[star,zhifu_gong], "值使門宮":[door,zhishi_gong]}
+
+    #排盤
+    def pan(self):
+        return {"干支":self.gangzhi()[0]+"年"+self.gangzhi()[1]+"月"+self.gangzhi()[2]+"日"+self.gangzhi()[3]+"時","旬首":self.shun(),"旬空":self.daykong_shikong(),"局日":self.qimen_ju_day(), "排局":self.qimen_ju_name(), "節氣":self.find_jieqi(), "值符值使":self.zhifu_n_zhishi(), "天乙":self.tianyi(), "天盤":self.pan_sky(), "地盤":self.pan_earth()[0], "門":self.pan_door(),"星":self.pan_star(), "神":self.pan_god(), "馬星": {"天馬": self.moonhorse(),"丁馬":self.dinhorse(), "驛馬":self.hourhorse()}}
     
+#%% 支節
+    #天乙
     def tianyi(self):
         try:
             star_location = stars_gong_code.get(self.zhifu_n_zhishi().get("值符星宮")[1])
         except IndexError:
             star_location = "禽"
         return star_location
+
+    #丁馬    
+    def dinhorse(self):
+        dinhorsedict = {"甲子":"卯", "甲戌":"丑", "甲申":"亥", "甲午":"酉", "甲辰":"未", "甲寅":"巳"}
+        liujiashun_dict = {tuple(jiazi()[0:10]):'甲子', tuple(jiazi()[10:20]):"甲戌", tuple(jiazi()[20:30]):"甲申", tuple(jiazi()[30:40]):"甲午", tuple(jiazi()[40:50]):"甲辰",  tuple(jiazi()[50:60]):"甲寅"  }
+        shun = multi_key_dict_get(liujiashun_dict, self.gangzhi()[2])
+        return multi_key_dict_get(dinhorsedict, shun)
     
-    def pan(self):
-        return {"干支":self.gangzhi()[0]+"年"+self.gangzhi()[1]+"月"+self.gangzhi()[2]+"日"+self.gangzhi()[3]+"時","旬空":self.daykong_shikong() ,"局日":self.qimen_ju_day(), "排局":self.qimen_ju_name(), "節氣":self.find_jieqi(), "值符值使":self.zhifu_n_zhishi(), "天乙":self.tianyi(), "天盤":self.pan_sky()[0], "地盤":self.pan_earth()[0], "門":self.pan_door(),"星":self.pan_star(), "神":self.pan_god()}
- 
-    def home_away(self):
-        sky = self.pan_sky()[0]
-        earth = self.pan_earth()[0]
-        zhifu_gong = self.zhifu_n_zhishi().get("值符星宮")[1]
-        if zhifu_gong == "中":
-            zhifu_gong = "坤"
-        home = sky.get(zhifu_gong) + earth.get(zhifu_gong)
-        awayl = self.pan_sky()[1].get("庚")
-        if sky.get(awayl) + earth.get(awayl) == "庚乙" or "庚丙" or "庚丁":
-            away =  sky.get(self.pan_earth()[1].get(home[0])) + earth.get(self.pan_earth()[1].get(home[0]))
-            awayl =  self.pan_sky()[1].get(sky.get(self.pan_earth()[1].get(home[0])))
-        else:
-            away = sky.get(awayl) + earth.get(awayl)
-        return {"主":[zhifu_gong, home], "客":[awayl, away]}
+    #天馬
+    def moonhorse(self):
+        moonhorsedict = {tuple(list("寅申")):"午", tuple(list("卯酉")):"申", tuple(list("辰戌")):"戌", tuple(list("巳亥")):"子", tuple(list("午子")):"寅", tuple(list("丑未")):"辰"}
+        return multi_key_dict_get(moonhorsedict, self.gangzhi()[2][1])
+    
+    #驛馬星
+    def hourhorse(self):
+        yima = {tuple(list("申子辰")):"寅", tuple(list("寅午戌")):"申", tuple(list("亥卯未")):"巳" , tuple(list("巳酉丑")):"亥" }
+        return multi_key_dict_get(yima, self.gangzhi()[3][1])
     
     def pan_html(self):
         god = self.pan_god()
