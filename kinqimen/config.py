@@ -242,3 +242,11 @@ def unZipSolarTermsList(data,rangeEndNum=24,charCountLen=2):
 def getTheYearAllSolarTermsList(year):
     return unZipSolarTermsList(solarTermsData[year-START_YEAR])
 
+def find_shier_luck(gan):
+    twelve_luck = re.findall('..',"長生沐浴冠帶臨冠帝旺") + list("衰病死墓絕胎養")
+    twelve_luck_i = list("死病衰") + re.findall('..',"帝旺臨冠冠帶沐浴長生") + list("養胎絕墓")
+    yang = dict(zip(Gan[0::2], [dict(zip(y, twelve_luck)) for y in [new_list(Zhi, i) for i in list("亥寅寅巳申")]]))
+    ying = dict(zip(Gan[1::2], [dict(zip(y, twelve_luck_i)) for y in [new_list(Zhi, i) for i in list("亥寅寅巳申")]]))
+    return {**yang, **ying}.get(gan)
+
+
