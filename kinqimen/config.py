@@ -128,7 +128,7 @@ rGan = list("癸壬辛庚己戊丁丙乙甲")
 rhourgang_dict = dict(zip(rGan, list(range(1,11))))
 hourgang_dict = dict(zip(Gan, list(range(1,11))))
 Zhi = list("子丑寅卯辰巳午未申酉戌亥")
-hidden_jia = {'甲子':'戊', '甲戌':'己','甲申':'庚','甲午':'辛','甲辰':'壬','甲寅':'癸' }
+hidden_jia = dict(zip(re.findall("..", "甲子甲戌甲申甲午甲辰甲寅"), list("戊己庚辛壬癸")))
 liushun = re.findall('..',"甲子甲戌甲申甲午甲辰甲寅")
 
 cnumber = list("一二三四五六七八九")
@@ -137,6 +137,7 @@ eight_door = list("休死傷杜中開驚生景")
 eight_door2 = list("休死傷杜開驚生景")
 eight_gua = list("坎坤震巽中乾兌艮離")
 god_dict = {"陽":list("符蛇陰合勾雀地天"),"陰":list("符蛇陰合虎玄地天")}
+zhi2gan = dict(zip(Zhi,list("癸己甲乙戊丙丁己庚辛戊壬")))
 
 gans_code = dict(zip(Gan,range(0,11)))
 gans_code2 = dict(zip(Gan,range(1,11)))

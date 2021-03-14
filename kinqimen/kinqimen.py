@@ -3,8 +3,8 @@
 Created on Thu Jan 16 09:49:35 2020
 @author: kentang
 """
-from config import *
-import sxtwl
+from kinqimen.config import *
+import sxtwl, re
 
 #%% 主程式
 class Qimen:
@@ -104,7 +104,7 @@ class Qimen:
             gong_reorder = new_list(rotate, "坤")
         else:
             gong_reorder = new_list(rotate,  fu_head_location)
-        return dict(zip(gong_reorder,gan_reorder)), {self.pan_star()[1].get("禽"):self.pan_earth()[0].get("中") } 
+        return [dict(zip(gong_reorder,gan_reorder)), {self.pan_star()[1].get("禽"):self.pan_earth()[0].get("中") } ]
     
     #八門
     def pan_door(self):
@@ -173,8 +173,18 @@ class Qimen:
 
     #排盤
     def pan(self):
-        return {"干支":self.gangzhi()[0]+"年"+self.gangzhi()[1]+"月"+self.gangzhi()[2]+"日"+self.gangzhi()[3]+"時","旬首":self.shun(),"旬空":self.daykong_shikong(),"局日":self.qimen_ju_day(), "排局":self.qimen_ju_name(), "節氣":self.find_jieqi(), "值符值使":self.zhifu_n_zhishi(), "天乙":self.tianyi(), "天盤":self.pan_sky(), "地盤":self.pan_earth()[0], "門":self.pan_door(),"星":self.pan_star()[0], "神":self.pan_god(), "馬星": {"天馬": self.moonhorse(),"丁馬":self.dinhorse(), "驛馬":self.hourhorse()}, "長生十二神": find_shier_luck(self.gangzhi()[2][0])}
+        return {"干支":self.gangzhi()[0]+"年"+self.gangzhi()[1]+"月"+self.gangzhi()[2]+"日"+self.gangzhi()[3]+"時","旬首":self.shun(),"旬空":self.daykong_shikong(),"局日":self.qimen_ju_day(), "排局":self.qimen_ju_name(), "節氣":self.find_jieqi(), "值符值使":self.zhifu_n_zhishi(), "天乙":self.tianyi(), "天盤":self.pan_sky(), "地盤":self.pan_earth()[0], "門":self.pan_door(),"星":self.pan_star()[0], "神":self.pan_god(), "馬星": {"天馬": self.moonhorse(),"丁馬":self.dinhorse(), "驛馬":self.hourhorse()}, "長生運": self.gong_chengsun()}
     
+    #九宮長生十二神
+    def gong_chengsun(self):
+        find_twelve_luck = find_shier_luck(self.gangzhi()[2][0])
+        find_twelve_luck_new = dict(zip([zhi2gan.get(i) for i in list(find_twelve_luck.keys())],list(find_twelve_luck.values())))
+        sky_pan = self.pan_sky()[0]
+        sky_pan_new = dict(zip(sky_pan.keys(),[{list(sky_pan.values())[y]: [find_twelve_luck_new.get(i) for i in sky_pan.values()][y]} for y in range(0,8)]))
+        earth_pan = self.pan_earth()[0]
+        earth_pan_new = earth_pan_new = dict(zip(earth_pan.keys(),[{list(earth_pan.values())[y]: [find_twelve_luck_new.get(i) for i in earth_pan.values()][y]} for y in range(0,9)]))
+        return {"天盤":sky_pan_new, "地盤": earth_pan_new}
+        
 #%% 支節
     #天乙
     def tianyi(self):
@@ -186,20 +196,22 @@ class Qimen:
 
     #丁馬    
     def dinhorse(self):
-        dinhorsedict = {"甲子":"卯", "甲戌":"丑", "甲申":"亥", "甲午":"酉", "甲辰":"未", "甲寅":"巳"}
+        dinhorsedict =dict(zip(re.findall("..","甲子甲戌甲申甲午甲辰甲寅"), list("卯丑亥酉未巳")))
         liujiashun_dict = {tuple(jiazi()[0:10]):'甲子', tuple(jiazi()[10:20]):"甲戌", tuple(jiazi()[20:30]):"甲申", tuple(jiazi()[30:40]):"甲午", tuple(jiazi()[40:50]):"甲辰",  tuple(jiazi()[50:60]):"甲寅"  }
         shun = multi_key_dict_get(liujiashun_dict, self.gangzhi()[2])
         return multi_key_dict_get(dinhorsedict, shun)
     
     #天馬
     def moonhorse(self):
-        moonhorsedict = {tuple(list("寅申")):"午", tuple(list("卯酉")):"申", tuple(list("辰戌")):"戌", tuple(list("巳亥")):"子", tuple(list("午子")):"寅", tuple(list("丑未")):"辰"}
+        moonhorsedict = dict(zip([tuple(i) for i in re.findall("..","寅申卯酉辰戌巳亥午子丑未")], list("午申戌子寅辰")))
         return multi_key_dict_get(moonhorsedict, self.gangzhi()[2][1])
     
     #驛馬星
     def hourhorse(self):
-        yima = {tuple(list("申子辰")):"寅", tuple(list("寅午戌")):"申", tuple(list("亥卯未")):"巳" , tuple(list("巳酉丑")):"亥" }
+        yima = dict(zip([tuple(i) for i in re.findall("...","申子辰寅午戌亥卯未巳酉丑")], list("寅申巳亥")))
         return multi_key_dict_get(yima, self.gangzhi()[3][1])
+    
+    
     
  
 if __name__ == '__main__':
