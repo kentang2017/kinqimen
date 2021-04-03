@@ -54,7 +54,7 @@ START_YEAR = 1901
 month_DAY_BIT = 12
 month_NUM_BIT = 13
 stc= '小寒大寒立春雨水驚蟄春分清明穀雨立夏小滿芒種夏至小暑大暑立秋處暑白露秋分寒露霜降立冬小雪大雪冬至'
-solarTermsNameList=[stc[x * 2:(x + 1) * 2] for x in range(0, len(stc) // 2)]
+solarTermsNameList=re.findall('..',stc)
 
 
 jieqidun_code = {
@@ -130,14 +130,18 @@ hourgang_dict = dict(zip(Gan, list(range(1,11))))
 Zhi = list("子丑寅卯辰巳午未申酉戌亥")
 hidden_jia = dict(zip(re.findall("..", "甲子甲戌甲申甲午甲辰甲寅"), list("戊己庚辛壬癸")))
 liushun = re.findall('..',"甲子甲戌甲申甲午甲辰甲寅")
+golen_d = re.findall("..","太乙攝提軒轅招搖天符青龍咸池太陰天乙")
 
+gtw = re.findall("..","地籥六賊五符天曹地符風伯雷公雨師風雲唐符國印天關")
 cnumber = list("一二三四五六七八九")
 nine_star = list("蓬芮沖輔禽心柱任英")
 eight_door = list("休死傷杜中開驚生景")
 eight_door2 = list("休死傷杜開驚生景")
 eight_gua = list("坎坤震巽中乾兌艮離")
+eight_gua2 = list("坎坤震巽乾兌艮離")
 god_dict = {"陽":list("符蛇陰合勾雀地天"),"陰":list("符蛇陰合虎玄地天")}
 zhi2gan = dict(zip(Zhi,list("癸己甲乙戊丙丁己庚辛戊壬")))
+
 
 gans_code = dict(zip(Gan,range(0,11)))
 gans_code2 = dict(zip(Gan,range(1,11)))
@@ -249,5 +253,4 @@ def find_shier_luck(gan):
     yang = dict(zip(Gan[0::2], [dict(zip(y, twelve_luck)) for y in [new_list(Zhi, i) for i in list("亥寅寅巳申")]]))
     ying = dict(zip(Gan[1::2], [dict(zip(y, twelve_luck_i)) for y in [new_list(Zhi, i) for i in list("亥寅寅巳申")]]))
     return {**yang, **ying}.get(gan)
-
 
