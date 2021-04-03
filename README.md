@@ -1,6 +1,6 @@
 ﻿# **Python Qimendunjia Kinqimen Python 奇門遁甲 堅奇門**
 
-簡單時家奇門起盤 A simple Qimendunjia in Chinese hour-based system for prediction.
+簡單時家奇門起盤 A simple Qimendunjia in Chinese hour-based system and golden letter jade mirror (金函玉鏡) style Qimendunjia for prediction.
 
 [![Python](https://img.shields.io/pypi/pyversions/kinqimen)](https://pypi.org/project/kinqimen/)
 [![PIP](https://img.shields.io/pypi/v/kinqimen)](https://pypi.org/project/kinqimen/)
@@ -10,8 +10,6 @@
 
 ![alt text](https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/CADAL06056497_%E9%81%81%E7%94%B2%E6%BC%94%E7%BE%A9%C2%B7%E5%8D%B7%E4%B8%89~%E5%8D%B7%E5%9B%9B.djvu/page123-452px-CADAL06056497_%E9%81%81%E7%94%B2%E6%BC%94%E7%BE%A9%C2%B7%E5%8D%B7%E4%B8%89~%E5%8D%B7%E5%9B%9B.djvu.jpg "遁甲演義陰遁七局排盤")
 ![alt text](https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/CADAL06056497_%E9%81%81%E7%94%B2%E6%BC%94%E7%BE%A9%C2%B7%E5%8D%B7%E4%B8%89~%E5%8D%B7%E5%9B%9B.djvu/page104-444px-CADAL06056497_%E9%81%81%E7%94%B2%E6%BC%94%E7%BE%A9%C2%B7%E5%8D%B7%E4%B8%89~%E5%8D%B7%E5%9B%9B.djvu.jpg "遁甲演義陰遁七局排盤")
-
-
 
 
 ## **1. 導讀 Introduction**︰
@@ -30,7 +28,9 @@ Qimen Dunjia is based on astronomical observations, and consists of various aspe
 ## **3. 起課方式 Quickstart**
 ```python
 	from kinqimen import Qimen
-	Qimen(year, month, day, hour).pan()
+	Qimen(year, month, day, hour).p (時家奇門)
+	Qimen(year, month, day, hour).g (金函日家)
+	Qimen(year, month, day, hour).overall (時家奇門 + 金函日家)
 	
 ```
 
