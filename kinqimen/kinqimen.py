@@ -185,6 +185,21 @@ class Qimen:
     
     def pan(self):
         return {"干支":self.gangzhi()[0]+"年"+self.gangzhi()[1]+"月"+self.gangzhi()[2]+"日"+self.gangzhi()[3]+"時","旬首":self.shun(),"旬空":self.daykong_shikong(),"局日":self.qimen_ju_day(), "排局":self.qimen_ju_name(), "節氣":self.find_jieqi(), "值符值使":self.zhifu_n_zhishi(), "天乙":self.tianyi(), "天盤":self.pan_sky(), "地盤":self.pan_earth()[0], "門":self.pan_door(),"星":self.pan_star()[0], "神":self.pan_god(), "馬星": {"天馬": self.moonhorse(),"丁馬":self.dinhorse(), "驛馬":self.hourhorse()}, "長生運": self.gong_chengsun()}
+  
+    def pan_html(self):
+        god = self.pan_god()
+        door = self.pan_door()
+        star = self.pan_star()[0]
+        sky = self.pan_sky()[0]
+        earth = self.pan_earth()[0]
+        a = ''' <div class="container"><table style="width:100%"><tr>'''+"".join(['''<td align="center">'''+sky.get(i)+god.get(i)+door.get(i) +"<br>"+ earth.get(i)+star.get(i)+ i+'''</td>''' for i in list("巽離坤")])+"</tr>"
+        b = ['''<td align="center">'''+sky.get(i)+god.get(i)+door.get(i) +"<br>"+ earth.get(i)+star.get(i)+ i+'''</td>''' for i in list("震兌")]
+        c = '''<tr>'''+b[0]+ '''<td><br><br></td>'''+b[1]+'''</tr>'''
+        d = "<tr>"+"".join(['''<td align="center">'''+sky.get(i)+god.get(i)+door.get(i) +"<br>"+ earth.get(i)+star.get(i)+ i+'''</td>''' for i in list("艮坎乾")])+"</tr></table></div>"
+        
+        
+        return a+c+d
+
     
 #%% 金函玉鏡 日家奇門       
     def gpan(self):
@@ -208,7 +223,13 @@ class Qimen:
 
         g =[]
         f = {"陰遁":anti_clockwise_eightgua ,"陽遁":clockwise_eightgua}
-        star = {"陰遁":dict(zip(new_list(eight_gua, dict(zip(new_list(jiazi(), shun)[0:10], new_list(list(reversed(eight_gua)), gong))).get(dgz)), golen_d)) ,"陽遁":dict(zip(new_list(eight_gua, dict(zip(new_list(jiazi(), shun)[0:10], new_list(eight_gua, gong))).get(dgz)), golen_d))}.get(yy)
+        c_gong = new_list(eight_gua, gong)
+        a_gong = new_list(list(reversed(eight_gua)), gong)
+        close_ten_day = new_list(jiazi(), shun)[0:10]
+        
+        ying = dict(zip(new_list(eight_gua, {**dict(zip(close_ten_day, a_gong)), **{close_ten_day[-1]:a_gong[0]}}.get(dgz)), golen_d))
+        yang = dict(zip(new_list(eight_gua, {**dict(zip(close_ten_day, c_gong)), **{close_ten_day[-1]:a_gong[0]}}.get(dgz)), golen_d))
+        star = {"陰遁":ying ,"陽遁":yang}.get(yy)
         for i in eight_gua2:
             c = dict(zip(new_list(f.get(yy), i), door_r))
             g.append(c)
@@ -217,7 +238,7 @@ class Qimen:
                     "局": yy+dgz+"日",
                     "鶴神": self.crane_god().get(dgz),
                     "星": star,
-                    "門": door,
+                    "門": {**door, **{"中":""}},
                     "神": self.getgtw().get(dgz[0])
                     }
         
@@ -238,7 +259,20 @@ class Qimen:
             newc_list.extend(newc)
         return dict(zip(newjz, newc_list))
             
-        
+    def gpan_html(self):
+        god = self.gpan().get("神")
+        door = self.gpan().get("門")
+        star = self.gpan().get("星")
+        a = ''' <div class="container"><table style="width:100%"><tr>'''+"".join(['''<td align="center">'''+star.get(i) +"<br>"+ door.get(i)+ i+'''</td>''' for i in list("巽離坤")])+"</tr>"
+        b = "".join(['''<td align="center">'''+star.get(i) +"<br>"+ door.get(i)+ i+'''</td>''' for i in list("震中兌")])
+        d = "<tr>"+"".join(['''<td align="center">'''+star.get(i) +"<br>"+ door.get(i)+ i+'''</td>''' for i in list("艮坎乾")])+"</tr></table></div>"
+        return a+b+d
+    
+    def five_html(self):
+        e = ['''<td align="center">'''+i+ '''<br>'''+god.get(i)+'''</td>''' for i in Zhi]
+        c = "<div><table><tr>"+e[0]+e[1]+e[2]+"</tr><tr>"+e[3]+e[4]+e[5]+"</tr><tr>"+e[6]+e[7]+e[8]+"</tr><tr>"+e[9]+e[10]+e[11]+"</tr></table></div>"
+        return c
+    
 #%% 支節
     #天乙
     def tianyi(self):
@@ -267,5 +301,5 @@ class Qimen:
     
     
 if __name__ == '__main__':
-    print(Qimen(2021,4,2,17).pan())
+    print(Qimen(2021,4,5,11).gpan())
 

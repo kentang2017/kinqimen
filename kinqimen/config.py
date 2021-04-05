@@ -253,4 +253,3 @@ def find_shier_luck(gan):
     yang = dict(zip(Gan[0::2], [dict(zip(y, twelve_luck)) for y in [new_list(Zhi, i) for i in list("亥寅寅巳申")]]))
     ying = dict(zip(Gan[1::2], [dict(zip(y, twelve_luck_i)) for y in [new_list(Zhi, i) for i in list("亥寅寅巳申")]]))
     return {**yang, **ying}.get(gan)
-
