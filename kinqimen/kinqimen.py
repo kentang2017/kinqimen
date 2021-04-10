@@ -196,8 +196,6 @@ class Qimen:
         b = ['''<td align="center">'''+sky.get(i)+god.get(i)+door.get(i) +"<br>"+ earth.get(i)+star.get(i)+ i+'''</td>''' for i in list("震兌")]
         c = '''<tr>'''+b[0]+ '''<td><br><br></td>'''+b[1]+'''</tr>'''
         d = "<tr>"+"".join(['''<td align="center">'''+sky.get(i)+god.get(i)+door.get(i) +"<br>"+ earth.get(i)+star.get(i)+ i+'''</td>''' for i in list("艮坎乾")])+"</tr></table></div>"
-        
-        
         return a+c+d
 
     
@@ -233,7 +231,8 @@ class Qimen:
         for i in eight_gua2:
             c = dict(zip(new_list(f.get(yy), i), door_r))
             g.append(c)
-        door = multi_key_dict_get(dict(zip(b, g)), dgz)
+        e = itertools.cycle(g)
+        door = multi_key_dict_get(dict(zip(b, e)), dgz)
         return {
                     "局": yy+dgz+"日",
                     "鶴神": self.crane_god().get(dgz),
@@ -301,5 +300,5 @@ class Qimen:
     
     
 if __name__ == '__main__':
-    print(Qimen(2021,4,5,11).gpan())
+    print(Qimen(2021,4,10,11).gpan())
 
