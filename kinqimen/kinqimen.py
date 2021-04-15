@@ -201,12 +201,12 @@ class Qimen:
     
 #%% 金函玉鏡 日家奇門       
     def gpan(self):
-        find_shun = {tuple(jiazi()[0:10]):"甲子", tuple(jiazi()[10:20]):"甲戌", tuple(jiazi()[20:30]):"甲申",  tuple(jiazi()[40:50]):"甲午",  tuple(jiazi()[50:60]):"甲寅"}
+        start_jia = jiazi()[0::10]
+        find_shun = dict(zip([tuple(new_list(jiazi(), i)[0:10]) for i in start_jia], start_jia))
         dgz = self.gangzhi()[2]
         shun = multi_key_dict_get(find_shun, dgz)
         start_gong_d = {"冬至": "艮離坎坤震巽", "夏至":"坤離巽坤離兌"}
         yy_dun = {"冬至":"陽遁", "夏至":"陰遁"}
-        start_jia = re.findall("..","甲子甲戌甲申甲午甲辰甲寅")
         start_gong = start_gong_d.get(multi_key_dict_get({tuple(jieqi_all[0:12]):"冬至", tuple(jieqi_all[13:24]):"夏至"}, self.find_jieqi()))
         yy = yy_dun.get(multi_key_dict_get({tuple(jieqi_all[0:12]):"冬至", tuple(jieqi_all[13:24]):"夏至"}, self.find_jieqi()))
         gong = dict(zip(start_jia, start_gong)).get(shun)
@@ -240,7 +240,7 @@ class Qimen:
                     "門": {**door, **{"中":""}},
                     "神": self.getgtw().get(dgz[0])
                     }
-        
+            
     def getgtw(self):
         newgtw_order = re.findall("..","地籥天關唐符風雲唐符風雲雷公風伯天曹五符")
         newgtw = [new_list(gtw, i) for i in newgtw_order]
@@ -281,7 +281,7 @@ class Qimen:
             star_location = "禽"
         return star_location
 
-    #丁馬    
+    #丁馬    s
     def dinhorse(self):
         dinhorsedict =dict(zip(re.findall("..","甲子甲戌甲申甲午甲辰甲寅"), list("卯丑亥酉未巳")))
         liujiashun_dict = {tuple(jiazi()[0:10]):'甲子', tuple(jiazi()[10:20]):"甲戌", tuple(jiazi()[20:30]):"甲申", tuple(jiazi()[30:40]):"甲午", tuple(jiazi()[40:50]):"甲辰",  tuple(jiazi()[50:60]):"甲寅"  }
@@ -300,5 +300,4 @@ class Qimen:
     
     
 if __name__ == '__main__':
-    print(Qimen(2021,4,10,11).gpan())
-
+    print(Qimen(2021,4,16,11).gpan())
