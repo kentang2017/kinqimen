@@ -93,20 +93,27 @@ class Qimen:
         return [earth, reverse_earth, clockwise_gan]
     
     #天盤
-    def pan_sky(self):
+     def pan_sky(self):
+        rotate = {"陽":clockwise_eightgua, "陰":anti_clockwise_eightgua }.get(self.qimen_ju_name()[0])
         fu_head = self.hourganghzi_zhifu()[2]
         fu_head_location = self.zhifu_n_zhishi().get("值符星宮")[1]
-        earth_order = self.pan_earth()
-        rotate = {"陽":clockwise_eightgua, "陰":anti_clockwise_eightgua }.get(self.qimen_ju_name()[0])
-        try:
-            gan_reorder = new_list([self.pan_earth()[0].get(i) for i in list(rotate)], fu_head)
-        except ValueError:
-            gan_reorder = new_list([self.pan_earth()[0].get(i) for i in list(rotate)], self.pan_earth()[0].get("乾"))
-        if fu_head_location == "中":
-            gong_reorder = new_list(rotate, "坤")
+        fu_head_location2 = self.pan_earth()[1].get(fu_head)
+        if fu_head_location2 != "中":
+            earth_order = self.pan_earth()
+            try:
+                gan_reorder = new_list([self.pan_earth()[0].get(i) for i in list(rotate)], fu_head)
+            except ValueError:
+                gan_reorder = new_list([self.pan_earth()[0].get(i) for i in list(rotate)], self.pan_earth()[0].get("乾"))
+            if fu_head_location == "中":
+                gong_reorder = new_list(rotate, "坤")
+            else:
+                gong_reorder = new_list(rotate,  fu_head_location)
+            return [dict(zip(gong_reorder,gan_reorder)), {self.pan_star()[1].get("禽"):self.pan_earth()[0].get("中") } ]
         else:
-            gong_reorder = new_list(rotate,  fu_head_location)
-        return [dict(zip(gong_reorder,gan_reorder)), {self.pan_star()[1].get("禽"):self.pan_earth()[0].get("中") } ]
+            gong_reorder = new_list(rotate, "坤")
+            gan_reorder = new_list([self.pan_earth()[0].get(i) for i in list(rotate)], self.pan_earth()[0].get(self.zhifu_n_zhishi().get("值使門宮")[1]))
+            return [dict(zip(gong_reorder,gan_reorder)), {self.pan_star()[1].get("禽"):self.pan_earth()[0].get("中") } ]
+    
     
     #八門
     def pan_door(self):
