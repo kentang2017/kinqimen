@@ -93,27 +93,43 @@ class Qimen:
         return [earth, reverse_earth, clockwise_gan]
     
     #天盤
-     def pan_sky(self):
+    def pan_sky(self):
         rotate = {"陽":clockwise_eightgua, "陰":anti_clockwise_eightgua }.get(self.qimen_ju_name()[0])
+        earth = self.pan_earth()
         fu_head = self.hourganghzi_zhifu()[2]
+        fu_location = earth[1].get(self.gangzhi()[3][0])
         fu_head_location = self.zhifu_n_zhishi().get("值符星宮")[1]
-        fu_head_location2 = self.pan_earth()[1].get(fu_head)
-        if fu_head_location2 != "中":
-            earth_order = self.pan_earth()
-            try:
-                gan_reorder = new_list([self.pan_earth()[0].get(i) for i in list(rotate)], fu_head)
-            except ValueError:
-                gan_reorder = new_list([self.pan_earth()[0].get(i) for i in list(rotate)], self.pan_earth()[0].get("乾"))
-            if fu_head_location == "中":
-                gong_reorder = new_list(rotate, "坤")
-            else:
-                gong_reorder = new_list(rotate,  fu_head_location)
-            return [dict(zip(gong_reorder,gan_reorder)), {self.pan_star()[1].get("禽"):self.pan_earth()[0].get("中") } ]
-        else:
+        fu_head_location2 = earth[1].get(fu_head)
+        zhishi = self.zhifu_n_zhishi()["值使門宮"][1]
+        zhifu_g = self.zhifu_n_zhishi()["值符星宮"][1]
+        zhifu = self.zhifu_n_zhishi()["值符星宮"][0]
+        if fu_head_location == "中":
             gong_reorder = new_list(rotate, "坤")
-            gan_reorder = new_list([self.pan_earth()[0].get(i) for i in list(rotate)], self.pan_earth()[0].get(self.zhifu_n_zhishi().get("值使門宮")[1]))
-            return [dict(zip(gong_reorder,gan_reorder)), {self.pan_star()[1].get("禽"):self.pan_earth()[0].get("中") } ]
-    
+            gan_reorder = new_list([self.pan_earth()[0].get(i) for i in list(rotate)], fu_head)
+            gong_reorder = new_list(rotate,  fu_head_location)
+            return dict(zip(gong_reorder, gan_reorder)), dict(zip(gan_reorder, gong_reorder)), gan_reorder
+        elif fu_head_location != "中" and zhifu != "禽" and fu_head_location2 != "中":
+            gan_reorder = new_list([self.pan_earth()[0].get(i) for i in list(rotate)], fu_head)
+            gong_reorder = new_list(rotate,  fu_head_location)
+            if fu_head not in gan_reorder:    
+                start = dict(zip(cnumber_order2, gan_reorder)).get(self.qimen_ju_name()[2])
+                rgan_reorder = new_list(gan_reorder , start)
+                rgong_reorder = new_list(gong_reorder , fu_location)
+                return dict(zip(rgong_reorder, rgan_reorder)), dict(zip(rgan_reorder, rgong_reorder)), gan_reorder
+            elif fu_head in gan_reorder: 
+                rgan_reorder = new_list(gan_reorder , earth[0].get(fu_location))
+                rgong_reorder = new_list(gong_reorder , fu_location)
+                return [dict(zip(gong_reorder,gan_reorder)), {self.pan_star()[1].get("禽"):self.pan_earth()[0].get("中") } ]
+        elif fu_head_location != "中" and zhifu == "禽" and fu_head_location2 == "中":
+            gan_reorder = new_list([self.pan_earth()[0].get(i) for i in list(rotate)], earth[0].get("坤"))
+            gong_reorder = new_list(rotate,  fu_head_location)
+            if fu_head not in gan_reorder:    
+                rgong_reorder = new_list(gong_reorder , fu_location)
+                return dict(zip(rgong_reorder, gan_reorder)), dict(zip(gan_reorder, rgong_reorder))
+            elif fu_head in gan_reorder: 
+                rgan_reorder = new_list(gan_reorder , earth[0].get(fu_location))
+                rgong_reorder = new_list(gong_reorder , fu_location)
+                return [dict(zip(gong_reorder,gan_reorder)), {self.pan_star()[1].get("禽"):self.pan_earth()[0].get("中") } ]
     
     #八門
     def pan_door(self):
