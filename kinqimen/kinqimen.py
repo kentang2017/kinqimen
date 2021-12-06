@@ -14,7 +14,7 @@ class Qimen:
         self.month = month
         self.day = day
         self.hour = hour
-        self.p = {"干支":self.gangzhi()[0]+"年"+self.gangzhi()[1]+"月"+self.gangzhi()[2]+"日"+self.gangzhi()[3]+"時","旬首":self.shun(),"旬空":self.daykong_shikong(),"局日":self.qimen_ju_day(), "排局":self.qimen_ju_name(), "節氣":self.find_jieqi(), "值符值使":self.zhifu_n_zhishi(), "天乙":self.tianyi(), "天盤":self.pan_sky(), "地盤":self.pan_earth()[0], "門":self.pan_door(),"星":self.pan_star()[0], "神":self.pan_god(), "馬星": {"天馬": self.moonhorse(),"丁馬":self.dinhorse(), "驛馬":self.hourhorse()}, "長生運": self.gong_chengsun()}
+        self.p = {"干支":self.gangzhi()[0]+"年"+self.gangzhi()[1]+"月"+self.gangzhi()[2]+"日"+self.gangzhi()[3]+"時","旬首":self.shun(self.gangzhi()[2]),"旬空":self.daykong_shikong(),"局日":self.qimen_ju_day(), "排局":self.qimen_ju_name(), "節氣":self.find_jieqi(), "值符值使":self.zhifu_n_zhishi(), "天乙":self.tianyi(), "天盤":self.pan_sky(), "地盤":self.pan_earth()[0], "門":self.pan_door(),"星":self.pan_star()[0], "神":self.pan_god(), "馬星": {"天馬": self.moonhorse(),"丁馬":self.dinhorse(), "驛馬":self.hourhorse()}, "長生運": self.gong_chengsun()}
         self.g = self.gpan()
         self.overall = {"時家奇門": self.pan, "金函玉鏡": self.g}
                            
@@ -51,8 +51,8 @@ class Qimen:
         return yy_mm_dd[0], yy_mm_dd[1],  yy_mm_dd[2], new_hh
     
     #旬
-    def shun(self):
-        gangzhi = self.gangzhi()[2]
+    def shun(self, gz):
+        gangzhi = gz
         gangzhi_gang = dict(zip(Gan, list(range(1,11))))
         gangzhi_zhi = dict(zip(Zhi, list(range(1,13))))
         gang = gangzhi_gang.get(gangzhi[0])
