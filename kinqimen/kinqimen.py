@@ -112,7 +112,7 @@ class Qimen:
             gan_reorder = new_list([self.pan_earth()[0].get(i) for i in list(rotate)], fu_head)
             gong_reorder = new_list(rotate,  fu_head_location)
             if fu_head not in gan_reorder:    
-                start = dict(zip(cnumber_order2, gan_reorder)).get(self.qimen_ju_name()[2])
+                start = dict(zip(cnumber_order, gan_reorder)).get(self.qimen_ju_name()[2])
                 rgan_reorder = new_list(gan_reorder , start)
                 rgong_reorder = new_list(gong_reorder , fu_location)
                 return dict(zip(rgong_reorder, rgan_reorder)), dict(zip(rgan_reorder, rgong_reorder)), gan_reorder
