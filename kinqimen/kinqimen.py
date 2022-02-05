@@ -3,7 +3,7 @@
 Created on Thu Jan 16 09:49:35 2020
 @author: kentang
 """
-from kinqimen.config import *
+from config import *
 import sxtwl, re
 import itertools
 
@@ -119,9 +119,12 @@ class Qimen:
                 rgong_reorder = new_list(gong_reorder , fu_location)
                 return dict(zip(rgong_reorder, rgan_reorder)), dict(zip(rgan_reorder, rgong_reorder)), gan_reorder
             elif fu_head in gan_reorder: 
-                rgan_reorder = new_list(gan_reorder , earth[0].get(fu_location))
-                rgong_reorder = new_list(gong_reorder , fu_location)
-                return [dict(zip(gong_reorder,gan_reorder)), {self.pan_star()[1].get("禽"):self.pan_earth()[0].get("中") } ]
+                if fu_location == None:
+                    return  self.pan_earth()
+                elif fu_location != None:
+                    rgan_reorder = new_list(gan_reorder , earth[0].get(fu_location))
+                    rgong_reorder = new_list(gong_reorder , fu_location)
+                    return [dict(zip(gong_reorder,gan_reorder)), {self.pan_star()[1].get("禽"):self.pan_earth()[0].get("中") } ]
         elif fu_head_location != "中" and zhifu == "禽" and fu_head_location2 == "中":
             gan_reorder = new_list([self.pan_earth()[0].get(i) for i in list(rotate)], earth[0].get("坤"))
             gong_reorder = new_list(rotate,  fu_head_location)
@@ -336,4 +339,4 @@ class Qimen:
 
     
 if __name__ == '__main__':
-    print(Qimen(2022,2,7,11).pan_sky())
+    print(Qimen(2022,2,9,23).pan())
