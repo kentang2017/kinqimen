@@ -243,8 +243,8 @@ class Qimen:
         shun = multi_key_dict_get(find_shun, dgz)
         start_gong_d = {"冬至": "艮離坎坤震巽", "夏至":"坤離巽坤離兌"}
         yy_dun = {"冬至":"陽遁", "夏至":"陰遁"}
-        start_gong = start_gong_d.get(multi_key_dict_get({tuple(jieqi_all[0:12]):"冬至", tuple(jieqi_all[13:24]):"夏至"}, self.find_jieqi()))
-        yy = yy_dun.get(multi_key_dict_get({tuple(jieqi_all[0:12]):"冬至", tuple(jieqi_all[13:24]):"夏至"}, self.find_jieqi()))
+        start_gong = start_gong_d.get(multi_key_dict_get({tuple(jieqi_all[0:12]):"冬至", tuple(jieqi_all[12:24]):"夏至"}, self.find_jieqi()))
+        yy = yy_dun.get(multi_key_dict_get({tuple(jieqi_all[0:12]):"冬至", tuple(jieqi_all[12:24]):"夏至"}, self.find_jieqi()))
         gong = dict(zip(start_jia, start_gong)).get(shun)
         triple_list = list(map(lambda x: x + x + x, list(range(0,21))))
         b = []
