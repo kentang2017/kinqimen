@@ -221,7 +221,7 @@ def twentyfourjieqi(year):
     day = getTheYearAllSolarTermsList(year)
     month = [ele for ele in [i for i in range(1,13)] for b in range(2)]
     new_date_list = []
-    for i in range(0,23):
+    for i in range(0,24):
         new_date = str(year)+"/"+str(month[i])+"/"+str(day[i])   
         date_format = datetime.strptime(new_date , "%Y/%m/%d").date()
         new_date_list.append(date_format)
