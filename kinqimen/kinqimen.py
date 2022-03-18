@@ -3,7 +3,7 @@
 Created on Thu Jan 16 09:49:35 2020
 @author: kentang
 """
-from config import *
+from kinqimen.config import *
 import sxtwl, re
 import itertools
 
@@ -19,12 +19,7 @@ class Qimen:
                            
     #找節氣
     def find_jieqi(self):
-        jieqi_list = twentyfourjieqi(self.year)
-        s_date = list(jieqi_list.keys())
-        date = datetime.strptime(str(self.year)+"-"+str(self.month)+"-"+str(self.day), '%Y-%m-%d').date()
-        closest = sorted(s_date, key=lambda d: abs( date  - d))[0]
-        test = {True:jieqi_list.get(s_date[s_date.index(closest) - 1]), False:jieqi_list.get(closest)}
-        return test.get(closest>date)
+        return jq(self.year, self.month, self.day, self.hour)
     
     #奇門排局
     def qimen_ju_name(self):
@@ -339,4 +334,4 @@ class Qimen:
 
     
 if __name__ == '__main__':
-    print(Qimen(2022,2,9,23).pan())
+    print(Qimen(2021,12,30,18).pan())
