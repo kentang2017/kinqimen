@@ -3,7 +3,7 @@
 Created on Thu Jan 16 09:49:35 2020
 @author: kentang
 """
-from kinqimen.config import *
+from config import *
 import sxtwl, re
 import itertools
 
@@ -13,7 +13,7 @@ class Qimen:
         self.month = month
         self.day = day
         self.hour = hour
-        #self.p = {"干支":self.gangzhi()[0]+"年"+self.gangzhi()[1]+"月"+self.gangzhi()[2]+"日"+self.gangzhi()[3]+"時","旬首":self.shun(self.gangzhi()[2]),"旬空":self.daykong_shikong(),"局日":self.qimen_ju_day(), "排局":self.qimen_ju_name(), "節氣":self.find_jieqi(), "值符值使":self.zhifu_n_zhishi(), "天乙":self.tianyi(), "天盤":self.pan_sky(), "地盤":self.pan_earth()[0], "門":self.pan_door(),"星":self.pan_star()[0], "神":self.pan_god(), "馬星": {"天馬": self.moonhorse(),"丁馬":self.dinhorse(), "驛馬":self.hourhorse()}, "長生運": self.gong_chengsun()}
+        self.p = {"干支":self.gangzhi()[0]+"年"+self.gangzhi()[1]+"月"+self.gangzhi()[2]+"日"+self.gangzhi()[3]+"時","旬首":self.shun(self.gangzhi()[2]),"旬空":self.daykong_shikong(),"局日":self.qimen_ju_day(), "排局":self.qimen_ju_name(), "節氣":self.find_jieqi(), "值符值使":self.zhifu_n_zhishi(), "天乙":self.tianyi(), "天盤":self.pan_sky(), "地盤":self.pan_earth()[0], "門":self.pan_door(),"星":self.pan_star()[0], "神":self.pan_god(), "馬星": {"天馬": self.moonhorse(),"丁馬":self.dinhorse(), "驛馬":self.hourhorse()}, "長生運": self.gong_chengsun()}
         self.g = self.gpan()
         self.overall = {"時家奇門": self.pan, "金函玉鏡": self.g}
                            
@@ -104,7 +104,7 @@ class Qimen:
                 gong_reorder = new_list(rotate,  fu_head_location)
                 return dict(zip(gong_reorder, gan_reorder)), dict(zip(gan_reorder, gong_reorder)), gan_reorder
             except ValueError:
-                return self.pan_earth()[0], [{'坤':fu_head}]       
+                return dict(zip(gong_reorder, gan_reorder)), [{'坤':fu_head}]       
         elif fu_head_location != "中" and zhifu != "禽" and fu_head_location2 != "中":
             gan_reorder = new_list([self.pan_earth()[0].get(i) for i in list(rotate)], fu_head)
             gong_reorder = new_list(rotate,  fu_head_location)
@@ -334,4 +334,4 @@ class Qimen:
 
     
 if __name__ == '__main__':
-    print(Qimen(2021,12,30,18).pan())
+    print(Qimen(2016,12,2,17).pan())

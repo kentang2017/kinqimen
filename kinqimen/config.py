@@ -10,6 +10,7 @@ import math, datetime, re
 
 jieqi=re.findall('..', '春分清明穀雨立夏小滿芒種夏至小暑大暑立秋處暑白露秋分寒露霜降立冬小雪大雪冬至小寒大寒立春雨水驚蟄')
 
+
 def ecliptic_lon(jd_utc):
     s=Sun(jd_utc)
     equ=Equatorial(s.ra,s.dec,epoch=jd_utc)
@@ -35,20 +36,36 @@ def iteration(jd,sta):
             break
     return jd
 
-def jq(year, month, day, hour):
+
+def fjqs(year, month, day, hour):
     jd=Date( str(year)+"/"+str(month).zfill(2)+"/"+str(day).zfill(2)+" "+str(hour).zfill(2)+":00:00.00")
+    ct = datetime.datetime.strptime(str(year)+"-"+str(month)+"-"+str(day)+"-"+str(hour)+":00:00", "%Y-%m-%d-%H:%M:%S")
     e=ecliptic_lon(jd)
     n=int(e*180.0/math.pi/15)+1
+    c = []
     for i in range(1):
         if n>=24:
             n-=24
         jd=iteration(jd,sta)
         d=Date(jd+1/3).tuple()
-        d1=Date(jd+1/3)
-        if d1 - jd > 0:
-            return jieqi[n-1]
-        else:
-            return jieqi[n]
+        b = [jieqi[n], datetime.datetime.strptime(str(d[0])+"-"+str(d[1])+"-"+str(d[2])+"-"+str(d[3])+":00:00", "%Y-%m-%d-%H:%M:%S")]
+        c.append(b)
+    return c[0]
+
+
+def jq(year, month, day, hour):
+    jd=Date( str(year)+"/"+str(month).zfill(2)+"/"+str(day).zfill(2)+" "+str(hour).zfill(2)+":00:00.00")
+    ct = datetime.datetime.strptime(str(year)+"-"+str(month)+"-"+str(day)+"-"+str(hour)+":00:00", "%Y-%m-%d-%H:%M:%S")
+    p = ct - datetime.timedelta(days=7)
+    pp = ct - datetime.timedelta(days=21)
+    bf = fjqs(p.year, p.month, p.day, p.hour)
+    bbf = fjqs(pp.year, pp.month, pp.day, pp.hour)
+    t1 = bf[1]
+    t2 = bbf[1]
+    if ct < t1:
+        return bbf[0]
+    else:
+        return bf[0]
 
 
 def jiazi():
@@ -186,5 +203,4 @@ def find_shier_luck(gan):
     yang = dict(zip(Gan[0::2], [dict(zip(y, twelve_luck)) for y in [new_list(Zhi, i) for i in list("亥寅寅巳申")]]))
     ying = dict(zip(Gan[1::2], [dict(zip(y, twelve_luck_i)) for y in [new_list(Zhi, i) for i in list("亥寅寅巳申")]]))
     return {**yang, **ying}.get(gan)
-
 
