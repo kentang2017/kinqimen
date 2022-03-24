@@ -3,7 +3,7 @@
 Created on Thu Jan 16 09:49:35 2020
 @author: kentang
 """
-from config import *
+from kinqimen.config import *
 import sxtwl, re
 import itertools
 
@@ -37,14 +37,17 @@ class Qimen:
     
     #干支
     def gangzhi(self):
-        cdate = sxtwl.fromSolar(self.year, self.month, self.day)
+        if self.hour == 23:
+            d = datetime.datetime.strptime(str(self.year)+"-"+str(self.month)+"-"+str(self.day)+"-"+str(self.hour)+":00:00", "%Y-%m-%d-%H:%M:%S") + datetime.timedelta(hours=1)
+        else:
+            d = datetime.datetime.strptime(str(self.year)+"-"+str(self.month)+"-"+str(self.day)+"-"+str(self.hour)+":00:00", "%Y-%m-%d-%H:%M:%S") 
+        cdate = sxtwl.fromSolar(d.year, d.month, d.day)
         yTG = Gan[cdate.getYearGZ().tg] + Zhi[cdate.getYearGZ().dz]
         mTG = Gan[cdate.getMonthGZ().tg] + Zhi[cdate.getMonthGZ().dz]
         dTG  = Gan[cdate.getDayGZ().tg] + Zhi[cdate.getDayGZ().dz]
-        hTG = Gan[cdate.getHourGZ(self.hour).tg] + Zhi[cdate.getHourGZ(self.hour).dz]
+        hTG = Gan[cdate.getHourGZ(d.hour).tg] + Zhi[cdate.getHourGZ(d.hour).dz]
         return [yTG, mTG, dTG, hTG]
-    
-    #旬
+  #旬
     def shun(self, gz):
         gangzhi = gz
         gangzhi_gang = dict(zip(Gan, list(range(1,11))))
@@ -333,8 +336,6 @@ class Qimen:
     def hourhorse(self):
         yima = dict(zip([tuple(i) for i in re.findall("...","申子辰寅午戌亥卯未巳酉丑")], list("寅申巳亥")))
         return multi_key_dict_get(yima, self.gangzhi()[3][1])
-
-
     
 if __name__ == '__main__':
-    print(Qimen(2005,1,20,0).pan())
+    print(Qimen(2005,1,19,23).pan())
