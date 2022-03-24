@@ -104,7 +104,10 @@ class Qimen:
                 gong_reorder = new_list(rotate,  fu_head_location)
                 return dict(zip(gong_reorder, gan_reorder)), dict(zip(gan_reorder, gong_reorder)), gan_reorder
             except ValueError:
-                return dict(zip(gong_reorder, gan_reorder)), [{'坤':fu_head}]       
+                try:    
+                    return dict(zip(gong_reorder, gan_reorder)), [{'坤':fu_head}]       
+                except UnboundLocalError:
+                    return self.pan_earth()
         elif fu_head_location != "中" and zhifu != "禽" and fu_head_location2 != "中":
             gan_reorder = new_list([self.pan_earth()[0].get(i) for i in list(rotate)], fu_head)
             gong_reorder = new_list(rotate,  fu_head_location)
@@ -334,4 +337,4 @@ class Qimen:
 
     
 if __name__ == '__main__':
-    print(Qimen(2016,12,2,17).pan())
+    print(Qimen(2005,1,20,0).pan())
