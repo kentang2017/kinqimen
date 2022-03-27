@@ -122,11 +122,12 @@ class Qimen:
         return [self.Gan[cdate.getYearGZ().tg] + self.Zhi[cdate.getYearGZ().dz], self.Gan[cdate.getMonthGZ().tg] + self.Zhi[cdate.getMonthGZ().dz],self.Gan[cdate.getDayGZ().tg] + self.Zhi[cdate.getDayGZ().dz],self.Gan[cdate.getHourGZ(d.hour).tg] +self.Zhi[cdate.getHourGZ(d.hour).dz]]
     #旬
     def shun(self, gz):
+        shunlist = {0:"戊", 10:"己", 8:"庚", 6:"辛", 4:"壬", 2:"癸"}
         gangzhi = gz
         shun_value = dict(zip(self.Zhi, list(range(1,13)))).get(gangzhi[1]) - dict(zip(self.Gan, list(range(1,11)))).get(gangzhi[0])
         if shun_value < 0:
             shun_value = shun_value+12
-        return {0:"戊", 10:"己", 8:"庚", 6:"辛", 4:"壬", 2:"癸"}.get(shun_value)
+        return shunlist.get(shun_value)
     #奇門局日
     def qimen_ju_day(self):
         ju_day_dict = {tuple(list("甲己")):"甲己日",  tuple(list("乙庚")):"乙庚日",  tuple(list("丙辛")):"丙辛日", tuple(list("丁壬")):"丁壬日", tuple(list("戊癸")):"戊癸日"}
@@ -224,7 +225,8 @@ class Qimen:
     def zhifu_pai(self):
         yinyang = self.qimen_ju_name()[0]
         kook = self.qimen_ju_name()[2]
-        pai = {"陽":{"一":"九八七一二三四五六","二":"一九八二三四五六七","三":"二一九三四五六七八","四":"三二一四五六七八九","五":"四三二五六七八九一","六":"五四三六七八九一二","七":"六五四七八九一二三","八":"七六五八九一二三四","九":"八七六九一二三四五"},"陰":{"九":"一二三九八七六五四","八":"九一二八七六五四三","七":"八九一七六五四三二","六":"七八九六五四三二一","五":"六七八五四三二一九","四":"五六七四三二一九八","三":"四五六三二一九八七","二":"三四五二一九八七六","一":"二三四一九八七六五"}}.get(yinyang).get(kook)
+        pai = {"陽":{"一":"九八七一二三四五六","二":"一九八二三四五六七","三":"二一九三四五六七八","四":"三二一四五六七八九","五":"四三二五六七八九一","六":"五四三六七八九一二","七":"六五四七八九一二三","八":"七六五八九一二三四","九":"八七六九一二三四五"},
+                      "陰":{"九":"一二三九八七六五四","八":"九一二八七六五四三","七":"八九一七六五四三二","六":"七八九六五四三二一","五":"六七八五四三二一九","四":"五六七四三二一九八","三":"四五六三二一九八七","二":"三四五二一九八七六","一":"二三四一九八七六五"}}.get(yinyang).get(kook)
         return {"陰":dict(zip(self.jiazi()[0::10], [i+pai for i in self.new_list_r(self.cnumber, kook)[0:6]])), "陽":dict(zip(self.jiazi()[0::10], [i+pai for i in self.new_list(self.cnumber, kook)[0:6]]))}.get(yinyang)
     #排值使
     def zhishi_pai(self):
@@ -281,14 +283,21 @@ class Qimen:
                 b.append(a)
             except IndexError:
                 pass
-        c_gong = self.new_list(self.eight_gua, gong)
-        a_gong = self.new_list(list(reversed(self.eight_gua)), gong)
+        g =[]
         close_ten_day = self.new_list(self.jiazi(), shun)[0:10]
         golen_d = re.findall("..","太乙攝提軒轅招搖天符青龍咸池太陰天乙")
-        ying = dict(zip(self.new_list(self.eight_gua, {**dict(zip(close_ten_day, a_gong)), **{close_ten_day[-1]:a_gong[0]}}.get(dgz)), golen_d))
-        yang = dict(zip(self.new_list(self.eight_gua, {**dict(zip(close_ten_day, c_gong)), **{close_ten_day[-1]:a_gong[0]}}.get(dgz)), golen_d))
-        g =[ dict(zip(self.new_list({"陰遁":list(reversed(self.clockwise_eightgua)) ,"陽遁":self.clockwise_eightgua}.get(yy), i), self.door_r)) for i in list("坎坤震巽乾兌艮離")]
-        return {"局": yy+dgz+"日","鶴神": self.crane_god().get(dgz),"星": {"陰遁":ying ,"陽遁":yang}.get(yy), "門": {**self.multi_key_dict_get(dict(zip(b, itertools.cycle(g))), dgz), **{"中":""}},"神": self.getgtw().get(dgz[0])}
+        ying = dict(zip(self.new_list(self.eight_gua, {**dict(zip(close_ten_day, self.new_list(list(reversed(self.eight_gua)), gong))), **{close_ten_day[-1]:a_gong[0]}}.get(dgz)), golen_d))
+        yang = dict(zip(self.new_list(self.eight_gua, {**dict(zip(close_ten_day, self.new_list(self.eight_gua, gong))), **{close_ten_day[-1]:a_gong[0]}}.get(dgz)), golen_d))
+        for i in list("坎坤震巽乾兌艮離"):
+            c = dict(zip(self.new_list({"陰遁":list(reversed(self.clockwise_eightgua)) ,"陽遁":self.clockwise_eightgua}.get(yy), i), self.door_r))
+            g.append(c)
+        return {
+                    "局": yy+dgz+"日",
+                    "鶴神": self.crane_god().get(dgz),
+                    "星": {"陰遁":ying ,"陽遁":yang}.get(yy),
+                    "門": {**self.multi_key_dict_get(dict(zip(b, itertools.cycle(g))), dgz), **{"中":""}},
+                    "神": self.getgtw().get(dgz[0])
+                    }
             
     def getgtw(self):
         gtw = re.findall("..","地籥六賊五符天曹地符風伯雷公雨師風雲唐符國印天關")
@@ -334,6 +343,6 @@ class Qimen:
 
 if __name__ == '__main__':
     tic = time.perf_counter()
-    print(Qimen(2022,3,27,12).overall())
+    print(Qimen(2022,3,27,12).pan())
     toc = time.perf_counter()
     print(f"{toc - tic:0.4f} seconds")
