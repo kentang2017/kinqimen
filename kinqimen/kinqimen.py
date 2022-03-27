@@ -286,6 +286,8 @@ class Qimen:
         g =[]
         close_ten_day = self.new_list(self.jiazi(), shun)[0:10]
         golen_d = re.findall("..","太乙攝提軒轅招搖天符青龍咸池太陰天乙")
+        c_gong = self.new_list(self.eight_gua, gong)
+        a_gong = self.new_list(list(reversed(self.eight_gua)), gong)
         ying = dict(zip(self.new_list(self.eight_gua, {**dict(zip(close_ten_day, self.new_list(list(reversed(self.eight_gua)), gong))), **{close_ten_day[-1]:a_gong[0]}}.get(dgz)), golen_d))
         yang = dict(zip(self.new_list(self.eight_gua, {**dict(zip(close_ten_day, self.new_list(self.eight_gua, gong))), **{close_ten_day[-1]:a_gong[0]}}.get(dgz)), golen_d))
         for i in list("坎坤震巽乾兌艮離"):
@@ -343,6 +345,6 @@ class Qimen:
 
 if __name__ == '__main__':
     tic = time.perf_counter()
-    print(Qimen(2022,3,27,12).pan())
+    print(Qimen(2022,3,27,12).gpan())
     toc = time.perf_counter()
     print(f"{toc - tic:0.4f} seconds")
