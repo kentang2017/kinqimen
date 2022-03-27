@@ -3,7 +3,9 @@
 Created on Thu Jan 16 09:49:35 2020
 @author: kentang
 """
-import sxtwl, re, time, itertools, math, datetime, ephem
+import sxtwl, re, time
+import itertools
+import math, datetime, re, ephem
 
 class Qimen:
     def __init__(self, year, month, day, hour):
@@ -281,7 +283,7 @@ class Qimen:
                 b.append(a)
             except IndexError:
                 pass
-        g =[]
+        g = []
         close_ten_day = self.new_list(self.jiazi(), shun)[0:10]
         golen_d = re.findall("..","太乙攝提軒轅招搖天符青龍咸池太陰天乙")
         c_gong = self.new_list(self.eight_gua, gong)
@@ -305,8 +307,14 @@ class Qimen:
         return dict(zip(self.Gan, newgtw_list))
     #鶴神 
     def crane_god(self):
-        newc_list = [[list("巽離坤兌乾坎天艮震")[i][:5]]*[6,5,6,5,6,5,16,6,5][i] for i in range(0,8)]
-        return dict(zip(self.new_list(self.jiazi(), "庚申"), newc_list))
+        newjz = self.new_list(self.jiazi(), "庚申")
+        crane_nums = [6,5,6,5,6,5,16,6,5]
+        crane_list = list("巽離坤兌乾坎天艮震")
+        newc_list = []
+        for i in range(0,8):
+            newc = [crane_list[i][:5]]*crane_nums[i]
+            newc_list.extend(newc)
+        return dict(zip(newjz, newc_list))
             
     def gpan_html(self):
         god = self.gpan().get("神")
@@ -343,6 +351,6 @@ class Qimen:
 
 if __name__ == '__main__':
     tic = time.perf_counter()
-    print(Qimen(2022,3,27,12).gpan())
+    print(Qimen(2022,3,27,12).overall())
     toc = time.perf_counter()
     print(f"{toc - tic:0.4f} seconds")
