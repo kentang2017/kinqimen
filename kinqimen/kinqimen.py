@@ -3,9 +3,7 @@
 Created on Thu Jan 16 09:49:35 2020
 @author: kentang
 """
-import sxtwl, re, time
-import itertools
-import math, datetime, re, ephem
+import sxtwl, re, time, itertools, math, datetime, ephem
 
 class Qimen:
     def __init__(self, year, month, day, hour):
