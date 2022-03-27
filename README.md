@@ -22,7 +22,7 @@ Qimen Dunjia is based on astronomical observations, and consists of various aspe
 ## **2. 安裝套件 Installation**
 
 ```python
-	pip install sxtwl==1.1.0
+	pip install sxtwl
 	pip install kinqimen
 ```
 
