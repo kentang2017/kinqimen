@@ -142,7 +142,7 @@ class Qimen:
         return {"日空":self.multi_key_dict_get(guxu, self.multi_key_dict_get(self.liujiashun_dict(), self.gangzhi()[2])).get("孤"), "時空":self.multi_key_dict_get(guxu, self.multi_key_dict_get(self.liujiashun_dict(), self.gangzhi()[3])).get("孤")}
     #值符
     def hourganghzi_zhifu(self):
-        return self.multi_key_dict_get(dict(zip(list(map(lambda x: tuple(x), [self.new_list(self.jiazi(), i)[0:10] for i in self.jiazi()[0::10]])), [self.jiazi()[0::10][i] + self.Gan[4:10][i]  for i in range(0,5)])), self.gangzhi()[3])
+        return self.multi_key_dict_get(dict(zip(list(map(lambda x: tuple(x), [self.new_list(self.jiazi(), i)[0:10] for i in self.jiazi()[0::10]])), [self.jiazi()[0::10][i] + self.Gan[4:10][i]  for i in range(0,6)])), self.gangzhi()[3])
     #地盤
     def pan_earth(self):
         return dict(zip([dict(zip(self.cnumber, self.eight_gua)).get(i) for i in self.new_list(self.cnumber, self.qimen_ju_name()[2])], {"陽遁":list("戊己庚辛壬癸丁丙乙"),"陰遁":list("戊乙丙丁癸壬辛庚己")}.get(self.qimen_ju_name()[0:2])))
