@@ -248,7 +248,10 @@ class Qimen:
     def gong_chengsun(self):
         find_twelve_luck = self.find_shier_luck(self.gangzhi()[2][0])
         find_twelve_luck_new = dict(zip([dict(zip(self.Zhi,list("癸己甲乙戊丙丁己庚辛戊壬"))).get(i) for i in list(find_twelve_luck.keys())],list(find_twelve_luck.values())))
-        sky_pan = self.pan_sky()[1]
+        try:
+            sky_pan = self.pan_sky()[1]
+        except KeyError:
+            sky_pan = self.pan_sky()
         sky_pan_new = dict(zip(sky_pan.keys(),[{list(sky_pan.values())[y]: [find_twelve_luck_new.get(i) for i in sky_pan.keys()][y]} for y in range(0,8)]))
         earth_pan = self.pan_earth()
         earth_pan_new = earth_pan_new = dict(zip(earth_pan.keys(),[{list(earth_pan.values())[y]: [find_twelve_luck_new.get(i) for i in earth_pan.values()][y]} for y in range(0,9)]))
@@ -345,6 +348,6 @@ class Qimen:
 
 if __name__ == '__main__':
     tic = time.perf_counter()
-    print(Qimen(2021,12,30,18).overall())
+    print(Qimen(2021,11,8,18).overall())
     toc = time.perf_counter()
     print(f"{toc - tic:0.4f} seconds")
