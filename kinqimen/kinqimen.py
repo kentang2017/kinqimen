@@ -248,8 +248,8 @@ class Qimen:
     def gong_chengsun(self):
         find_twelve_luck = self.find_shier_luck(self.gangzhi()[2][0])
         find_twelve_luck_new = dict(zip([dict(zip(self.Zhi,list("癸己甲乙戊丙丁己庚辛戊壬"))).get(i) for i in list(find_twelve_luck.keys())],list(find_twelve_luck.values())))
-        sky_pan = self.pan_sky()
-        sky_pan_new = dict(zip(sky_pan.keys(),[{list(sky_pan.values())[y]: [find_twelve_luck_new.get(i) for i in sky_pan.values()][y]} for y in range(0,8)]))
+        sky_pan = self.pan_sky()[1]
+        sky_pan_new = dict(zip(sky_pan.keys(),[{list(sky_pan.values())[y]: [find_twelve_luck_new.get(i) for i in sky_pan.keys()][y]} for y in range(0,8)]))
         earth_pan = self.pan_earth()
         earth_pan_new = earth_pan_new = dict(zip(earth_pan.keys(),[{list(earth_pan.values())[y]: [find_twelve_luck_new.get(i) for i in earth_pan.values()][y]} for y in range(0,9)]))
         return {"天盤":sky_pan_new, "地盤": earth_pan_new}
@@ -283,7 +283,7 @@ class Qimen:
                 b.append(a)
             except IndexError:
                 pass
-        g = []
+        g =[]
         close_ten_day = self.new_list(self.jiazi(), shun)[0:10]
         golen_d = re.findall("..","太乙攝提軒轅招搖天符青龍咸池太陰天乙")
         c_gong = self.new_list(self.eight_gua, gong)
@@ -307,14 +307,8 @@ class Qimen:
         return dict(zip(self.Gan, newgtw_list))
     #鶴神 
     def crane_god(self):
-        newjz = self.new_list(self.jiazi(), "庚申")
-        crane_nums = [6,5,6,5,6,5,16,6,5]
-        crane_list = list("巽離坤兌乾坎天艮震")
-        newc_list = []
-        for i in range(0,8):
-            newc = [crane_list[i][:5]]*crane_nums[i]
-            newc_list.extend(newc)
-        return dict(zip(newjz, newc_list))
+        newc_list = [[list("巽離坤兌乾坎天艮震")[i][:5]]*[6,5,6,5,6,5,16,6,5][i] for i in range(0,8)]
+        return dict(zip(self.new_list(self.jiazi(), "庚申"), newc_list))
             
     def gpan_html(self):
         god = self.gpan().get("神")
@@ -326,7 +320,7 @@ class Qimen:
         return a+b+d
     
     def five_html(self):
-        e = ['''<td align="center">'''+i+ '''<br>'''+god.get(i)+'''</td>''' for i in self.Zhi]
+        e = ['''<td align="center">'''+i+ '''<br>'''+self.god.get(i)+'''</td>''' for i in self.Zhi]
         c = "<div><table><tr>"+e[0]+e[1]+e[2]+"</tr><tr>"+e[3]+e[4]+e[5]+"</tr><tr>"+e[6]+e[7]+e[8]+"</tr><tr>"+e[9]+e[10]+e[11]+"</tr></table></div>"
         return c
     #天乙
@@ -351,6 +345,6 @@ class Qimen:
 
 if __name__ == '__main__':
     tic = time.perf_counter()
-    print(Qimen(2022,3,27,12).overall())
+    print(Qimen(2021,12,30,18).overall())
     toc = time.perf_counter()
     print(f"{toc - tic:0.4f} seconds")
