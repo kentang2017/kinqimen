@@ -250,13 +250,14 @@ class Qimen:
         find_twelve_luck_new = dict(zip([dict(zip(self.Zhi,list("癸己甲乙戊丙丁己庚辛戊壬"))).get(i) for i in list(find_twelve_luck.keys())],list(find_twelve_luck.values())))
         try:
             sky_pan = self.pan_sky()[1]
+            sky_pan_new = dict(zip(sky_pan.keys(),[{list(sky_pan.values())[y]: [find_twelve_luck_new.get(i) for i in sky_pan.keys()][y]} for y in range(0,8)]))
         except KeyError:
             sky_pan = self.pan_sky()
-        sky_pan_new = dict(zip(sky_pan.keys(),[{list(sky_pan.values())[y]: [find_twelve_luck_new.get(i) for i in sky_pan.keys()][y]} for y in range(0,8)]))
+            sky_pan_new = dict(zip(list(sky_pan.keys()), [{i:find_twelve_luck_new.get(i)} for i in list(sky_pan.values())]))
         earth_pan = self.pan_earth()
         earth_pan_new = earth_pan_new = dict(zip(earth_pan.keys(),[{list(earth_pan.values())[y]: [find_twelve_luck_new.get(i) for i in earth_pan.values()][y]} for y in range(0,9)]))
         return {"天盤":sky_pan_new, "地盤": earth_pan_new}
-    
+
     def pan(self):
         return {"干支":self.gangzhi()[0]+"年"+self.gangzhi()[1]+"月"+self.gangzhi()[2]+"日"+self.gangzhi()[3]+"時","旬首":self.shun(self.gangzhi()[2]),"旬空":self.daykong_shikong(),"局日":self.qimen_ju_day(), "排局":self.qimen_ju_name(), "節氣":self.find_jieqi(), "值符值使":self.zhifu_n_zhishi(), "天乙":self.tianyi(), "天盤":self.pan_sky(), "地盤":self.pan_earth(), "門":self.pan_door(),"星":self.pan_star()[0], "神":self.pan_god(), "馬星": {"天馬": self.moonhorse(),"丁馬":self.dinhorse(), "驛馬":self.hourhorse()}, "長生運": self.gong_chengsun()}
   
@@ -348,6 +349,6 @@ class Qimen:
 
 if __name__ == '__main__':
     tic = time.perf_counter()
-    print(Qimen(2021,11,8,18).overall())
+    print(Qimen(2022,6,30,9).gong_chengsun())
     toc = time.perf_counter()
     print(f"{toc - tic:0.4f} seconds")
