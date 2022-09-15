@@ -3,9 +3,10 @@
 Created on Thu Jan 16 09:49:35 2020
 @author: kentang
 """
-import sxtwl, re, time
+import re, time
 import itertools, datetime, ephem
 from math import pi
+from sxtwl import fromSolar
 
 class Qimen:
     def __init__(self, year, month, day, hour):
@@ -32,7 +33,7 @@ class Qimen:
         zhihead_code = olist.index(o)
         res1 = []
         for i in range(len(olist)):
-            res1.append( olist[zhihead_code % len(olist)])
+            res1.append(olist[zhihead_code % len(olist)])
             zhihead_code = zhihead_code - 1
         return res1
     
@@ -51,7 +52,7 @@ class Qimen:
         return None
         
     def find_shier_luck(self, gan):
-        return {**dict(zip(self.Gan[0::2], [dict(zip(y, re.findall('..',"長生沐浴冠帶臨冠帝旺") + list("衰病死墓絕胎養"))) for y in [self.new_list(self.Zhi, i) for i in list("亥寅寅巳申")]])), **dict(zip(self.Gan[1::2], [dict(zip(y, list("死病衰") + re.findall('..',"帝旺臨冠冠帶沐浴長生") + list("養胎絕墓"))) for y in [self.new_list(self.Zhi, i) for i in list("亥寅寅巳申")]]))}.get(gan)
+        return {**dict(zip(self.Gan[0::2], list(map(lambda y: dict(zip(y, re.findall('..',"長生沐浴冠帶臨冠帝旺") + list("衰病死墓絕胎養"))),list(map(lambda i:self.new_list(self.Zhi, i),list("亥寅寅巳申"))))))), **dict(zip(self.Gan[1::2], [dict(zip(y, list("死病衰") + re.findall('..',"帝旺臨冠冠帶沐浴長生") + list("養胎絕墓"))) for y in list(map(lambda i:self.new_list(self.Zhi, i), list("亥寅寅巳申")))]))}.get(gan)
         
     def ecliptic_lon(self, jd_utc):
         s = ephem.Sun(jd_utc)
@@ -113,7 +114,7 @@ class Qimen:
             d = datetime.datetime.strptime(str(self.year).zfill(4)+"-"+str(self.month)+"-"+str(self.day)+"-"+str(self.hour)+":00:00", "%Y-%m-%d-%H:%M:%S") + datetime.timedelta(hours=1)
         else:
             d = datetime.datetime.strptime(str(self.year).zfill(4)+"-"+str(self.month)+"-"+str(self.day)+"-"+str(self.hour)+":00:00", "%Y-%m-%d-%H:%M:%S") 
-        cdate = sxtwl.fromSolar(d.year, d.month, d.day)
+        cdate = fromSolar(d.year, d.month, d.day)
         return [self.Gan[cdate.getYearGZ().tg] + self.Zhi[cdate.getYearGZ().dz], self.Gan[cdate.getMonthGZ().tg] + self.Zhi[cdate.getMonthGZ().dz],self.Gan[cdate.getDayGZ().tg] + self.Zhi[cdate.getDayGZ().dz],self.Gan[cdate.getHourGZ(d.hour).tg] +self.Zhi[cdate.getHourGZ(d.hour).dz]]
     #旬
     def shun(self, gz):
@@ -239,7 +240,7 @@ class Qimen:
         door = dict(zip(list(self.zhishi_pai().keys()), list(map(lambda i: dict(zip(self.cnumber, list("休死傷杜中開驚生景"))).get(i[0]), list(self.zhishi_pai().values()))))).get(chour)
         if door == "中":
             door = "死"
-        return {"值符星宮":[dict(zip(list(self.zhifu_pai().keys()), list(map(lambda i:dict(zip(self.cnumber, list("蓬芮沖輔禽心柱任英"))).get(i[0]) , list(self.zhifu_pai().values()))))).get(chour),dict(zip(list(self.zhifu_pai().keys()), list(map(lambda i:gongs_code.get(i[hgan]),list(self.zhifu_pai().values()))))).get(chour)], "值使門宮":[door,dict(zip(list(self.zhishi_pai().keys()), [gongs_code.get(i[hgan]) for i in list(self.zhishi_pai().values())])).get(chour)]}
+        return {"值符星宮":[dict(zip(list(self.zhifu_pai().keys()), list(map(lambda i:dict(zip(self.cnumber, list("蓬芮沖輔禽心柱任英"))).get(i[0]) , list(self.zhifu_pai().values()))))).get(chour),dict(zip(list(self.zhifu_pai().keys()), list(map(lambda i:gongs_code.get(i[hgan]), list(self.zhifu_pai().values()))))).get(chour)], "值使門宮":[door,dict(zip(list(self.zhishi_pai().keys()),list(map(lambda i:gongs_code.get(i[hgan]), list(self.zhishi_pai().values()))))).get(chour)]}
     #九宮長生十二神
     def gong_chengsun(self):
         find_twelve_luck = self.find_shier_luck(self.gangzhi()[2][0])
