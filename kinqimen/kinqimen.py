@@ -4,24 +4,21 @@ Created on Thu Jan 16 09:49:35 2020
 @author: kentang
 """
 import re, time
-import itertools, datetime, ephem
+import itertools, datetime
 from math import pi
 from sxtwl import fromSolar
+from ephem import Sun, Date, Ecliptic, Equatorial, hour
 
 class Qimen:
     def __init__(self, year, month, day, hour):
         self.year, self.month, self.day, self.hour = year, month, day, hour
         self.jieqi = re.findall('..', '春分清明穀雨立夏小滿芒種夏至小暑大暑立秋處暑白露秋分寒露霜降立冬小雪大雪冬至小寒大寒立春雨水驚蟄')
         self.jieqi_all = self.new_list(self.jieqi, "冬至")
-        self.cnumber = list("一二三四五六七八九")
-        self.door_r = list("休生傷杜景死驚開")
-        self.eight_gua = list("坎坤震巽中乾兌艮離")
-        self.clockwise_eightgua = list("坎艮震巽離坤兌乾")
-        self.Gan = list("甲乙丙丁戊己庚辛壬癸")
-        self.Zhi = list("子丑寅卯辰巳午未申酉戌亥")
+        self.cnumber, self.door_r, self.eight_gua, self.clockwise_eightgua = list("一二三四五六七八九"), list("休生傷杜景死驚開"), list("坎坤震巽中乾兌艮離"), list("坎艮震巽離坤兌乾")
+        self.Gan, self.Zhi = list("甲乙丙丁戊己庚辛壬癸"),list("子丑寅卯辰巳午未申酉戌亥")
     
     def jiazi(self):
-        return list(map(lambda x: self.Gan[x % len(self.Gan)] + self.Zhi[x % len(self.Zhi)], list(range(60))))
+        return list(map(lambda x: "{}{}".format(self.Gan[x % len(self.Gan)],self.Zhi[x % len(self.Zhi)]), list(range(60))))
     
     def liujiashun_dict(self):
         return dict(zip(list(map(lambda x: tuple(x), list(map(lambda x:self.new_list(self.jiazi(), x)[0:10] ,self.jiazi()[0::10])))), self.jiazi()[0::10]))
@@ -55,8 +52,8 @@ class Qimen:
         return {**dict(zip(self.Gan[0::2], list(map(lambda y: dict(zip(y, re.findall('..',"長生沐浴冠帶臨冠帝旺") + list("衰病死墓絕胎養"))),list(map(lambda i:self.new_list(self.Zhi, i),list("亥寅寅巳申"))))))), **dict(zip(self.Gan[1::2], [dict(zip(y, list("死病衰") + re.findall('..',"帝旺臨冠冠帶沐浴長生") + list("養胎絕墓"))) for y in list(map(lambda i:self.new_list(self.Zhi, i), list("亥寅寅巳申")))]))}.get(gan)
         
     def ecliptic_lon(self, jd_utc):
-        s = ephem.Sun(jd_utc)
-        return ephem.Ecliptic(ephem.Equatorial(s.ra,s.dec,epoch=jd_utc)).lon
+        s = Sun(jd_utc)
+        return Ecliptic(Equatorial(s.ra,s.dec,epoch=jd_utc)).lon
     
     def sta(self, jd):
         return int(self.ecliptic_lon(jd)*180.0/pi/15)
@@ -76,23 +73,24 @@ class Qimen:
         return jd
     
     def fjqs(self, year, month, day, hour):
-        jd = ephem.Date( str(year).zfill(4)+"/"+str(month).zfill(2)+"/"+str(day).zfill(2)+" "+str(hour).zfill(2)+":00:00.00")
-        n=int(self.ecliptic_lon(jd)*180.0/pi/15)+1
+        jd = Date("{}/{}/{} {}:00:00.00".format(str(year).zfill(4), str(month).zfill(2), str(day).zfill(2), str(hour).zfill(2) ))
+        n= int(self.ecliptic_lon(jd)*180.0/pi/15)+1
         c = []
         for i in range(1):
             if n>=24:
                 n-=24
             jd = self.iteration(jd)
-            d = ephem.Date(jd+1/3).tuple()
-            c.append([self.jieqi[n], datetime.datetime.strptime(str(d[0]).zfill(4)+"-"+str(d[1])+"-"+str(d[2])+"-"+str(d[3])+":00:00", "%Y-%m-%d-%H:%M:%S")])
+            d = Date(jd+1/3).tuple()
+            c.append([self.jieqi[n], Date("{}/{}/{} {}:{}:00.00".format(str(d[0]).zfill(4), str(d[1]).zfill(2), str(d[2]).zfill(2), str(d[3]).zfill(2) , str(d[4]).zfill(2)))])
         return c[0]
     
+
     def jq(self, year, month, day, hour):
-        ct = datetime.datetime.strptime(str(year).zfill(4)+"-"+str(month)+"-"+str(day)+"-"+str(hour)+":00:00", "%Y-%m-%d-%H:%M:%S")
-        p = ct - datetime.timedelta(days=7)
-        pp = ct - datetime.timedelta(days=21)
-        bf = self.fjqs(p.year, p.month, p.day, p.hour)
-        bbf = self.fjqs(pp.year, pp.month, pp.day, pp.hour)
+        ct =  Date("{}/{}/{} {}:00:00.00".format(str(year).zfill(4), str(month).zfill(2), str(day).zfill(2), str(hour).zfill(2) ))
+        p = Date(round((ct - 7 ), 3)).tuple()
+        pp = Date(round((ct - 21 ), 3)).tuple()
+        bf = self.fjqs(p[0], p[1], p[2], p[3])
+        bbf = self.fjqs(pp[0], pp[1], pp[2], pp[3])
         if ct < bf[1]:
             return bbf[0]
         else:
@@ -104,26 +102,24 @@ class Qimen:
     def qimen_ju_name(self):
         find_yingyang = self.multi_key_dict_get({tuple(self.jieqi_all[0:12]):"陽遁",tuple(self.jieqi_all[12:24]):"陰遁" }, self.find_jieqi())
         findyuen = self.multi_key_dict_get(self.findyuen_dict(), self.gangzhi()[2])
-        jieqidun_code = {("冬至", "驚蟄"): "一七四",  "小寒": "二八五",  ("大寒", "春分"): "三九六", "立春":"八五二","雨水":"九六三",  ("清明", "立夏"): "四一七", ("穀雨", "小滿"): "五二八", "芒種": "六三九", ("夏至", "白露"): "九三六", "小暑":"八二五",  ("大暑", "秋分"): "七一四", "立秋":"二五八",  "處暑":"一四七",  ("霜降", "小雪"): "五八二", ("寒露", "立冬"): "六九三", "大雪":"四七一"}
-        jieqicode = self.multi_key_dict_get(jieqidun_code, self.find_jieqi())
-        return find_yingyang+ {"上元":jieqicode[0], "中元":jieqicode[1], "下元":jieqicode[2]}.get(findyuen)+"局"+findyuen
-
+        jieqicode = self.multi_key_dict_get({("冬至", "驚蟄"): "一七四",  "小寒": "二八五",  ("大寒", "春分"): "三九六", "立春":"八五二","雨水":"九六三",  ("清明", "立夏"): "四一七", ("穀雨", "小滿"): "五二八", "芒種": "六三九", ("夏至", "白露"): "九三六", "小暑":"八二五",  ("大暑", "秋分"): "七一四", "立秋":"二五八",  "處暑":"一四七",  ("霜降", "小雪"): "五八二", ("寒露", "立冬"): "六九三", "大雪":"四七一"}, self.find_jieqi())
+        return "{}{}局{}".format(find_yingyang,{"上元":jieqicode[0], "中元":jieqicode[1], "下元":jieqicode[2]}.get(findyuen),findyuen)
     #干支
     def gangzhi(self):
         if self.hour == 23:
-            d = datetime.datetime.strptime(str(self.year).zfill(4)+"-"+str(self.month)+"-"+str(self.day)+"-"+str(self.hour)+":00:00", "%Y-%m-%d-%H:%M:%S") + datetime.timedelta(hours=1)
+            d = Date(round((Date("{}/{}/{} {}:00:00.00".format(str(self.year).zfill(4), str(self.month).zfill(2), str(self.day).zfill(2), str(self.hour).zfill(2))) + 1 * hour), 3))
         else:
-            d = datetime.datetime.strptime(str(self.year).zfill(4)+"-"+str(self.month)+"-"+str(self.day)+"-"+str(self.hour)+":00:00", "%Y-%m-%d-%H:%M:%S") 
-        cdate = fromSolar(d.year, d.month, d.day)
-        return [self.Gan[cdate.getYearGZ().tg] + self.Zhi[cdate.getYearGZ().dz], self.Gan[cdate.getMonthGZ().tg] + self.Zhi[cdate.getMonthGZ().dz],self.Gan[cdate.getDayGZ().tg] + self.Zhi[cdate.getDayGZ().dz],self.Gan[cdate.getHourGZ(d.hour).tg] +self.Zhi[cdate.getHourGZ(d.hour).dz]]
+            d = Date("{}/{}/{} {}:00:00.00".format(str(self.year).zfill(4), str(self.month).zfill(2), str(self.day).zfill(2), str(self.hour).zfill(2) ))
+        dd = list(d.tuple())
+        cdate = fromSolar(dd[0], dd[1], dd[2])
+        yTG,mTG,dTG,hTG = "{}{}".format(self.Gan[cdate.getYearGZ().tg], self.Zhi[cdate.getYearGZ().dz]), "{}{}".format(self.Gan[cdate.getMonthGZ().tg],self.Zhi[cdate.getMonthGZ().dz]), "{}{}".format(self.Gan[cdate.getDayGZ().tg], self.Zhi[cdate.getDayGZ().dz]), "{}{}".format(self.Gan[cdate.getHourGZ(dd[3]).tg], self.Zhi[cdate.getHourGZ(dd[3]).dz])
+        return [yTG, mTG, dTG, hTG]
     #旬
     def shun(self, gz):
-        shunlist = {0:"戊", 10:"己", 8:"庚", 6:"辛", 4:"壬", 2:"癸"}
-        gangzhi = gz
-        shun_value = dict(zip(self.Zhi, list(range(1,13)))).get(gangzhi[1]) - dict(zip(self.Gan, list(range(1,11)))).get(gangzhi[0])
+        shun_value = dict(zip(self.Zhi, list(range(1,13)))).get(gz[1]) - dict(zip(self.Gan, list(range(1,11)))).get(gz[0])
         if shun_value < 0:
             shun_value = shun_value+12
-        return shunlist.get(shun_value)
+        return {0:"戊", 10:"己", 8:"庚", 6:"辛", 4:"壬", 2:"癸"}.get(shun_value)
     #奇門局日
     def qimen_ju_day(self):
         ju_day_dict = {tuple(list("甲己")):"甲己日",  tuple(list("乙庚")):"乙庚日",  tuple(list("丙辛")):"丙辛日", tuple(list("丁壬")):"丁壬日", tuple(list("戊癸")):"戊癸日"}
@@ -139,15 +135,12 @@ class Qimen:
     #值符
     def hourganghzi_zhifu(self):
         return self.multi_key_dict_get(dict(zip(list(map(lambda x: tuple(x), list(map(lambda x: self.new_list(self.jiazi(), x)[0:10], self.jiazi()[0::10])))), list(map(lambda x: self.jiazi()[0::10][x] + self.Gan[4:10][x], list(range(0,6)))))), self.gangzhi()[3])
-      
     #地盤
     def pan_earth(self):
         return  dict(zip(list(map(lambda x: dict(zip(self.cnumber, self.eight_gua)).get(x), self.new_list(self.cnumber, self.qimen_ju_name()[2]))), {"陽遁":list("戊己庚辛壬癸丁丙乙"),"陰遁":list("戊乙丙丁癸壬辛庚己")}.get(self.qimen_ju_name()[0:2])))
-       
     #逆地盤
     def pan_earth_r(self):
-        earth = self.pan_earth()
-        return dict(zip(list(earth.values()), list(earth.keys())))
+        return dict(zip(list(self.pan_earth().values()), list(self.pan_earth().keys())))
     #天盤
     def pan_sky(self):
         rotate = {"陽":self.clockwise_eightgua, "陰":list(reversed(self.clockwise_eightgua)) }.get(self.qimen_ju_name()[0])
@@ -231,7 +224,7 @@ class Qimen:
         kook = self.qimen_ju_name()[2]
         yanglist = "".join(self.new_list(self.cnumber, kook))+"".join(self.new_list(self.cnumber, kook))+"".join(self.new_list(self.cnumber, kook))
         yinlist =  "".join(self.new_list_r(self.cnumber, kook))+"".join(self.new_list_r(self.cnumber, kook))+"".join(self.new_list_r(self.cnumber, kook))
-        return {"陰":dict(zip(self.jiazi()[0::10], list(map(lambda i: i+ yinlist[yinlist.index(i)+1:][0:11],self.new_list_r(self.cnumber, kook)[0:6])))), "陽":dict(zip(self.jiazi()[0::10], [i+ yanglist[yanglist.index(i)+1:][0:11] for i in self.new_list(self.cnumber, kook)[0:6]]))}.get(yinyang)
+        return {"陰":dict(zip(self.jiazi()[0::10], list(map(lambda i: i+ yinlist[yinlist.index(i)+1:][0:11],self.new_list_r(self.cnumber, kook)[0:6])))), "陽":dict(zip(self.jiazi()[0::10], list(map(lambda i:i+ yanglist[yanglist.index(i)+1:][0:11] , self.new_list(self.cnumber, kook)[0:6]))))}.get(yinyang)
     #找值符及值使
     def zhifu_n_zhishi(self):
         gongs_code = dict(zip(self.cnumber, self.eight_gua))
@@ -244,7 +237,7 @@ class Qimen:
     #九宮長生十二神
     def gong_chengsun(self):
         find_twelve_luck = self.find_shier_luck(self.gangzhi()[2][0])
-        find_twelve_luck_new = dict(zip([dict(zip(self.Zhi,list("癸己甲乙戊丙丁己庚辛戊壬"))).get(i) for i in list(find_twelve_luck.keys())],list(find_twelve_luck.values())))
+        find_twelve_luck_new = dict(zip(list(map(lambda i:dict(zip(self.Zhi,list("癸己甲乙戊丙丁己庚辛戊壬"))).get(i),list(find_twelve_luck.keys()))),list(find_twelve_luck.values())))
         try:
             sky_pan = self.pan_sky()[0]
             sky_pan_new = dict(zip(sky_pan.keys(),list(map(lambda y:{list(sky_pan.values())[y]: list(map(lambda x: find_twelve_luck_new.get(x), sky_pan.keys()))[y]}, list(range(0,8))))))
@@ -252,7 +245,7 @@ class Qimen:
             sky_pan = self.pan_sky()
             sky_pan_new = dict(zip(list(sky_pan.keys()), list(map(lambda i:{i:find_twelve_luck_new.get(i)}, list(sky_pan.values())))))
         earth_pan = self.pan_earth()
-        earth_pan_new = earth_pan_new = dict(zip(earth_pan.keys(),[{list(earth_pan.values())[y]: [find_twelve_luck_new.get(i) for i in earth_pan.values()][y]} for y in range(0,9)]))
+        earth_pan_new = earth_pan_new = dict(zip(earth_pan.keys(),[{list(earth_pan.values())[y]: list(map(lambda i:find_twelve_luck_new.get(i) ,earth_pan.values()))[y]} for y in range(0,9)]))
         return {"天盤":sky_pan_new, "地盤": earth_pan_new}
 
     def pan(self):
@@ -263,7 +256,7 @@ class Qimen:
         a = ''' <div class="container"><table style="width:100%"><tr>'''+"".join(['''<td align="center">'''+sky.get(i)+god.get(i)+door.get(i) +"<br>"+ earth.get(i)+star.get(i)+ i+'''</td>''' for i in list("巽離坤")])+"</tr>"
         b = ['''<td align="center">'''+sky.get(i)+god.get(i)+door.get(i) +"<br>"+ earth.get(i)+star.get(i)+ i+'''</td>''' for i in list("震兌")]
         c = '''<tr>'''+b[0]+ '''<td><br><br></td>'''+b[1]+'''</tr>'''
-        d = "<tr>"+"".join(['''<td align="center">'''+sky.get(i)+god.get(i)+door.get(i) +"<br>"+ earth.get(i)+star.get(i)+ i+'''</td>''' for i in list("艮坎乾")])+"</tr></table></div>"
+        d = "<tr>"+"".join(list(map(lambda i: '''<td align="center">'''+sky.get(i)+god.get(i)+door.get(i) +"<br>"+ earth.get(i)+star.get(i)+ i+'''</td>''',list("艮坎乾"))))+"</tr></table></div>"
         return a+c+d
    
     def gpan(self):
@@ -340,6 +333,6 @@ class Qimen:
 
 if __name__ == '__main__':
     tic = time.perf_counter()
-    print(Qimen(2022,6,30,9).pan())
+    print(Qimen(-2022,6,30,9).pan())
     toc = time.perf_counter()
     print(f"{toc - tic:0.4f} seconds")
