@@ -2,8 +2,7 @@ import streamlit as st
 import pendulum as pdlm
 from contextlib import contextmanager, redirect_stdout
 import streamlit.components.v1 as components
-import kinqimen
-
+from kinqimen import *
 
 @contextmanager
 def st_capture(output_func):
@@ -30,7 +29,7 @@ with st.sidebar:
     min = int(pp[1])
     
 with pan:
-    qtext = kinqimen.kinqimen.Qimen(y,m,d,h).pan()
+    qtext = Qimen(y,m,d,h).pan()
     eg = list("巽離坤震兌艮坎乾")
     qd = [qtext.get("地盤").get(i) for i in eg]
     try:
