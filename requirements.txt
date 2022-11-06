@@ -1,3 +1,4 @@
 pendulum==2.1.2
 streamlit==1.13.0
 sxtwl==2.0.6
+kinqimen==0.0.6.4
