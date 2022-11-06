@@ -1,5 +1,6 @@
 import streamlit as st
 import pendulum as pdlm
+from io import StringIO
 from contextlib import contextmanager, redirect_stdout
 import streamlit.components.v1 as components
 from kinqimen import kinqimen
