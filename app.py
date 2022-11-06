@@ -43,7 +43,7 @@ with pan:
     md = qtext.get("地盤").get("中")
     output4 = st.empty()
     with st_capture(output4.code):
-        print("{} |/n{} | 節氣︰{} |\n值符星宮︰{} | 值使門宮︰{}\n".format(qtext.get("干支"), qtext.get("排局"), qtext.get("節氣"),  qtext.get("值符值使").get("值符星宮"), qtext.get("值符值使").get("值使門宮") ))
+        print("{} |\n{} | 節氣︰{} |\n值符星宮︰{} | 值使門宮︰{}\n".format(qtext.get("干支"), qtext.get("排局"), qtext.get("節氣"),  qtext.get("值符值使").get("值符星宮"), qtext.get("值符值使").get("值使門宮") ))
         print("┌───────────┬───────────┬───────────┐")
         print("│　　{}　　　 │　　{}　　　 │　　{}　　　 │".format(god[0], god[1], god[2]))
         print("│　　{}　　{} │　　{}　　{} │　　{}　　{} │".format(door[0], qt[0], door[1], qt[1], door[2], qt[2]))
