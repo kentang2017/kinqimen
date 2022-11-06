@@ -2,7 +2,7 @@ import streamlit as st
 import pendulum as pdlm
 from contextlib import contextmanager, redirect_stdout
 import streamlit.components.v1 as components
-import kinqimen
+from kinqimen import kinqimen
 
 @contextmanager
 def st_capture(output_func):
