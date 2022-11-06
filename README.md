@@ -2,6 +2,8 @@
 
 簡單時家奇門及金函玉鏡奇門遁甲起盤 A simple Qimendunjia in Chinese hour-based system and golden letter jade mirror style Qimendunjia for prediction.
 
+堅奇門排盤 https://kintaiyi.streamlitapp.com
+
 [![Python](https://img.shields.io/pypi/pyversions/kinqimen)](https://pypi.org/project/kinqimen/)
 [![PIP](https://img.shields.io/pypi/v/kinqimen)](https://pypi.org/project/kinqimen/)
 [![Downloads](https://img.shields.io/pypi/dm/kinqimen)](https://pypi.org/project/kinqimen/)
