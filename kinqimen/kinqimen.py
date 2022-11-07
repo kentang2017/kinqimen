@@ -177,7 +177,7 @@ class Qimen:
             gong_reorder = self.new_list(rotate,  fu_head_location)
             if fu_head not in gan_reorder:    
                 rgong_reorder = self.new_list(gong_reorder , fu_location)
-                return dict(zip(rgong_reorder, gan_reorder)), dict(zip(gan_reorder, rgong_reorder))
+                return [dict(zip(rgong_reorder, gan_reorder)), dict(zip(gan_reorder, rgong_reorder))]
             elif fu_head in gan_reorder: 
                 return {**dict(zip(gong_reorder,gan_reorder)),**{"中":self.pan_earth()[0].get("中") } }
     #八門
