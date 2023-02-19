@@ -158,7 +158,8 @@ class Qimen:
                 try:    
                     return dict(zip(gong_reorder, gan_reorder))     
                 except UnboundLocalError:
-                    return self.pan_earth()
+                    fuhead_order = self.new_list(list(map(lambda x:self.pan_earth().get(x), list(rotate))), fu_head)
+                    return dict(zip(gong_reorder, fuhead_order))
         elif fu_head_location != "中" and zhifu != "禽" and fu_head_location2 != "中":
             gan_reorder = self.new_list(list(map(lambda x:self.pan_earth().get(x), list(rotate))), fu_head)
             gong_reorder = self.new_list(rotate,  fu_head_location)
