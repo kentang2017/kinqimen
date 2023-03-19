@@ -17,6 +17,16 @@ class Qimen:
         self.cnumber, self.door_r, self.eight_gua, self.clockwise_eightgua = list("一二三四五六七八九"), list("休生傷杜景死驚開"), list("坎坤震巽中乾兌艮離"), list("坎艮震巽離坤兌乾")
         self.Gan, self.Zhi = list("甲乙丙丁戊己庚辛壬癸"),list("子丑寅卯辰巳午未申酉戌亥")
     
+     #上中下元
+    def year_yuen(self):
+        w = [(i * 60) + 4 for i in range(22,100)]
+        three_yuen = cycle([i+"元甲子" for i in list("上中下")])
+        for i in w:
+            if self.year < i:
+                break
+        yuen = dict(zip(w, three_yuen)).get(w[w.index(i)-1])
+        return [yuen, w[w.index(i)-1]]
+    
     def jiazi(self):
         return list(map(lambda x: "{}{}".format(self.Gan[x % len(self.Gan)],self.Zhi[x % len(self.Zhi)]), list(range(60))))
     
@@ -259,7 +269,14 @@ class Qimen:
         c = '''<tr>'''+b[0]+ '''<td><br><br></td>'''+b[1]+'''</tr>'''
         d = "<tr>"+"".join(list(map(lambda i: '''<td align="center">'''+sky.get(i)+god.get(i)+door.get(i) +"<br>"+ earth.get(i)+star.get(i)+ i+'''</td>''',list("艮坎乾"))))+"</tr></table></div>"
         return a+c+d
-   
+
+    def ypan(self):
+        kok = {"上元甲子":"陰一局", "中元甲子":"陰四局", "下元甲子":"陰七局"}.get(self.year_yuen()[0])
+        start = {"上元甲子":"坎", "中元甲子":"巽", "下元甲子":"兌"}.get(self.year_yuen()[0])
+        
+        
+        return kok
+
     def gpan(self):
         start_jia = self.jiazi()[0::10]
         dgz = self.gangzhi()[2]
