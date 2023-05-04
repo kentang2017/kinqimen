@@ -45,11 +45,8 @@ class Qimen:
         return res1
     
     def new_list(self, olist, o):
-        zhihead_code = olist.index(o)
-        res1 = []
-        for i in range(len(olist)):
-            res1.append( olist[zhihead_code % len(olist)])
-            zhihead_code = zhihead_code + 1
+        a = olist.index(o)
+        res1 = olist[a:] + olist[:a]
         return res1
     
     def multi_key_dict_get(self, d, k):
@@ -273,8 +270,7 @@ class Qimen:
     def ypan(self):
         kok = {"上元甲子":"陰一局", "中元甲子":"陰四局", "下元甲子":"陰七局"}.get(self.year_yuen()[0])
         start = {"上元甲子":"坎", "中元甲子":"巽", "下元甲子":"兌"}.get(self.year_yuen()[0])
-        
-        
+ 
         return kok
 
     def gpan(self):
