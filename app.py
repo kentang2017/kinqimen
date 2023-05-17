@@ -30,7 +30,7 @@ with st.sidebar:
     min = int(pp[1])
     
 with pan:
-    qtext = kinqimen.Qimen(y,m,d,h).pan()
+    qtext = kinqimen.Qimen(y,m,d,h,min).pan()
     eg = list("巽離坤震兌艮坎乾")
     qd = [qtext.get("地盤").get(i) for i in eg]
     try:
