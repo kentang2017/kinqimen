@@ -64,6 +64,6 @@ with pan:
         print(" 　│　　{}　　{} │　　{}　　{} │　　{}　　{} │".format(star[5], qd[5], star[6], qd[6], star[7], qd[7]))
         print("  ／────────┬──┴─────┬─────┴──┬────────＼")
         print("／          │        │        │          ＼")
-        print(qtext.get("干支")[2])
+        print(qtext.get("干支"))
     expander = st.expander("原始碼")
     expander.write(str(qtext))
