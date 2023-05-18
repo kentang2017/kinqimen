@@ -57,7 +57,7 @@ with pan:
         print(" 　│　　{}　　　 │　　{}　　　 │　　{}　　　 │".format(god[0], god[1], god[2]))
         print(" 　│　　{}　　{} │　　{}　　{} │　　{}　　{} │".format(door[0], qt[0], door[1], qt[1], door[2], qt[2]))
         print(" 　│　　{}　　{} │　　{}　　{} │　　{}　　{} │".format(star[0], qd[0], star[1], qd[1], star[2], qd[2]))
-        print(" 　├───────────┼───────────┼───────────┤")
+        print(" {}├───────────┼───────────┼───────────┤{}".format(e_to_s.get("辰"),e_to_s.get("酉")))
         print(" 　│　　{}　　　 │　　　　　　 │　　{}　　　 │".format(god[3], god[4]))
         print("　─┤　　{}　　{} │　　　　　　 │　　{}　　{} ├─".format(door[3], qt[3],  door[4], qt[4]))
         print(" 　│　　{}　　{} │　　　　　{} │　　{}　　{} │".format(star[3], qd[3], md, star[4], qd[4]))
