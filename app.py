@@ -37,7 +37,7 @@ with pan:
     eg = list("巽離坤震兌艮坎乾")
     qd = [qtext.get("地盤").get(i) for i in eg]
     lunar_month = dict(zip(range(1,13), config.cmonth)).get(config.lunar_date_d(y,m,d).get("月"))
-    lr = kinliuren.Liuren( qtext.get("節氣"),lunar_month, qtext.get("干支")[2], qtext.get("干支")[3]).result(0)
+    #lr = kinliuren.Liuren( qtext.get("節氣"),lunar_month, qtext.get("干支")[2], qtext.get("干支")[3]).result(0)
     try:
         qt = [qtext.get("天盤").get(i)[0] for i in eg]
     except KeyError:
@@ -64,5 +64,6 @@ with pan:
         print(" 　│　　{}　　{} │　　{}　　{} │　　{}　　{} │".format(star[5], qd[5], star[6], qd[6], star[7], qd[7]))
         print("  ／────────┬──┴─────┬─────┴──┬────────＼")
         print("／          │        │        │          ＼")
+        print(lunar_month)
     expander = st.expander("原始碼")
     expander.write(str(qtext))
