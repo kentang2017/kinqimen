@@ -52,7 +52,7 @@ with pan:
     output4 = st.empty()
     with st_capture(output4.code):
         print("{} |\n{} | 節氣︰{} |\n值符星宮︰天{}宮 | 值使門宮︰{}\n".format(qtext.get("干支"), qtext.get("排局"), qtext.get("節氣"),  qtext.get("值符值使").get("值符星宮")[0]+"-"+qtext.get("值符值使").get("值符星宮")[1], qtext.get("值符值使").get("值使門宮")[0]+"門"+qtext.get("值符值使").get("值使門宮")[1]+"宮" ))
-        print("＼  {}{}  　 │  {}{}　 │  {}{}　 │  　 {}{}　／".format(e_to_s.get("巳"),e_to_g.get("巳"),e_to_s.get("午"),e_to_g.get("午"),e_to_s.get("未"),e_to_g.get("未"),e_to_s.get("申"),e_to_g.get("申")))
+        print("＼  {}{}  　 │  {}{}　 │  {}{}　 │  　 {}{}　 ／".format(e_to_s.get("巳"),e_to_g.get("巳"),e_to_s.get("午"),e_to_g.get("午"),e_to_s.get("未"),e_to_g.get("未"),e_to_s.get("申"),e_to_g.get("申")))
         print("  ＼────────┴──┬─────┴─────┬──┴────────／")
         print(" 　│　　{}　　　 │　　{}　　　 │　　{}　　　 │".format(god[0], god[1], god[2]))
         print(" 　│　　{}　　{} │　　{}　　{} │　　{}　　{} │".format(door[0], qt[0], door[1], qt[1], door[2], qt[2]))
@@ -66,7 +66,7 @@ with pan:
         print(" {}│　　{}　　{} │　　{}　　{} │　　{}　　{} │{}".format(e_to_s.get("卯"),door[5], qt[5], door[6], qt[6], door[7], qt[7], e_to_s.get("戌")))
         print(" {}│　　{}　　{} │　　{}　　{} │　　{}　　{} │{}".format(e_to_g.get("卯"),star[5], qd[5], star[6], qd[6], star[7], qd[7], e_to_g.get("戌")))
         print("  ／────────┬──┴─────┬─────┴──┬────────＼")
-        print("／  {}{}  　 │  {}{}　 │  {}{}　 │  　 {}{}　＼".format(e_to_s.get("寅"),e_to_g.get("寅"),e_to_s.get("丑"),e_to_g.get("丑"),e_to_s.get("子"),e_to_g.get("子"),e_to_s.get("亥"),e_to_g.get("亥")))
+        print("／  {}{}  　 │  {}{}　 │  {}{}　 │  　 {}{}　 ＼".format(e_to_s.get("寅"),e_to_g.get("寅"),e_to_s.get("丑"),e_to_g.get("丑"),e_to_s.get("子"),e_to_g.get("子"),e_to_s.get("亥"),e_to_g.get("亥")))
 
     expander = st.expander("原始碼")
     expander.write(str(qtext))
