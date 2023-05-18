@@ -11,6 +11,7 @@ from ephem import Date
 from sxtwl import fromSolar
 from itertools import cycle, repeat
 import jieqi
+import config
 
 
 cnum = list("一二三四五六七八九十")
