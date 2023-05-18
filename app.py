@@ -39,6 +39,8 @@ with pan:
     lunar_month = dict(zip(range(1,13), config.cmonth)).get(config.lunar_date_d(y,m,d).get("月"))
     gz = config.gangzhi(y,m,d,h,min)
     lr = kinliuren.Liuren( qtext.get("節氣"),lunar_month, gz[2], gz[3]).result(0)
+    e_to_s = lr.get("地轉天盤")
+    e_to_g = lr.get("地轉天將")
     try:
         qt = [qtext.get("天盤").get(i)[0] for i in eg]
     except KeyError:
@@ -54,17 +56,17 @@ with pan:
         print("  ＼────────┴──┬─────┴─────┬──┴────────／")
         print(" 　│　　{}　　　 │　　{}　　　 │　　{}　　　 │".format(god[0], god[1], god[2]))
         print(" 　│　　{}　　{} │　　{}　　{} │　　{}　　{} │".format(door[0], qt[0], door[1], qt[1], door[2], qt[2]))
-        print("　─┤　　{}　　{} │　　{}　　{} │　　{}　　{} ├─".format(star[0], qd[0], star[1], qd[1], star[2], qd[2]))
+        print(" 　│　　{}　　{} │　　{}　　{} │　　{}　　{} │".format(star[0], qd[0], star[1], qd[1], star[2], qd[2]))
         print(" 　├───────────┼───────────┼───────────┤")
         print(" 　│　　{}　　　 │　　　　　　 │　　{}　　　 │".format(god[3], god[4]))
         print("　─┤　　{}　　{} │　　　　　　 │　　{}　　{} ├─".format(door[3], qt[3],  door[4], qt[4]))
         print(" 　│　　{}　　{} │　　　　　{} │　　{}　　{} │".format(star[3], qd[3], md, star[4], qd[4]))
         print(" 　├───────────┼───────────┼───────────┤")
-        print("　─┤　　{}　　　 │　　{}　　　 │　　{}　　　 ├─".format(god[5], god[6], god[7]))
+        print("　 │　　{}　　　 │　　{}　　　 │　　{}　　　 │".format(god[5], god[6], god[7]))
         print(" 　│　　{}　　{} │　　{}　　{} │　　{}　　{} │".format(door[5], qt[5], door[6], qt[6], door[7], qt[7]))
         print(" 　│　　{}　　{} │　　{}　　{} │　　{}　　{} │".format(star[5], qd[5], star[6], qd[6], star[7], qd[7]))
         print("  ／────────┬──┴─────┬─────┴──┬────────＼")
-        print("／          │        │        │          ＼")
+        print("／    {}{}    │   {}{}   │   {}{}   │  {}{}    ＼").format(e_to_s.get("寅"),e_to_g.get("寅"),e_to_s.get("丑"),e_to_g.get("丑"),e_to_s.get("子"),e_to_g.get("子"),e_to_s.get("亥"),e_to_g.get("亥"))
 
     expander = st.expander("原始碼")
     expander.write(str(qtext))
