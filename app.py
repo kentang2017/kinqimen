@@ -4,6 +4,7 @@ from io import StringIO
 from contextlib import contextmanager, redirect_stdout
 import streamlit.components.v1 as components
 import kinqimen
+from kinliuren import kinliuren
 
 @contextmanager
 def st_capture(output_func):
