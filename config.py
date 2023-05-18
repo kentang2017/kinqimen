@@ -24,7 +24,7 @@ clockwise_eightgua = list("坎艮震巽離坤兌乾")
 golen_d = re.findall("..","太乙攝提軒轅招搖天符青龍咸池太陰天乙")
 wuxing = "火水金火木金水土土木,水火火金金木土水木土,火火金金木木土土水水,火木水金木水土火金土,木火金水水木火土土金"
 wuxing_relation_2 = dict(zip(list(map(lambda x: tuple(re.findall("..",x)), wuxing.split(","))), "尅我,我尅,比和,生我,我生".split(",")))
-
+cmonth = list("一二三四五六七八九十") + ["十一","十二"]
 
 
 
