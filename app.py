@@ -5,6 +5,7 @@ from contextlib import contextmanager, redirect_stdout
 import streamlit.components.v1 as components
 import kinqimen
 from kinliuren import kinliuren
+import config
 
 @contextmanager
 def st_capture(output_func):
@@ -35,8 +36,8 @@ with pan:
     qtext = kinqimen.Qimen(y,m,d,h,min).pan()
     eg = list("巽離坤震兌艮坎乾")
     qd = [qtext.get("地盤").get(i) for i in eg]
-    #lunar_month = dict(zip(range(1,13), config.cmonth)).get(config.lunar_date_d(y,m,d).get("月"))
-    #lr = kinliuren.Liuren( qtext.get("節氣"),lunar_month, qtext.get("干支")[2], qtext.get("干支")[3]).result(0)
+    lunar_month = dict(zip(range(1,13), config.cmonth)).get(config.lunar_date_d(y,m,d).get("月"))
+    lr = kinliuren.Liuren( qtext.get("節氣"),lunar_month, qtext.get("干支")[2], qtext.get("干支")[3]).result(0)
     try:
         qt = [qtext.get("天盤").get(i)[0] for i in eg]
     except KeyError:
