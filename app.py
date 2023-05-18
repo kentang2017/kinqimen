@@ -60,6 +60,6 @@ with pan:
         print(" 　│　　{}　　{} │　　{}　　{} │　　{}　　{} │".format(door[5], qt[5], door[6], qt[6], door[7], qt[7]))
         print(" 　│　　{}　　{} │　　{}　　{} │　　{}　　{} │".format(star[5], qd[5], star[6], qd[6], star[7], qd[7]))
         print("  ／────────┬──┴─────┬─────┴──┬────────＼")
-        print("／          │        │        │         ＼")
+        print("／          │        │        │          ＼")
     expander = st.expander("原始碼")
     expander.write(str(qtext))
