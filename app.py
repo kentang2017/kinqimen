@@ -18,6 +18,11 @@ def st_capture(output_func):
         stdout.write = new_write
         yield
         
+def get_file_content_as_string(path):
+    url = 'https://raw.githubusercontent.com/kentang2017/kinliuren/master/' + path
+    response = urllib.request.urlopen(url)
+    return response.read().decode("utf-8")
+
 st.set_page_config(layout="wide",page_title="堅奇門 - 奇門遁甲排盘")
 pan,example,guji,update = st.tabs([' 排盤 ', ' 案例 ', ' 古籍 ',' 日誌 ' ])
 with st.sidebar:
