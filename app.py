@@ -30,6 +30,10 @@ with st.sidebar:
     d = int(p[2])
     h = int(pp[0])
     min = int(pp[1])
+   
+with update:
+    st.header('日誌')
+    st.markdown(get_file_content_as_string("update.md"))
     
 with pan:
     st.header('奇門穿壬')
