@@ -47,7 +47,7 @@ with links:
     st.markdown(get_file_content_as_string1("update.md"))
     
 with pan:
-    st.header('奇門穿壬')
+    st.header('堅奇門')
     qtext = kinqimen.Qimen(y,m,d,h,min).pan()
     eg = list("巽離坤震兌艮坎乾")
     qd = [qtext.get("地盤").get(i) for i in eg]
