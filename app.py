@@ -1,13 +1,11 @@
-import os, urllib
+import urllib
 import streamlit as st
 import pendulum as pdlm
 from io import StringIO
 from contextlib import contextmanager, redirect_stdout
-import streamlit.components.v1 as components
 import kinqimen
 from kinliuren import kinliuren
 import config
-from jieqi import *
 
 @contextmanager
 def st_capture(output_func):
@@ -55,7 +53,7 @@ with pan:
     lunar_month = dict(zip(range(1,13), config.cmonth)).get(config.lunar_date_d(y,m,d).get("月"))
     gz = config.gangzhi(y,m,d,h,min)
     lr = kinliuren.Liuren( qtext.get("節氣"),lunar_month, gz[2], gz[3]).result(0)
-    j_q =  jq(y, m, d, h)
+    j_q =  config.jq(y, m, d)
     e_to_s = lr.get("地轉天盤")
     e_to_g = lr.get("地轉天將")
     try:
