@@ -95,7 +95,7 @@ class Qimen:
         return {"天盤":sky_pan_new, "地盤": earth_pan_new}
 
     def pan(self):
-        return {"干支":config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[0]+"年"+config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[1]+"月"+config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[2]+"日"+config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[3]+"時","旬首":config.shun(config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[2]),"旬空":config.daykong_shikong(self.year, self.month, self.day, self.hour, self.minute),"局日":self.qimen_ju_day(), "排局":config.qimen_ju_name(self.year, self.month, self.day, self.hour, self.minute), "節氣":config.jq(self.year, self.month, self.day, self.hour), "值符值使":config.zhifu_n_zhishi(self.year, self.month, self.day, self.hour, self.minute), "天乙":self.tianyi(), "天盤":self.pan_sky(), "地盤":self.pan_earth(), "門":config.pan_door(self.year, self.month, self.day, self.hour, self.minute),"星":config.pan_star(self.year, self.month, self.day, self.hour, self.minute)[0], "神":config.pan_god(self.year, self.month, self.day, self.hour, self.minute), "馬星": {"天馬": self.moonhorse(),"丁馬":self.dinhorse(), "驛馬":self.hourhorse()}, "長生運": self.gong_chengsun()}
+        return {"干支":config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[0]+"年"+config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[1]+"月"+config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[2]+"日"+config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[3]+"時","旬首":config.shun(config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[2]),"旬空":config.daykong_shikong(self.year, self.month, self.day, self.hour, self.minute),"局日":self.qimen_ju_day(), "排局":config.qimen_ju_name(self.year, self.month, self.day, self.hour, self.minute), "節氣":config.jq(self.year, self.month, self.day), "值符值使":config.zhifu_n_zhishi(self.year, self.month, self.day, self.hour, self.minute), "天乙":self.tianyi(), "天盤":self.pan_sky(), "地盤":self.pan_earth(), "門":config.pan_door(self.year, self.month, self.day, self.hour, self.minute),"星":config.pan_star(self.year, self.month, self.day, self.hour, self.minute)[0], "神":config.pan_god(self.year, self.month, self.day, self.hour, self.minute), "馬星": {"天馬": self.moonhorse(),"丁馬":self.dinhorse(), "驛馬":self.hourhorse()}, "長生運": self.gong_chengsun()}
 
     def pan_html(self):
         god, door, star, sky, earth = self.pan_god(), self.pan_door(), self.pan_star()[0],  self.pan_sky(), self.pan_earth()
@@ -114,8 +114,8 @@ class Qimen:
         start_jia = config.jiazi()[0::10]
         dgz = config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[2]
         shun = config.multi_key_dict_get(dict(zip([tuple(config.new_list(config.jiazi(), i)[0:10]) for i in start_jia], start_jia)), dgz)
-        yy = {"冬至":"陽遁", "夏至":"陰遁"}.get(config.multi_key_dict_get({tuple(config.jieqi_name[0:12]):"冬至", tuple(config.jieqi_name[12:24]):"夏至"}, config.jq(self.year, self.month, self.day, self.hour)))
-        gong = dict(zip(start_jia, {"冬至": "艮離坎坤震巽", "夏至":"坤離巽坤離兌"}.get(config.multi_key_dict_get({tuple(config.jieqi_name[0:12]):"冬至", tuple(config.jieqi_name[12:24]):"夏至"}, config.jq(self.year, self.month, self.day, self.hour))))).get(shun)
+        yy = {"冬至":"陽遁", "夏至":"陰遁"}.get(config.multi_key_dict_get({tuple(config.jieqi_name[0:12]):"冬至", tuple(config.jieqi_name[12:24]):"夏至"}, config.jq(self.year, self.month, self.day)))
+        gong = dict(zip(start_jia, {"冬至": "艮離坎坤震巽", "夏至":"坤離巽坤離兌"}.get(config.multi_key_dict_get({tuple(config.jieqi_name[0:12]):"冬至", tuple(config.jieqi_name[12:24]):"夏至"}, config.jq(self.year, self.month, self.day))))).get(shun)
         triple_list = list(map(lambda x: x + x + x, list(range(0,21))))
         b = []
         for i in range(0, len(triple_list)):
