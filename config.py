@@ -27,7 +27,6 @@ cmonth = list("一二三四五六七八九十") + ["十一","十二"]
 
 jieqi_name = re.findall('..', '春分清明穀雨立夏小滿芒種夏至小暑大暑立秋處暑白露秋分寒露霜降立冬小雪大雪冬至小寒大寒立春雨水驚蟄')
 
-
 #%% 基本功能函數
 def multi_key_dict_get(d, k):
     for keys, v in d.items():
