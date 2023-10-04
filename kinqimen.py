@@ -54,15 +54,7 @@ class Qimen:
                 gan_reorder, gong_reorder= config.new_list(list(map(lambda x: self.pan_earth().get(x), list(rotate))), fu_head),  config.new_list(rotate,  fu_head_location)
                 return dict(zip(gong_reorder, gan_reorder))
             except ValueError:
-                try:
-                    return dict(zip(gong_reorder, gan_reorder))
-                except UnboundLocalError:
-                    try:
-                        fuhead_order = config.new_list(list(map(lambda x:self.pan_earth().get(x), list(rotate))), fu_head)
-                        return dict(zip(gong_reorder, fuhead_order))
-                    except ValueError:
-                       
-                        return dict(zip(list(reversed(gong_reorder)), config.new_list(list(map(lambda x: self.pan_earth().get(x), list(reversed(rotate)))), self.pan_earth().get("坤")) ))
+                return dict(zip(list(reversed(gong_reorder)), config.new_list(list(map(lambda x: self.pan_earth().get(x), list(reversed(rotate)))), self.pan_earth().get("坤")) ))
         if fu_head_location != "中" and zhifu != "禽" and fu_head_location2 != "中":
             gan_reorder = config.new_list(list(map(lambda x:self.pan_earth().get(x), list(rotate))), fu_head)
             gong_reorder = config.new_list(rotate,  fu_head_location)
