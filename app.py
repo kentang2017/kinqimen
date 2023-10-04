@@ -53,7 +53,7 @@ with pan:
     lunar_month = dict(zip(range(1,13), config.cmonth)).get(config.lunar_date_d(y,m,d).get("月"))
     gz = config.gangzhi(y,m,d,h,min)
     lr = kinliuren.Liuren( qtext.get("節氣"),lunar_month, gz[2], gz[3]).result(0)
-    j_q =  config.jq(y, m, d)
+    j_q =  config.jq(y, m, d, h, min)
     e_to_s = lr.get("地轉天盤")
     e_to_g = lr.get("地轉天將")
     try:
