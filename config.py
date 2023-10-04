@@ -68,8 +68,8 @@ def Ganzhiwuxing(gangorzhi):
     ganzhiwuxing = dict(zip(list(map(lambda x: tuple(x),"甲寅乙卯震巽,丙巳丁午離,壬亥癸子坎,庚申辛酉乾兌,未丑戊己未辰戌艮坤".split(","))), list("木火水金土")))
     return multi_key_dict_get(ganzhiwuxing, gangorzhi)
 
-def jieqicode(year,month, day):
-    return multi_key_dict_get({("冬至", "驚蟄"): "一七四",  "小寒": "二八五",  ("大寒", "春分"): "三九六", "立春":"八五二","雨水":"九六三",  ("清明", "立夏"): "四一七", ("穀雨", "小滿"): "五二八", "芒種": "六三九", ("夏至", "白露"): "九三六", "小暑":"八二五",  ("大暑", "秋分"): "七一四", "立秋":"二五八",  "處暑":"一四七",  ("霜降", "小雪"): "五八二", ("寒露", "立冬"): "六九三", "大雪":"四七一"}, jq(year,month, day))
+def jieqicode(year,month, day, hour, minute):
+    return multi_key_dict_get({("冬至", "驚蟄"): "一七四",  "小寒": "二八五",  ("大寒", "春分"): "三九六", "立春":"八五二","雨水":"九六三",  ("清明", "立夏"): "四一七", ("穀雨", "小滿"): "五二八", "芒種": "六三九", ("夏至", "白露"): "九三六", "小暑":"八二五",  ("大暑", "秋分"): "七一四", "立秋":"二五八",  "處暑":"一四七",  ("霜降", "小雪"): "五八二", ("寒露", "立冬"): "六九三", "大雪":"四七一"}, jq(year,month, day,hour, minute))
 
 def findyuen(year, month, day, hour, minute):
     return multi_key_dict_get(findyuen_dict(), gangzhi(year, month, day, hour, minute)[2])
@@ -155,7 +155,7 @@ def find_shier_luck(gan):
 def qimen_ju_name(year, month, day, hour, minute):
     find_yingyang = multi_key_dict_get({tuple(jieqi_name[0:12]):"陽遁",tuple(jieqi_name[12:24]):"陰遁" }, jq(year, month, day))
     find_yuen = findyuen(year, month, day, hour, minute)
-    jieqi_code = jieqicode(year, month, day)
+    jieqi_code = jieqicode(year, month, day, hour, minute)
     return "{}{}局{}".format(find_yingyang,{"上元":jieqi_code[0], "中元":jieqi_code[1], "下元":jieqi_code[2]}.get(find_yuen),find_yuen)
 
 def getgtw(self):
