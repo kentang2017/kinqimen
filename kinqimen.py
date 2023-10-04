@@ -47,6 +47,7 @@ class Qimen:
         fu_head_location = config.zhifu_n_zhishi(self.year, self.month, self.day, self.hour, self.minute).get("值符星宮")[1]
         fu_head_location2 = self.pan_earth_r().get(fu_head)
         zhifu = config.zhifu_n_zhishi(self.year, self.month, self.day, self.hour, self.minute)["值符星宮"][0]
+        zhifu2 = config.zhifu_n_zhishi(self.year, self.month, self.day, self.hour, self.minute)
         if fu_head_location == "中":
             gong_reorder = config.new_list(rotate, "坤")
             try:
@@ -56,8 +57,12 @@ class Qimen:
                 try:
                     return dict(zip(gong_reorder, gan_reorder))
                 except UnboundLocalError:
-                    fuhead_order = config.new_list(list(map(lambda x:self.pan_earth().get(x), list(rotate))), fu_head)
-                    return dict(zip(gong_reorder, fuhead_order))
+                    try:
+                        fuhead_order = config.new_list(list(map(lambda x:self.pan_earth().get(x), list(rotate))), fu_head)
+                        return dict(zip(gong_reorder, fuhead_order))
+                    except ValueError:
+                       
+                        return dict(zip(list(reversed(gong_reorder)), config.new_list(list(map(lambda x: self.pan_earth().get(x), list(reversed(rotate)))), self.pan_earth().get("坤")) ))
         if fu_head_location != "中" and zhifu != "禽" and fu_head_location2 != "中":
             gan_reorder = config.new_list(list(map(lambda x:self.pan_earth().get(x), list(rotate))), fu_head)
             gong_reorder = config.new_list(rotate,  fu_head_location)
