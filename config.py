@@ -7,11 +7,10 @@ Created on Wed May 17 11:55:49 2023
 
 import re
 from itertools import cycle, repeat
-from math import pi
+import math
 from sxtwl import fromSolar
 import ephem
-from ephem import Date, Ecliptic, Equatorial
-
+from ephem import Sun, Date, Ecliptic, Equatorial
 
 cnum = list("一二三四五六七八九十")
 #干支
@@ -217,42 +216,6 @@ def zhifu_n_zhishi(year, month, day, hour, minute):
     if door == "中":
         door = "死"
     return {"值符星宮":[dict(zip(list(zhifu_pai(year, month, day, hour, minute).keys()), list(map(lambda i:dict(zip(cnumber, list("蓬芮沖輔禽心柱任英"))).get(i[0]) , list(zhifu_pai(year, month, day, hour, minute).values()))))).get(chour),dict(zip(list(zhifu_pai(year, month, day, hour, minute).keys()), list(map(lambda i:gongs_code.get(i[hgan]), list(zhifu_pai(year, month, day, hour, minute).values()))))).get(chour)], "值使門宮":[door,dict(zip(list(zhishi_pai(year, month, day, hour, minute).keys()),list(map(lambda i:gongs_code.get(i[hgan]), list(zhishi_pai(year, month, day, hour, minute).values()))))).get(chour)]}
-
-def ecliptic_lon(jd_utc):
-    return Ecliptic(Equatorial(ephem.Sun(jd_utc).ra,ephem.Sun(jd_utc).dec,epoch=jd_utc)).lon
-
-def sta(jd_num):
-    return int(ecliptic_lon(jd_num)*180.0/pi/15)
-
-def iteration(jd_num):
-    s1_jd=sta(jd_num)
-    s0_jd=s1_jd
-    dt=1.0
-    while True:
-        jd_num+=dt
-        s=sta(jd_num)
-        if s0_jd!=s:
-            s0_jd=s
-            dt=-dt/2
-        if abs(dt)<0.0000001 and s!=s1_jd:
-            break
-    return jd_num
-
-def find_jq_date(year, month, day, hour, jie_qi):
-    jd_format=Date("{}/{}/{} {}:00:00.00".format(str(year).zfill(4), str(month).zfill(2), str(day).zfill(2), str(hour).zfill(2) ))
-    e_1=ecliptic_lon(jd_format)
-    n_1=int(e_1*180.0/pi/15)+1
-    dzlist = []
-    for i in range(24):
-        if n_1>=24:
-            n_1-=24
-        jd_d=iteration(jd_format)
-        d=Date(jd_d+1/3).tuple()
-        bb_1 = {jieqi_name[n_1]: Date("{}/{}/{} {}:{}:00.00".format(str(d[0]).zfill(4), str(d[1]).zfill(2), str(d[2]).zfill(2), str(d[3]).zfill(2) , str(d[4]).zfill(2)))}
-        n_1+=1
-        dzlist.append(bb_1)
-    return list(dzlist[list(map(lambda i:list(i.keys())[0], dzlist)).index(jie_qi)].values())[0]
-
 def gong_wangzhuai():
     wangzhuai = list("旺相胎沒死囚休廢")
     wangzhuai_num = [3,4,9,2,7,6,1,8]
@@ -266,42 +229,58 @@ def gong_wangzhuai():
                         ('立春','雨水','驚蟄'):'立春'}
     return dict(zip(new_list(wangzhuai_num, dict(zip(jieqi_name[0::3],wangzhuai_num )).get(multi_key_dict_get(wangzhuai_jieqi, "霜降"))), wangzhuai))
 
-def xzdistance(year, month, day, hour):
-    return int(find_jq_date(year, month, day, hour, "夏至") -  Date("{}/{}/{} {}:00:00.00".format(str(year).zfill(4), str(month).zfill(2), str(day).zfill(2), str(hour).zfill(2))))
+def ecliptic_lon(jd_utc):
+    s=Sun(jd_utc)
+    equ=Equatorial(s.ra,s.dec,epoch=jd_utc)
+    e=Ecliptic(equ)
+    return e.lon
 
-def distancejq(year, month, day, hour, jq):
-    return int( Date("{}/{}/{} {}:00:00.00".format(str(year).zfill(4), str(month).zfill(2), str(day).zfill(2), str(hour).zfill(2))) - find_jq_date(year-1, month, day, hour, jq) )
+def sta(jd):
+    e=ecliptic_lon(jd)
+    n=int(e*180.0/math.pi/15)
+    return n
 
-def fjqs(year, month, day, hour):
-    jd_format = Date("{}/{}/{} {}:00:00.00".format(str(year).zfill(4), str(month).zfill(2), str(day).zfill(2), str(hour).zfill(2) ))
-    n= int(ecliptic_lon(jd_format)*180.0/pi/15)+1
-    c = []
-    for i in range(1):
+def iteration(jd,sta):
+    s1=sta(jd)
+    s0=s1
+    dt=1.0
+    while True:
+        jd+=dt
+        s=sta(jd)
+        if s0!=s:
+            s0=s
+            dt=-dt/2
+        if abs(dt)<0.0000001 and s!=s1:
+            break
+    return jd
+
+def change(year, month, day, hour, minute):
+    changets = Date("{}/{}/{} {}:{}:00".format(str(year).zfill(4), str(month).zfill(2), str(day).zfill(2),str(hour).zfill(2), str(minute).zfill(2)))
+    return Date(changets - 24 * ephem.hour *30)
+
+def jq(year, month, day, hour, minute):#从当前时间开始连续输出未来n个节气的时间
+    #current =  datetime.strptime("{}/{}/{} {}:{}:00".format(str(year).zfill(4), str(month).zfill(2), str(day).zfill(2),str(hour).zfill(2), str(minute).zfill(2)), '%Y/%m/%d %H:%M:%S')
+    current = Date("{}/{}/{} {}:{}:00".format(str(year).zfill(4), str(month).zfill(2), str(day).zfill(2),str(hour).zfill(2), str(minute).zfill(2)))
+    jd = change(year, month, day, hour, minute)
+    #jd = Date("{}/{}/{} {}:{}:00.00".format(str(b.year).zfill(4), str(b.month).zfill(2), str(b.day).zfill(2), str(b.hour).zfill(2), str(b.minute).zfill(2)  ))
+    result = []
+    e=ecliptic_lon(jd)
+    n=int(e*180.0/math.pi/15)+1
+    for i in range(3):
         if n>=24:
             n-=24
-        d = Date(jd_format+1/3).tuple()
-        c.append([jieqi_name[n], Date("{}/{}/{} {}:{}:00.00".format(str(d[0]).zfill(4), str(d[1]).zfill(2), str(d[2]).zfill(2), str(d[3]).zfill(2) , str(d[4]).zfill(2)))])
-    return c[0]
-
-#def jq(year, month, day, hour):
-#    ct =  Date("{}/{}/{} {}:00:00.00".format(str(year).zfill(4), str(month).zfill(2), str(day).zfill(2), str(hour).zfill(2) ))
-#    p = Date(round((ct - 7 ), 3)).tuple()
-#    pp = Date(round((ct - 21 ), 3)).tuple()
-#    bf = fjqs(p[0], p[1], p[2], p[3])
-#    bbf = fjqs(pp[0], pp[1], pp[2], pp[3])
-#    if ct < bf[1]:
-#        return bbf[0]
-#    else:
-#        return jieqi_name[jieqi_name.index(bf[0])+1]
-
-def jq(year, month, day):
-    dd = fromSolar(year, month, day) 
-    while True:
-        dd = dd.before(1)
-        if dd.hasJieQi():
-            return jqmc[dd.getJieQi()]
-            break
-
-
-
-print(qimen_ju_name(1896, 9, 9, 12, 0))
+        jd=iteration(jd,sta)
+        d=Date(jd+1/3).tuple()
+        dt = Date("{}/{}/{} {}:{}:00.00".format(d[0],d[1],d[2],d[3],d[4]).split(".")[0])
+        time_info = {  dt:jieqi_name[n]}
+        n+=1    
+        result.append(time_info)
+    j = [list(i.keys())[0] for i in result]
+    if current > j[0] and current > j[1] and current > j[2]:
+        return list(result[2].values())[0]
+    if current > j[0] and current > j[1] and current <= j[2]:
+        return list(result[1].values())[0]
+    if current >= j[1] and current < j[2]:
+        return list(result[1].values())[0]
+    if current < j[1] and current < j[2]:
+        return list(result[0].values())[0]
