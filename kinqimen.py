@@ -76,24 +76,58 @@ class Qimen:
                 return dict(zip(rgong_reorder, gan_reorder))
             if fu_head in gan_reorder:
                 return {**dict(zip(gong_reorder,gan_reorder)),**{"中":self.pan_earth()[0].get("中") } }
-
     #九宮長生十二神
     def gong_chengsun(self):
-        find_twelve_luck = config.find_shier_luck(config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[2][0])
-        find_twelve_luck_new = dict(zip(list(map(lambda i:dict(zip(config.di_zhi,list("癸己甲乙戊丙丁己庚辛戊壬"))).get(i),list(find_twelve_luck.keys()))),list(find_twelve_luck.values())))
+        sky = self.pan_sky()
+        gz = config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)
+        find_twelve_luck = config.find_shier_luck(gz[2][0])
+        di_zhi_mapping = dict(zip(config.di_zhi, list("癸己甲乙戊丙丁己庚辛戊壬")))
+        find_twelve_luck_new = {di_zhi_mapping.get(k): v for k, v in find_twelve_luck.items()}
         try:
-            sky_pan = self.pan_sky()[0]
-            sky_pan_new = dict(zip(sky_pan.keys(),list(map(lambda y:{list(sky_pan.values())[y]: list(map(lambda x: find_twelve_luck_new.get(x), sky_pan.keys()))[y]}, list(range(0,8))))))
+            sky_pan = sky[0]
+            sky_pan_new = {k: {v: find_twelve_luck_new.get(k)} for k, v in sky_pan.items()}
         except KeyError:
-            sky_pan = self.pan_sky()
-            sky_pan_new = dict(zip(list(sky_pan.keys()), list(map(lambda i:{i:find_twelve_luck_new.get(i)}, list(sky_pan.values())))))
+             sky_pan = sky
+             sky_pan_new = dict(zip(list(sky_pan.keys()), list(map(lambda i:{i:find_twelve_luck_new.get(i)}, list(sky_pan.values())))))
         earth_pan = self.pan_earth()
-        earth_pan_new = earth_pan_new = dict(zip(earth_pan.keys(),[{list(earth_pan.values())[y]: list(map(lambda i:find_twelve_luck_new.get(i) ,earth_pan.values()))[y]} for y in range(0,9)]))
-        return {"天盤":sky_pan_new, "地盤": earth_pan_new}
+        earth_pan_new = {k: {v: find_twelve_luck_new.get(v)} for k, v in earth_pan.items()}
+        return {"天盤": sky_pan_new, "地盤": earth_pan_new}
 
     def pan(self):
-        return {"干支":config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[0]+"年"+config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[1]+"月"+config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[2]+"日"+config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[3]+"時","旬首":config.shun(config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[2]),"旬空":config.daykong_shikong(self.year, self.month, self.day, self.hour, self.minute),"局日":self.qimen_ju_day(), "排局":config.qimen_ju_name(self.year, self.month, self.day, self.hour, self.minute), "節氣":config.jq(self.year, self.month, self.day, self.hour, self.minute), "值符值使":config.zhifu_n_zhishi(self.year, self.month, self.day, self.hour, self.minute), "天乙":self.tianyi(), "天盤":self.pan_sky(), "地盤":self.pan_earth(), "門":config.pan_door(self.year, self.month, self.day, self.hour, self.minute),"星":config.pan_star(self.year, self.month, self.day, self.hour, self.minute)[0], "神":config.pan_god(self.year, self.month, self.day, self.hour, self.minute), "馬星": {"天馬": self.moonhorse(),"丁馬":self.dinhorse(), "驛馬":self.hourhorse()}, "長生運": self.gong_chengsun()}
-
+        # Calculate gangzhi once and store the result for reuse
+        gz = config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)
+        gzd = "{}年{}月{}日{}時".format(gz[0], gz[1], gz[2], gz[3])
+        shunhead = config.shun(gz[2])
+        shunkong = config.daykong_shikong(self.year, self.month, self.day, self.hour, self.minute)
+        paiju = config.qimen_ju_name(self.year, self.month, self.day, self.hour, self.minute)
+        j_q = config.jq(self.year, self.month, self.day, self.hour, self.minute)
+        zfzs = config.zhifu_n_zhishi(self.year, self.month, self.day, self.hour, self.minute)
+        pan_star_result = config.pan_star(self.year, self.month, self.day, self.hour, self.minute)
+        star = pan_star_result[0]
+        door = config.pan_door(self.year, self.month, self.day, self.hour, self.minute)
+        god = config.pan_god(self.year, self.month, self.day, self.hour, self.minute)
+        return {
+            "干支": gzd,
+            "旬首": shunhead,
+            "旬空": shunkong,
+            "局日": self.qimen_ju_day(),
+            "排局": paiju,
+            "節氣": j_q,
+            "值符值使": zfzs,
+            "天乙": self.tianyi(),
+            "天盤": self.pan_sky(),
+            "地盤": self.pan_earth(),
+            "門": door,
+            "星": star,
+            "神": god,
+            "馬星": {
+                "天馬": self.moonhorse(),
+                "丁馬": self.dinhorse(),
+                "驛馬": self.hourhorse()
+            },
+            "長生運": self.gong_chengsun()
+        }
+        
     def pan_html(self):
         god, door, star, sky, earth = self.pan_god(), self.pan_door(), self.pan_star()[0],  self.pan_sky(), self.pan_earth()
         a = ''' <div class="container"><table style="width:100%"><tr>'''+"".join(['''<td align="center">'''+sky.get(i)+god.get(i)+door.get(i) +"<br>"+ earth.get(i)+star.get(i)+ i+'''</td>''' for i in list("巽離坤")])+"</tr>"
