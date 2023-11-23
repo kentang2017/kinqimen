@@ -170,8 +170,6 @@ class Qimen:
                     "門": {**config.multi_key_dict_get(dict(zip(b, itertools.cycle(g))), dgz), **{"中":""}},
                     "神": self.getgtw().get(dgz[0])
                     }
-
-
     #鶴神
     def crane_god(self):
         newc_list = list(map(lambda i:[list("巽離坤兌乾坎天艮震")[i][:5]]*[6,5,6,5,6,5,16,6,5][i],list(range(0,8))))
