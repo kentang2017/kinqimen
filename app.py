@@ -33,6 +33,8 @@ pan,example,guji,links = st.tabs([' 排盤 ', ' 案例 ', ' 古籍 ',' 連結 ' 
 with st.sidebar:
     pp_date=st.date_input("日期",pdlm.now(tz='Asia/Shanghai').date())
     pp_time=st.time_input("時間",pdlm.now(tz='Asia/Shanghai').time())
+    option = st.selectbox( '起盤方式', (' 日家奇門 ', ' 時家奇門 ', ' 分家奇門 '))
+    num = dict(zip([' 時家奇門 ', ' 分家奇門 '],[1,2])).get(option)
     p = str(pp_date).split("-")
     pp = str(pp_time).split(":")
     y = int(p[0])
@@ -47,12 +49,15 @@ with links:
     
 with pan:
     st.header('堅奇門')
-    qtext = kinqimen.Qimen(y,m,d,h,min).pan()
+    if num == 1:
+        qtext = kinqimen.Qimen(y,m,d,h,min).pan()
+    if num == 2:
+        qtext = kinqimen.Qimen(y,m,d,h,min).pan_minute()
     eg = list("巽離坤震兌艮坎乾")
     qd = [qtext.get("地盤").get(i) for i in eg]
     lunar_month = dict(zip(range(1,13), config.cmonth)).get(config.lunar_date_d(y,m,d).get("月"))
     gz = config.gangzhi(y,m,d,h,min)
-    lr = kinliuren.Liuren( qtext.get("節氣"),lunar_month, gz[2], gz[3]).result(0)
+    lr = kinliuren.Liuren( qtext.get("節氣"),lunar_month, gz[3], gz[4]).result(0)
     j_q =  config.jq(y, m, d, h, min)
     e_to_s = lr.get("地轉天盤")
     e_to_g = lr.get("地轉天將")
@@ -64,6 +69,7 @@ with pan:
     door = [qtext.get("門").get(i) for i in eg]
     star = [qtext.get("星").get(i) for i in eg]
     md = qtext.get("地盤").get("中")
+
     output4 = st.empty()
     with st_capture(output4.code):
         print("{}年{}月{}日{}時\n".format(y,m,d,h))
