@@ -51,26 +51,37 @@ with pan:
     st.header('堅奇門')
     gz = config.gangzhi(y,m,d,h,min)
     j_q =  config.jq(y, m, d, h, min)
+    eg = list("巽離坤震兌艮坎乾")
+    lunar_month = dict(zip(range(1,13), config.cmonth)).get(config.lunar_date_d(y,m,d).get("月"))
     if num == 1:
         qtext = kinqimen.Qimen(y,m,d,h,min).pan()
         lr = kinliuren.Liuren( qtext.get("節氣"),lunar_month, gz[2], gz[3]).result(0)
         qd = [qtext.get("地盤").get(i) for i in eg]
+        e_to_s = lr.get("地轉天盤")
+        e_to_g = lr.get("地轉天將")
+        try:
+            qt = [qtext.get("天盤").get(i)[0] for i in eg]
+        except KeyError:
+            qt = [qtext.get("天盤").get(i) for i in eg]
+        god = [qtext.get("神").get(i) for i in eg]
+        door = [qtext.get("門").get(i) for i in eg]
+        star = [qtext.get("星").get(i) for i in eg]
+        md = qtext.get("地盤").get("中")
     if num == 2:
         qtext = kinqimen.Qimen(y,m,d,h,min).pan_minute()
         lr = kinliuren.Liuren( qtext.get("節氣"),lunar_month, gz[3], gz[4]).result(0)
         qd = [qtext.get("地盤").get(i) for i in eg]
-    eg = list("巽離坤震兌艮坎乾")
-    lunar_month = dict(zip(range(1,13), config.cmonth)).get(config.lunar_date_d(y,m,d).get("月"))
-    e_to_s = lr.get("地轉天盤")
-    e_to_g = lr.get("地轉天將")
-    try:
-        qt = [qtext.get("天盤").get(i)[0] for i in eg]
-    except KeyError:
-        qt = [qtext.get("天盤").get(i) for i in eg]
-    god = [qtext.get("神").get(i) for i in eg]
-    door = [qtext.get("門").get(i) for i in eg]
-    star = [qtext.get("星").get(i) for i in eg]
-    md = qtext.get("地盤").get("中")
+        e_to_s = lr.get("地轉天盤")
+        e_to_g = lr.get("地轉天將")
+        try:
+            qt = [qtext.get("天盤").get(i)[0] for i in eg]
+        except KeyError:
+            qt = [qtext.get("天盤").get(i) for i in eg]
+        god = [qtext.get("神").get(i) for i in eg]
+        door = [qtext.get("門").get(i) for i in eg]
+        star = [qtext.get("星").get(i) for i in eg]
+        md = qtext.get("地盤").get("中")
+    
 
     output4 = st.empty()
     with st_capture(output4.code):
