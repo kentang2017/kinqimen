@@ -49,6 +49,8 @@ with links:
     
 with pan:
     st.header('堅奇門')
+    gz = config.gangzhi(y,m,d,h,min)
+    j_q =  config.jq(y, m, d, h, min)
     if num == 1:
         qtext = kinqimen.Qimen(y,m,d,h,min).pan()
         lr = kinliuren.Liuren( qtext.get("節氣"),lunar_month, gz[2], gz[3]).result(0)
@@ -58,8 +60,6 @@ with pan:
     eg = list("巽離坤震兌艮坎乾")
     qd = [qtext.get("地盤").get(i) for i in eg]
     lunar_month = dict(zip(range(1,13), config.cmonth)).get(config.lunar_date_d(y,m,d).get("月"))
-    gz = config.gangzhi(y,m,d,h,min)
-    j_q =  config.jq(y, m, d, h, min)
     e_to_s = lr.get("地轉天盤")
     e_to_g = lr.get("地轉天將")
     try:
