@@ -54,11 +54,12 @@ with pan:
     if num == 1:
         qtext = kinqimen.Qimen(y,m,d,h,min).pan()
         lr = kinliuren.Liuren( qtext.get("節氣"),lunar_month, gz[2], gz[3]).result(0)
+        qd = [qtext.get("地盤").get(i) for i in eg]
     if num == 2:
         qtext = kinqimen.Qimen(y,m,d,h,min).pan_minute()
         lr = kinliuren.Liuren( qtext.get("節氣"),lunar_month, gz[3], gz[4]).result(0)
+        qd = [qtext.get("地盤").get(i) for i in eg]
     eg = list("巽離坤震兌艮坎乾")
-    qd = [qtext.get("地盤").get(i) for i in eg]
     lunar_month = dict(zip(range(1,13), config.cmonth)).get(config.lunar_date_d(y,m,d).get("月"))
     e_to_s = lr.get("地轉天盤")
     e_to_g = lr.get("地轉天將")
