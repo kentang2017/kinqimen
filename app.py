@@ -52,7 +52,7 @@ with links:
 with pan:
     output4 = st.empty()
     st.header('堅奇門')
-     with st_capture(output4.code):
+    with st_capture(output4.code):
         try:
             if manual:
                 gz = config.gangzhi(y,m,d,h,min)
