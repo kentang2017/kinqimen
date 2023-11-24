@@ -125,8 +125,8 @@ with pan:
                     print("／  {}{}  　 │  {}{}　 │  {}{}　 │  　 {}{}　 ＼".format(e_to_s.get("寅"),e_to_g.get("寅"),e_to_s.get("丑"),e_to_g.get("丑"),e_to_s.get("子"),e_to_g.get("子"),e_to_s.get("亥"),e_to_g.get("亥")))
                     expander = st.expander("原始碼")
                     expander.write(str(qtext))
-            else:
-                output4 = st.empty()
+                else:
+                    output4 = st.empty()
         except ValueError:
             st.empty()
             
@@ -208,8 +208,8 @@ with pan:
                     print("／  {}{}  　 │  {}{}　 │  {}{}　 │  　 {}{}　 ＼".format(e_to_s.get("寅"),e_to_g.get("寅"),e_to_s.get("丑"),e_to_g.get("丑"),e_to_s.get("子"),e_to_g.get("子"),e_to_s.get("亥"),e_to_g.get("亥")))
                     expander = st.expander("原始碼")
                     expander.write(str(qtext))
-            else:
-                output4 = st.empty()
+                else:
+                    output4 = st.empty()
         except ValueError:
             st.empty()
 
