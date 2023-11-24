@@ -33,7 +33,7 @@ pan,example,guji,links = st.tabs([' 排盤 ', ' 案例 ', ' 古籍 ',' 連結 ' 
 with st.sidebar:
     pp_date=st.date_input("日期",pdlm.now(tz='Asia/Shanghai').date())
     pp_time=st.time_input("時間",pdlm.now(tz='Asia/Shanghai').time())
-    option = st.selectbox( '起盤方式', (' 日家奇門 ', ' 時家奇門 ', ' 分家奇門 '))
+    option = st.selectbox( '起盤方式', ( ' 時家奇門 ', ' 分家奇門 '))
     num = dict(zip([' 時家奇門 ', ' 分家奇門 '],[1,2])).get(option)
     p = str(pp_date).split("-")
     pp = str(pp_time).split(":")
