@@ -39,6 +39,10 @@ class Qimen:
     #地盤
     def pan_earth(self):
         return dict(zip(list(map(lambda x: dict(zip(config.cnumber, config.eight_gua)).get(x), config.new_list(config.cnumber, config.qimen_ju_name(self.year, self.month, self.day, self.hour, self.minute)[2]))), {"陽遁":list("戊己庚辛壬癸丁丙乙"),"陰遁":list("戊乙丙丁癸壬辛庚己")}.get(config.qimen_ju_name(self.year, self.month, self.day, self.hour, self.minute)[0:2])))
+    #地盤
+    def pan_earth_minute(self):
+        return dict(zip(list(map(lambda x: dict(zip(config.cnumber, config.eight_gua)).get(x), config.new_list(config.cnumber, config.qimen_ju_name_minute(self.year, self.month, self.day, self.hour, self.minute)[2]))), {"陽遁":list("戊己庚辛壬癸丁丙乙"),"陰遁":list("戊乙丙丁癸壬辛庚己")}.get(config.qimen_ju_name_minute(self.year, self.month, self.day, self.hour, self.minute)[0:2])))
+    
     #逆地盤
     def pan_earth_r(self):
         return dict(zip(list(self.pan_earth().values()), list(self.pan_earth().keys())))
@@ -192,7 +196,7 @@ class Qimen:
         gzd = "{}年{}月{}日{}時{}分".format(gz[0], gz[1], gz[2], gz[3], gz[4])
         shunhead = config.shun(gz[3])
         shunkong = config.hourkong_minutekong(self.year, self.month, self.day, self.hour, self.minute)
-        paiju = config.qimen_ju_name(self.year, self.month, self.day, self.hour, self.minute)
+        paiju = config.qimen_ju_name_minute(self.year, self.month, self.day, self.hour, self.minute)
         j_q = config.jq(self.year, self.month, self.day, self.hour, self.minute)
         zfzs = config.zhifu_n_zhishi_minute(self.year, self.month, self.day, self.hour, self.minute)
         pan_star_result = config.pan_star_minute(self.year, self.month, self.day, self.hour, self.minute)
@@ -208,8 +212,8 @@ class Qimen:
             "節氣": j_q,
             "值符值使": zfzs,
             "天乙": self.tianyi(),
-            "天盤": self.pan_sky(),
-            "地盤": self.pan_earth(),
+            "天盤": self.pan_sky_minute(),
+            "地盤": self.pan_earth_minute(),
             "門": door,
             "星": star,
             "神": god,
@@ -303,7 +307,7 @@ class Qimen:
 
 if __name__ == '__main__':
     tic = time.perf_counter()
-    print(Qimen(2023,11,24,11,24).pan())
-    print(Qimen(2023,11,24,11,24).pan_minute())
+    print(Qimen(2023,11,27,10,4).pan())
+    print(Qimen(2023,11,27,10,4).pan_minute())
     toc = time.perf_counter()
     print(f"{toc - tic:0.4f} seconds")

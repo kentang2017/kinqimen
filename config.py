@@ -68,6 +68,9 @@ def jieqicode(year,month, day, hour, minute):
 def findyuen(year, month, day, hour, minute):
     return multi_key_dict_get(findyuen_dict(), gangzhi(year, month, day, hour, minute)[2])
 
+def findyuen_minute(year, month, day, hour, minute):
+    return multi_key_dict_get(findyuen_dict(), gangzhi(year, month, day, hour, minute)[3])
+
 def find_wx_relation(zhi1, zhi2):
     return multi_key_dict_get(wuxing_relation_2, Ganzhiwuxing(zhi1) + Ganzhiwuxing(zhi2))
 #換算干支
@@ -154,6 +157,13 @@ def find_shier_luck(gan):
 def qimen_ju_name(year, month, day, hour, minute):
     find_yingyang = multi_key_dict_get({tuple(jieqi_name[0:12]):"陽遁",tuple(jieqi_name[12:24]):"陰遁" }, jq(year, month, day, hour, minute))
     find_yuen = findyuen(year, month, day, hour, minute)
+    jieqi_code = jieqicode(year, month, day, hour, minute)
+    return "{}{}局{}".format(find_yingyang,{"上元":jieqi_code[0], "中元":jieqi_code[1], "下元":jieqi_code[2]}.get(find_yuen),find_yuen)
+
+#奇門排局分家
+def qimen_ju_name_minute(year, month, day, hour, minute):
+    find_yingyang = multi_key_dict_get({tuple(list(range(0,13))):"陽遁",tuple(list(range(13,24))):"陰遁" }, hour)
+    find_yuen = findyuen_minute(year, month, day, hour, minute)
     jieqi_code = jieqicode(year, month, day, hour, minute)
     return "{}{}局{}".format(find_yingyang,{"上元":jieqi_code[0], "中元":jieqi_code[1], "下元":jieqi_code[2]}.get(find_yuen),find_yuen)
 
@@ -325,4 +335,3 @@ def jq(year, month, day, hour, minute):#从当前时间开始连续输出未来n
         return list(result[1].values())[0]
     if current < j[1] and current < j[2]:
         return list(result[0].values())[0]
-
