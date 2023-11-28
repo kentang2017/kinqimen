@@ -85,7 +85,7 @@ with pan:
                 md = qtext.get("地盤").get("中")
                 mdd = qtextt.get("地盤").get("中")
                 print("{}年{}月{}日{}時\n".format(y,m,d,h))
-                print("{} |\n{} | 節氣︰{} |\n值符星宮︰天{}宮 | 值使門宮︰{} \n".format(qtext.get("干支"), qtext.get("排局"),  j_q,  qtext.get("值符值使").get("值符星宮")[0]+"-"+qtext.get("值符值使").get("值符星宮")[1], qtext.get("值符值使").get("值使門宮")[0]+"門"+qtext.get("值符值使").get("值使門宮")[1]+"宮" ))
+                print("{} |\n{} | 節氣︰{} |\n值符星宮︰天{}宮 | 值使門宮︰{} \n".format(qtext.get("干支"), qtext.get("排局"),  j_q,  qtext.get("值符值使").get("值符星宮")[0]+"-"+qtext.get("值符值使").get("值符星宮")[1], qtext.get("值符值使").get("值使門宮")[0]+"門"+qtext.get("值符值使").get("值使門宮")[1]+"宮" )))
                 print("時家奇門                        |                      刻家奇門")
                 print("＼  {}{}  　 │  {}{}　 │  {}{}　 │  　 {}{}　 ／   |   ＼  {}{}  　 │  {}{}　 │  {}{}　 │  　 {}{}　 ／".format(e_to_s.get("巳"),e_to_g.get("巳"),e_to_s.get("午"),e_to_g.get("午"),e_to_s.get("未"),e_to_g.get("未"),e_to_s.get("申"),e_to_g.get("申")),e_to_ss.get("巳"),e_to_gg.get("巳"),e_to_ss.get("午"),e_to_gg.get("午"),e_to_ss.get("未"),e_to_gg.get("未"),e_to_ss.get("申"),e_to_gg.get("申")))
                 print("  ＼────────┴──┬─────┴─────┬──┴────────／   |   ＼────────┴──┬─────┴─────┬──┴────────／   ")
