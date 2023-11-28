@@ -167,7 +167,7 @@ def qimen_ju_name_minute(year, month, day, hour, minute):
     jieqi_code = jieqicode(year, month, day, hour, minute)
     return "{}{}局{}".format(find_yingyang,{"上元":jieqi_code[0], "中元":jieqi_code[1], "下元":jieqi_code[2]}.get(find_yuen),find_yuen)
 
-def getgtw(self):
+def getgtw():
     gtw = re.findall("..","地籥六賊五符天曹地符風伯雷公雨師風雲唐符國印天關")
     newgtw_list = list(map(lambda y: dict(zip(di_zhi, y)) ,list(map(lambda i: new_list(gtw, i),re.findall("..","地籥天關唐符風雲唐符風雲雷公風伯天曹五符")))))
     return dict(zip(tian_gan, newgtw_list))

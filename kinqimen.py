@@ -266,7 +266,7 @@ class Qimen:
                     "鶴神": self.crane_god().get(dgz),
                     "星": {"陰遁":ying ,"陽遁":yang}.get(yy),
                     "門": {**config.multi_key_dict_get(dict(zip(b, itertools.cycle(g))), dgz), **{"中":""}},
-                    "神": self.getgtw().get(dgz[0])
+                    "神": config.getgtw().get(dgz[0])
                     }
     #鶴神
     def crane_god(self):
@@ -307,7 +307,7 @@ class Qimen:
 
 if __name__ == '__main__':
     tic = time.perf_counter()
-    print(Qimen(2023,11,27,10,4).pan())
-    print(Qimen(2023,11,27,10,4).pan_minute())
+    #print(Qimen(2023,11,27,10,4).pan())
+    print(Qimen(2023,11,27,10,4).overall())
     toc = time.perf_counter()
     print(f"{toc - tic:0.4f} seconds")
