@@ -158,7 +158,7 @@ class Qimen:
     def pan(self):
         # Calculate gangzhi once and store the result for reuse
         gz = config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)
-        gzd = "{}年{}月{}日{}時{}分".format(gz[0], gz[1], gz[2], gz[3], gz[4])
+        gzd = "{}年{}月{}日{}時".format(gz[0], gz[1], gz[2], gz[3], gz[4])
         shunhead = config.shun(gz[2])
         shunkong = config.daykong_shikong(self.year, self.month, self.day, self.hour, self.minute)
         paiju = config.qimen_ju_name(self.year, self.month, self.day, self.hour, self.minute)
@@ -303,7 +303,7 @@ class Qimen:
         return config.multi_key_dict_get(dict(zip(list(map(lambda i:tuple(i), re.findall("...","申子辰寅午戌亥卯未巳酉丑"))), list("寅申巳亥"))), config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[3][1])
 
     def overall(self):
-        return {"時家奇門": self.pan(), "分家奇門":self.pan_minute(), "金函玉鏡(日家奇門)": self.gpan()}
+        return { "金函玉鏡(日家奇門)": self.gpan(), "時家奇門": self.pan(), "分家奇門":self.pan_minute()}
 
 if __name__ == '__main__':
     tic = time.perf_counter()
