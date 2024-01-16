@@ -125,6 +125,21 @@ def find_lunar_hour(day):
         result = multi_key_dict_get(fiverats, day[0])
     return dict(zip(list(di_zhi), new_list(jiazi(), result)[:12]))
 
+#五馬遁，起子刻
+def find_lunar_ke(hour):
+    fivehourses = {
+    tuple(list('丙辛')):'甲午',
+    tuple(list('丁壬')):'丙午',
+    tuple(list('戊癸')):'戊午',
+    tuple(list('甲己')):'庚午',
+    tuple(list('乙庚')):'壬午'
+    }
+    if multi_key_dict_get(fivehourses, hour[0]) == None:
+        result = multi_key_dict_get(fivehourses, hour[1])
+    else:
+        result = multi_key_dict_get(fivehourses, hour[0])
+    return new_list(jiazi(), result)
+
 def liujiashun_dict():
     return dict(zip(list(map(lambda x: tuple(x), list(map(lambda x:new_list(jiazi(), x)[0:10], jiazi()[0::10])))), jiazi()[0::10]))
 
@@ -135,6 +150,12 @@ def findyuen_dict():
 def minutes_jiazi_d():
     t = [f"{h}:{m}" for h in range(24) for m in range(60)]
     minutelist = dict(zip(t, cycle(repeat_list(2, jiazi()))))
+    return minutelist
+
+#刻干支 (一刻十分鐘)
+def ke_jiazi_d(hour):
+    t = [f"{h}:{m}0" for h in range(24) for m in range(6)]
+    minutelist = dict(zip(t, cycle(repeat_list(1, find_lunar_ke(hour)))))
     return minutelist
 #農曆
 def lunar_date_d(year, month, day):
