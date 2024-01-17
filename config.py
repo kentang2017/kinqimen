@@ -385,6 +385,3 @@ def jq(year, month, day, hour, minute):#从当前时间开始连续输出未来n
         return list(result[1].values())[0]
     if current < j[1] and current < j[2]:
         return list(result[0].values())[0]
-
-
-print(gangzhi(2024, 1, 17, 12, 11))
