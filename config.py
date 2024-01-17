@@ -74,6 +74,21 @@ def findyuen_minute(year, month, day, hour, minute):
 def find_wx_relation(zhi1, zhi2):
     return multi_key_dict_get(wuxing_relation_2, Ganzhiwuxing(zhi1) + Ganzhiwuxing(zhi2))
 #換算干支
+def gangzhi1(year, month, day, hour, minute):
+    if hour == 23:
+        d = Date(round((Date("{}/{}/{} {}:00:00.00".format(str(year).zfill(4), str(month).zfill(2), str(day+1).zfill(2), str(0).zfill(2)))), 3))
+    else:
+        d = Date("{}/{}/{} {}:00:00.00".format(str(year).zfill(4), str(month).zfill(2), str(day).zfill(2), str(hour).zfill(2) ))
+    dd = list(d.tuple())
+    cdate = fromSolar(dd[0], dd[1], dd[2])
+    yTG,mTG,dTG,hTG = "{}{}".format(tian_gan[cdate.getYearGZ().tg], di_zhi[cdate.getYearGZ().dz]), "{}{}".format(tian_gan[cdate.getMonthGZ().tg],di_zhi[cdate.getMonthGZ().dz]), "{}{}".format(tian_gan[cdate.getDayGZ().tg], di_zhi[cdate.getDayGZ().dz]), "{}{}".format(tian_gan[cdate.getHourGZ(dd[3]).tg], di_zhi[cdate.getHourGZ(dd[3]).dz])
+    if year < 1900:
+        mTG1 = find_lunar_month(yTG).get(lunar_date_d(year, month, day).get("月"))
+    else:
+        mTG1 = mTG
+    hTG1 = find_lunar_hour(dTG).get(hTG[1])
+    return [yTG, mTG1, dTG, hTG1]
+
 def gangzhi(year, month, day, hour, minute):
     if hour == 23:
         d = Date(round((Date("{}/{}/{} {}:00:00.00".format(str(year).zfill(4), str(month).zfill(2), str(day+1).zfill(2), str(0).zfill(2)))), 3))
@@ -87,7 +102,21 @@ def gangzhi(year, month, day, hour, minute):
     else:
         mTG1 = mTG
     hTG1 = find_lunar_hour(dTG).get(hTG[1])
-    gangzhi_minute = minutes_jiazi_d().get(str(hour)+":"+str(minute))
+    zi = gangzhi1(year, month, day, 0, 0)[3]
+    if minute < 10 and minute >=0:
+        reminute = "00"
+    if minute < 20 and minute >=10:
+        reminute = "10"
+    if minute < 30 and minute >=20:
+        reminute = "20"
+    if minute < 40 and minute >=30:
+        reminute = "30"
+    if minute < 50 and minute >=40:
+        reminute = "40"
+    if minute < 60 and minute >=50:
+        reminute = "50"
+    hourminute = str(hour)+":"+str(reminute)
+    gangzhi_minute = ke_jiazi_d(zi).get(hourminute)
     return [yTG, mTG1, dTG, hTG1, gangzhi_minute]
 #旬
 def shun(gz):
@@ -356,3 +385,6 @@ def jq(year, month, day, hour, minute):#从当前时间开始连续输出未来n
         return list(result[1].values())[0]
     if current < j[1] and current < j[2]:
         return list(result[0].values())[0]
+
+
+print(gangzhi(2024, 1, 17, 12, 11))
