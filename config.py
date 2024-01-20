@@ -206,7 +206,7 @@ def find_shier_luck(gan):
 
 #奇門排局
 def qimen_ju_name(year, month, day, hour, minute):
-    find_yingyang = multi_key_dict_get({tuple(jieqi_name[0:12]):"陽遁",tuple(jieqi_name[12:24]):"陰遁" }, jq(year, month, day, hour, minute))
+    find_yingyang = multi_key_dict_get({tuple(new_list(jieqi_name, "冬至")[0:12]):"陽遁",tuple(new_list(jieqi_name, "夏至")[0:12]):"陰遁" }, jq(year, month, day, hour, minute))
     find_yuen = findyuen(year, month, day, hour, minute)
     jieqi_code = jieqicode(year, month, day, hour, minute)
     return "{}{}局{}".format(find_yingyang,{"上元":jieqi_code[0], "中元":jieqi_code[1], "下元":jieqi_code[2]}.get(find_yuen),find_yuen)
@@ -253,8 +253,6 @@ def zhishi_pai_ke(year, month, day, hour, minute):
     yanglist = "".join(new_list(cnumber, kook))+"".join(new_list(cnumber, kook))+"".join(new_list(cnumber, kook))
     yinlist =  "".join(new_list_r(cnumber, kook))+"".join(new_list_r(cnumber, kook))+"".join(new_list_r(cnumber, kook))
     return {"陰":dict(zip(jiazi()[0::10], list(map(lambda i: i+ yinlist[yinlist.index(i)+1:][0:11],new_list_r(cnumber, kook)[0:6])))), "陽":dict(zip(jiazi()[0::10], list(map(lambda i:i+ yanglist[yanglist.index(i)+1:][0:11], new_list(cnumber, kook)[0:6]))))}.get(yinyang)
-
-
 
 
 #八門
@@ -408,5 +406,3 @@ def jq(year, month, day, hour, minute):#从当前时间开始连续输出未来n
     if current < j[1] and current < j[2]:
         return list(result[0].values())[0]
 
-print(gangzhi(2024,1,20,11,4))
-print(qimen_ju_name_ke(2024,1,20,11,4))
