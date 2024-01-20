@@ -214,13 +214,11 @@ def qimen_ju_name(year, month, day, hour, minute):
 #奇門排局刻家
 def qimen_ju_name_ke(year, month, day, hour, minute):
     hgz = gangzhi(year, month, day, hour, minute)[3]
-    #子时后，用阳遁，采用时家冬至174；午时后，用阴遁，采用时家夏至936；
-    def jieqicode1(year,month, day, hour, minute):
-        return multi_key_dict_get({tuple(new_list(jieqi_name, "冬至")[0:12]): "一七四", tuple(new_list(jieqi_name, "夏至")[0:12]): "九三六"}, jq(year,month, day,hour, minute))
     find_yingyang = multi_key_dict_get({tuple(list('子丑寅卯辰巳')):"陽遁",tuple(list('午未申酉戌亥')):"陰遁" }, hgz[1])
+    qu = {"陽遁": multi_key_dict_get({tuple(new_list(jieqi_name, "冬至")[0:12]): "一七四", tuple(new_list(jieqi_name, "夏至")[0:12]): "九三六"}, jq(year,month, day,hour, minute)),  "陰遁": multi_key_dict_get({tuple(new_list(jieqi_name, "夏至")[0:12]): "一七四", tuple(new_list(jieqi_name, "冬至")[0:12]): "九三六"}, jq(year,month, day,hour, minute))}.get( find_yingyang)
     find_yuen = findyuen_minute(year, month, day, hour, minute)
-    jieqi_code = jieqicode1(year, month, day, hour, minute)
-    return "{}{}局{}".format(find_yingyang,{"上元":jieqi_code[0], "中元":jieqi_code[1], "下元":jieqi_code[2]}.get(find_yuen),find_yuen)
+    return "{}{}局{}".format(find_yingyang, qu[dict(zip(["上元","中元", "下元"], [0,1,2])).get(find_yuen)],find_yuen)
+
 
 def getgtw():
     gtw = re.findall("..","地籥六賊五符天曹地符風伯雷公雨師風雲唐符國印天關")
@@ -411,4 +409,4 @@ def jq(year, month, day, hour, minute):#从当前时间开始连续输出未来n
         return list(result[0].values())[0]
 
 print(gangzhi(2024,1,20,11,4))
-
+print(qimen_ju_name_ke(2024,1,20,11,4))
