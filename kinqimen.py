@@ -41,11 +41,15 @@ class Qimen:
         return dict(zip(list(map(lambda x: dict(zip(config.cnumber, config.eight_gua)).get(x), config.new_list(config.cnumber, config.qimen_ju_name(self.year, self.month, self.day, self.hour, self.minute)[2]))), {"陽遁":list("戊己庚辛壬癸丁丙乙"),"陰遁":list("戊乙丙丁癸壬辛庚己")}.get(config.qimen_ju_name(self.year, self.month, self.day, self.hour, self.minute)[0:2])))
     #地盤
     def pan_earth_minute(self):
-        return dict(zip(list(map(lambda x: dict(zip(config.cnumber, config.eight_gua)).get(x), config.new_list(config.cnumber, config.qimen_ju_name_minute(self.year, self.month, self.day, self.hour, self.minute)[2]))), {"陽遁":list("戊己庚辛壬癸丁丙乙"),"陰遁":list("戊乙丙丁癸壬辛庚己")}.get(config.qimen_ju_name_minute(self.year, self.month, self.day, self.hour, self.minute)[0:2])))
+        return dict(zip(list(map(lambda x: dict(zip(config.cnumber, config.eight_gua)).get(x), config.new_list(config.cnumber, config.qimen_ju_name_ke(self.year, self.month, self.day, self.hour, self.minute)[2]))), {"陽遁":list("戊己庚辛壬癸丁丙乙"),"陰遁":list("戊乙丙丁癸壬辛庚己")}.get(config.qimen_ju_name_ke(self.year, self.month, self.day, self.hour, self.minute)[0:2])))
     
     #逆地盤
     def pan_earth_r(self):
         return dict(zip(list(self.pan_earth().values()), list(self.pan_earth().keys())))
+    
+    def pan_earth_min_r(self):
+        return dict(zip(list(self.pan_earth_minute().values()), list(self.pan_earth_minute().keys())))
+    
     #天盤
     def pan_sky(self):
         rotate = {"陽":config.clockwise_eightgua, "陰":list(reversed(config.clockwise_eightgua)) }.get(config.qimen_ju_name(self.year, self.month, self.day, self.hour, self.minute)[0])
@@ -54,7 +58,7 @@ class Qimen:
         fu_head_location = config.zhifu_n_zhishi(self.year, self.month, self.day, self.hour, self.minute).get("值符星宮")[1]
         fu_head_location2 = self.pan_earth_r().get(fu_head)
         zhifu = config.zhifu_n_zhishi(self.year, self.month, self.day, self.hour, self.minute)["值符星宮"][0]
-        zhifu2 = config.zhifu_n_zhishi(self.year, self.month, self.day, self.hour, self.minute)
+        #zhifu2 = config.zhifu_n_zhishi(self.year, self.month, self.day, self.hour, self.minute)
         if fu_head_location == "中":
             gong_reorder = config.new_list(rotate, "坤")
             try:
@@ -86,13 +90,13 @@ class Qimen:
             
     #天盤分
     def pan_sky_minute(self):
-        rotate = {"陽":config.clockwise_eightgua, "陰":list(reversed(config.clockwise_eightgua)) }.get(config.qimen_ju_name(self.year, self.month, self.day, self.hour, self.minute)[0])
+        rotate = {"陽":config.clockwise_eightgua, "陰":list(reversed(config.clockwise_eightgua)) }.get(config.qimen_ju_name_ke(self.year, self.month, self.day, self.hour, self.minute)[0])
         fu_head = self.hourganghzi_zhifu_minute()[2]
-        fu_location = self.pan_earth_r().get(config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[4][0])
-        fu_head_location = config.zhifu_n_zhishi_minute(self.year, self.month, self.day, self.hour, self.minute).get("值符星宮")[1]
-        fu_head_location2 = self.pan_earth_r().get(fu_head)
-        zhifu = config.zhifu_n_zhishi_minute(self.year, self.month, self.day, self.hour, self.minute)["值符星宮"][0]
-        zhifu2 = config.zhifu_n_zhishi_minute(self.year, self.month, self.day, self.hour, self.minute)
+        fu_location = self.pan_earth_min_r().get(config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[4][0])
+        fu_head_location = config.zhifu_n_zhishi_ke(self.year, self.month, self.day, self.hour, self.minute).get("值符星宮")[1]
+        fu_head_location2 = self.pan_earth_min_r().get(fu_head)
+        zhifu = config.zhifu_n_zhishi_ke(self.year, self.month, self.day, self.hour, self.minute)["值符星宮"][0]
+        #zhifu2 = config.zhifu_n_zhishi_ke(self.year, self.month, self.day, self.hour, self.minute)
         if fu_head_location == "中":
             gong_reorder = config.new_list(rotate, "坤")
             try:
@@ -101,7 +105,7 @@ class Qimen:
             except ValueError:
                 return dict(zip(list(reversed(gong_reorder)), config.new_list(list(map(lambda x: self.pan_earth().get(x), list(reversed(rotate)))), self.pan_earth().get("坤")) ))
         if fu_head_location != "中" and zhifu != "禽" and fu_head_location2 != "中":
-            gan_reorder = config.new_list(list(map(lambda x:self.pan_earth().get(x), list(rotate))), fu_head)
+            gan_reorder = config.new_list(list(map(lambda x:self.pan_earth_minute().get(x), list(rotate))), fu_head)
             gong_reorder = config.new_list(rotate,  fu_head_location)
             if fu_head not in gan_reorder:
                 start = dict(zip(config.cnumber, gan_reorder)).get(config.qimen_ju_name(self.year, self.month, self.day, self.hour, self.minute)[2])
@@ -110,17 +114,17 @@ class Qimen:
                 return dict(zip(rgong_reorder, rgan_reorder)), dict(zip(rgan_reorder, rgong_reorder))
             if fu_head in gan_reorder:
                 if fu_location == None:
-                    return  self.pan_earth()
+                    return  self.pan_earth_minute()
                 elif fu_location != None:
-                    return {**dict(zip(gong_reorder,gan_reorder)),**{"中":self.pan_earth().get("中") } }
+                    return {**dict(zip(gong_reorder,gan_reorder)),**{"中":self.pan_earth_minute().get("中") } }
         if fu_head_location != "中" and zhifu == "禽" and fu_head_location2 == "中":
-            gan_reorder = config.new_list(list(map(lambda x: self.pan_earth().get(x), list(rotate))), self.pan_earth().get("坤"))
+            gan_reorder = config.new_list(list(map(lambda x: self.pan_earth_minute().get(x), list(rotate))), self.pan_earth_minute().get("坤"))
             gong_reorder = config.new_list(rotate,  fu_head_location)
             if fu_head not in gan_reorder:
                 rgong_reorder = config.new_list(gong_reorder , fu_location)
                 return dict(zip(rgong_reorder, gan_reorder))
             if fu_head in gan_reorder:
-                return {**dict(zip(gong_reorder,gan_reorder)),**{"中":self.pan_earth()[0].get("中") } }
+                return {**dict(zip(gong_reorder,gan_reorder)),**{"中":self.pan_earth_minute()[0].get("中") } }
     #九宮長生十二神
     def gong_chengsun(self):
         sky = self.pan_sky()
@@ -196,9 +200,9 @@ class Qimen:
         gzd = "{}年{}月{}日{}時{}分".format(gz[0], gz[1], gz[2], gz[3], gz[4])
         shunhead = config.shun(gz[3])
         shunkong = config.hourkong_minutekong(self.year, self.month, self.day, self.hour, self.minute)
-        paiju = config.qimen_ju_name_minute(self.year, self.month, self.day, self.hour, self.minute)
+        paiju = config.qimen_ju_name_ke(self.year, self.month, self.day, self.hour, self.minute)
         j_q = config.jq(self.year, self.month, self.day, self.hour, self.minute)
-        zfzs = config.zhifu_n_zhishi_minute(self.year, self.month, self.day, self.hour, self.minute)
+        zfzs = config.zhifu_n_zhishi_ke(self.year, self.month, self.day, self.hour, self.minute)
         pan_star_result = config.pan_star_minute(self.year, self.month, self.day, self.hour, self.minute)
         star = pan_star_result[0]
         door = config.pan_door_minute(self.year, self.month, self.day, self.hour, self.minute)
@@ -303,11 +307,12 @@ class Qimen:
         return config.multi_key_dict_get(dict(zip(list(map(lambda i:tuple(i), re.findall("...","申子辰寅午戌亥卯未巳酉丑"))), list("寅申巳亥"))), config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[3][1])
 
     def overall(self):
-        return { "金函玉鏡(日家奇門)": self.gpan(), "時家奇門": self.pan(), "分家奇門":self.pan_minute()}
+        return { "金函玉鏡(日家奇門)": self.gpan(), "時家奇門": self.pan(), "刻家奇門":self.pan_minute()}
 
 if __name__ == '__main__':
     tic = time.perf_counter()
     #print(Qimen(2023,11,27,10,4).pan())
-    print(Qimen(2023,11,27,10,4).overall())
+    #print(Qimen(2024,1,16,0,0).pan_minute())
+    print(Qimen(2024,1,20,10,26).pan_minute())
     toc = time.perf_counter()
     print(f"{toc - tic:0.4f} seconds")
