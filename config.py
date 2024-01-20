@@ -262,7 +262,7 @@ def pan_door_minute(year, month, day, hour, minute):
         gong_reorder = new_list(rotate, "坤")
     else:
         gong_reorder = new_list(rotate, starting_gong)
-    return dict(zip(gong_reorder,{"陽":new_list(door_r, starting_door), "陰":new_list(list(reversed(door_r)), starting_door)}.get(qimen_ju_name(year, month, day, hour, minute)[0])))
+    return dict(zip(gong_reorder,{"陽":new_list(door_r, starting_door), "陰":new_list(list(reversed(door_r)), starting_door)}.get(qimen_ju_name_ke(year, month, day, hour, minute)[0])))
 #九星
 def pan_star(year, month, day, hour, minute):
     star_r = list("蓬任沖輔英禽柱心")
@@ -299,12 +299,12 @@ def pan_god(year, month, day, hour, minute):
 
 def pan_god_minute(year, month, day, hour, minute):
     starting_gong = zhifu_n_zhishi_ke(year, month, day, hour, minute).get("值符星宮")[1]
-    rotate = {"陽":clockwise_eightgua, "陰":list(reversed(clockwise_eightgua)) }.get(qimen_ju_name(year, month, day, hour, minute)[0])
+    rotate = {"陽":clockwise_eightgua, "陰":list(reversed(clockwise_eightgua)) }.get(qimen_ju_name_ke(year, month, day, hour, minute)[0])
     if starting_gong == "中":
         gong_reorder = new_list(rotate, "坤")
     else:
         gong_reorder = new_list(rotate, starting_gong)
-    return dict(zip(gong_reorder,{"陽":list("符蛇陰合勾雀地天"),"陰":list("符蛇陰合虎玄地天")}.get(qimen_ju_name(year, month, day, hour, minute)[0])))
+    return dict(zip(gong_reorder,{"陽":list("符蛇陰合勾雀地天"),"陰":list("符蛇陰合虎玄地天")}.get(qimen_ju_name_ke(year, month, day, hour, minute)[0])))
 
 #找值符及值使
 def zhifu_n_zhishi(year, month, day, hour, minute):
