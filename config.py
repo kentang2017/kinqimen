@@ -215,7 +215,8 @@ def qimen_ju_name(year, month, day, hour, minute):
 def qimen_ju_name_ke(year, month, day, hour, minute):
     hgz = gangzhi(year, month, day, hour, minute)[3]
     find_yingyang = multi_key_dict_get({tuple(list('子丑寅卯辰巳')):"陽遁",tuple(list('午未申酉戌亥')):"陰遁" }, hgz[1])
-    qu = {"陽遁": multi_key_dict_get({tuple(new_list(jieqi_name, "冬至")[0:12]): "一七四", tuple(new_list(jieqi_name, "夏至")[0:12]): "九三六"}, jq(year,month, day,hour, minute)),  "陰遁": multi_key_dict_get({tuple(new_list(jieqi_name, "夏至")[0:12]): "一七四", tuple(new_list(jieqi_name, "冬至")[0:12]): "九三六"}, jq(year,month, day,hour, minute))}.get( find_yingyang)
+    #qu = {"陽遁": multi_key_dict_get({tuple(new_list(jieqi_name, "冬至")[0:12]): "一七四", tuple(new_list(jieqi_name, "夏至")[0:12]): "九三六"}, jq(year,month, day,hour, minute)),  "陰遁": multi_key_dict_get({tuple(new_list(jieqi_name, "夏至")[0:12]): "一七四", tuple(new_list(jieqi_name, "冬至")[0:12]): "九三六"}, jq(year,month, day,hour, minute))}.get( find_yingyang)
+    qu = multi_key_dict_get({tuple(new_list(jieqi_name, "冬至")[0:12]): "一七四", tuple(new_list(jieqi_name, "夏至")[0:12]): "九三六"}, jq(year,month, day,hour, minute))
     find_yuen = findyuen_minute(year, month, day, hour, minute)
     return "{}{}局{}".format(find_yingyang, qu[dict(zip(["上元","中元", "下元"], [0,1,2])).get(find_yuen)],find_yuen)
 
