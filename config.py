@@ -18,14 +18,16 @@ tian_gan = '甲乙丙丁戊己庚辛壬癸'
 di_zhi = '子丑寅卯辰巳午未申酉戌亥'
 cnumber = list("一二三四五六七八九")
 door_r = list("休生傷杜景死驚開")
+star_r = list("蓬任沖輔英禽柱心")
 eight_gua = list("坎坤震巽中乾兌艮離")
 clockwise_eightgua = list("坎艮震巽離坤兌乾")
 golen_d = re.findall("..","太乙攝提軒轅招搖天符青龍咸池太陰天乙")
 wuxing = "火水金火木金水土土木,水火火金金木土水木土,火火金金木木土土水水,火木水金木水土火金土,木火金水水木火土土金"
 wuxing_relation_2 = dict(zip(list(map(lambda x: tuple(re.findall("..",x)), wuxing.split(","))), "尅我,我尅,比和,生我,我生".split(",")))
 cmonth = list("一二三四五六七八九十") + ["十一","十二"]
-
 jieqi_name = re.findall('..', '春分清明穀雨立夏小滿芒種夏至小暑大暑立秋處暑白露秋分寒露霜降立冬小雪大雪冬至小寒大寒立春雨水驚蟄')
+door_wuxing = dict(zip(door_r,"水土木木火土金金"))
+star_wuxing = dict(zip(star_r,"水土木木火土金金"))
 
 #%% 基本功能函數
 def multi_key_dict_get(d, k):
@@ -290,7 +292,6 @@ def pan_star(year, month, day, hour, minute):
     return dict(zip(gong_reorder,star_reorder)), dict(zip(star_reorder, gong_reorder))
 
 def pan_star_minute(year, month, day, hour, minute):
-    star_r = list("蓬任沖輔英禽柱心")
     starting_star = zhifu_n_zhishi_ke(year, month, day, hour, minute).get("值符星宮")[0].replace("芮", "禽")
     starting_gong = zhifu_n_zhishi_ke(year, month, day, hour, minute).get("值符星宮")[1]
     rotate = {"陽":clockwise_eightgua, "陰":list(reversed(clockwise_eightgua))}.get(qimen_ju_name_ke(year, month, day, hour, minute)[0])
@@ -406,4 +407,3 @@ def jq(year, month, day, hour, minute):#从当前时间开始连续输出未来n
         return list(result[1].values())[0]
     if current < j[1] and current < j[2]:
         return list(result[0].values())[0]
-
