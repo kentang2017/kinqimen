@@ -1,5 +1,6 @@
 ﻿# **Python Qimendunjia Kinqimen Python 奇門遁甲 堅奇門**
 
+![alt text](https://github.com/kentang2017/kinqimen/blob/master/pic/Untitled-22.png)
 簡單金函玉鏡、時家奇門、刻家奇門的奇門遁甲起盤 A simple python package of Qimendunjia in Chinese hour-based system, minute-based system and golden letter jade mirror style Qimendunjia for prediction.
 
 堅奇門排盤 https://kinqimen.streamlitapp.com
