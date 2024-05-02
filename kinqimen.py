@@ -43,8 +43,15 @@ class Qimen:
         Jieqi_disance = config.jq_distance(self.year, self.month, self.day, self.hour, self.minute)[0].get(Jieqi)
         current = config.jq_distance(self.year, self.month, self.day, self.hour, self.minute)[1]
         difference = datetime.datetime.strptime(current, "%Y/%m/%d %H:%M:%S") >  datetime.datetime.strptime(Jieqi_disance, "%Y/%m/%d %H:%M:%S")
+        difference1 = datetime.datetime.strptime(current, "%Y/%m/%d %H:%M:%S") - datetime.datetime.strptime(Jieqi_disance, "%Y/%m/%d %H:%M:%S")
         
-        return config.multi_key_dict_get(ju_day_dict, dict(zip(config.jiazi(),list(itertools.chain.from_iterable([[i]*5 for i in config.jiazi()[0::5]])))).get(dgz)), Jieqi, dgz, dgz_dist, difference, current,Jieqi_disance 
+        if dgz_dist == "日干是符頭" and difference == True:
+            return "超神"
+        if dgz_dist == "日干非符頭" and difference == True:
+            return "接氣"
+        if dgz_dist == "日干是符頭" and difference1 > 0:
+            return  "正授"
+        #return config.multi_key_dict_get(ju_day_dict, dict(zip(config.jiazi(),list(itertools.chain.from_iterable([[i]*5 for i in config.jiazi()[0::5]])))).get(dgz)), Jieqi, dgz, dgz_dist, difference, current,Jieqi_disance 
     
     #值符
     def hourganghzi_zhifu(self):
@@ -331,8 +338,8 @@ if __name__ == '__main__':
     tic = time.perf_counter()
     #print(Qimen(2023,11,27,10,4).pan())
     #print(Qimen(2024,1,16,0,0).pan_minute())
-    print(Qimen(2024,3,16,22,28).qimen_ju_day_zhirun())
-    print(Qimen(2024,3,20,11,56).qimen_ju_day_zhirun())
+    print(Qimen(2024,7,22,22,28).qimen_ju_day_zhirun())
+    print(Qimen(2024,7,24,11,56).qimen_ju_day_zhirun())
     #print(config.qimen_ju_name_ke(2023,6,22,18,17))
     #print(config.jq(2023,6,22,18,17))
     toc = time.perf_counter()
