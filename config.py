@@ -419,10 +419,10 @@ def jq(year, month, day, hour, minute):#从当前时间开始连续输出未来n
     
 def jq_distance(year, month, day, hour, minute):#从当前时间开始连续输出未来n个节气的时间
     #current =  datetime.strptime("{}/{}/{} {}:{}:00".format(str(year).zfill(4), str(month).zfill(2), str(day).zfill(2),str(hour).zfill(2), str(minute).zfill(2)), '%Y/%m/%d %H:%M:%S')
-    current = Date("{}/{}/{} {}:{}:00".format(str(year).zfill(4), str(month).zfill(2), str(day).zfill(2),str(hour).zfill(2), str(minute).zfill(2)))
+    current = "{}/{}/{} {}:{}:00".format(str(year).zfill(4), str(month).zfill(2), str(day).zfill(2),str(hour).zfill(2), str(minute).zfill(2))
     jd = change(year, month, day, hour, minute)
     #jd = Date("{}/{}/{} {}:{}:00.00".format(str(b.year).zfill(4), str(b.month).zfill(2), str(b.day).zfill(2), str(b.hour).zfill(2), str(b.minute).zfill(2)  ))
-    result = []
+    result = {}
     e=ecliptic_lon(jd)
     n=int(e*180.0/math.pi/15)+1
     for i in range(12):
@@ -430,13 +430,10 @@ def jq_distance(year, month, day, hour, minute):#从当前时间开始连续输�
             n-=24
         jd=iteration(jd,sta)
         d=Date(jd+1/3).tuple()
-        dt = "{}/{}/{} {}:{}:00.00".format(d[0],d[1],d[2],d[3],d[4]).split(".")[0]
-        time_info = {  dt:jieqi_name[n]}
+        dt = "{}/{}/{} {}:{}:00.00".format(d[0],d[1],d[2],str(d[3]).zfill(2),str(d[4]).zfill(2)).split(".")[0]
+        time_info = {  jieqi_name[n]:dt}
         n+=1    
-        result.append(time_info)
-    j = [list(i.keys())[0] for i in result]
-    return result
+        result.update(time_info)
+    #j = [list(i.keys())[0] for i in result]
+    return result, current
 
-
-
-print(jq_distance(2024,3,20,11, 20))
