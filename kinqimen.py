@@ -7,6 +7,7 @@ import re
 import time
 import itertools
 import config
+import datetime
 
 
 class Qimen:
@@ -33,14 +34,17 @@ class Qimen:
     #有正授，有超神，有閏奇，有接氣
     def qimen_ju_day_zhirun(self):
         ju_day_dict = {tuple(["甲子", "甲午", "己卯", "己酉"]):"上元", tuple(["甲寅","甲申", "己巳", "己亥"]):"中元", tuple(["甲辰", "甲戌", "己丑", "己未"]):"下元"}
-        jieqi = config.jq(self.year, self.month, self.day, self.hour, self.minute)
+        Jieqi = config.jq(self.year, self.month, self.day, self.hour, self.minute)
         dgz = config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[2]
         if dgz in ["甲子", "甲午", "己卯", "己酉", "甲寅","甲申", "己巳", "己亥", "甲辰", "甲戌", "己丑", "己未"]:
-            dgz_dist = "符頭"
+            dgz_dist = "日干是符頭"
         else:
-            dgz_dist = "非符頭"
+            dgz_dist = "日干非符頭"
+        Jieqi_disance = config.jq_distance(self.year, self.month, self.day, self.hour, self.minute)[0].get(Jieqi)
+        current = config.jq_distance(self.year, self.month, self.day, self.hour, self.minute)[1]
+        difference = datetime.datetime.strptime(current, "%Y/%m/%d %H:%M:%S") >  datetime.datetime.strptime(Jieqi_disance, "%Y/%m/%d %H:%M:%S")
         
-        return config.multi_key_dict_get(ju_day_dict, dict(zip(config.jiazi(),list(itertools.chain.from_iterable([[i]*5 for i in config.jiazi()[0::5]])))).get(dgz)), jieqi, dgz, dgz_dist
+        return config.multi_key_dict_get(ju_day_dict, dict(zip(config.jiazi(),list(itertools.chain.from_iterable([[i]*5 for i in config.jiazi()[0::5]])))).get(dgz)), Jieqi, dgz, dgz_dist, difference, current,Jieqi_disance 
     
     #值符
     def hourganghzi_zhifu(self):
@@ -328,7 +332,7 @@ if __name__ == '__main__':
     #print(Qimen(2023,11,27,10,4).pan())
     #print(Qimen(2024,1,16,0,0).pan_minute())
     print(Qimen(2024,3,16,22,28).qimen_ju_day_zhirun())
-    print(Qimen(2024,3,20,5,56).qimen_ju_day_zhirun())
+    print(Qimen(2024,3,20,11,56).qimen_ju_day_zhirun())
     #print(config.qimen_ju_name_ke(2023,6,22,18,17))
     #print(config.jq(2023,6,22,18,17))
     toc = time.perf_counter()
