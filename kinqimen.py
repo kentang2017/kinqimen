@@ -30,6 +30,18 @@ class Qimen:
         except TypeError:
             find_d = config.multi_key_dict_get(ju_day_dict, config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[2][1])
         return find_d
+    #有正授，有超神，有閏奇，有接氣
+    def qimen_ju_day_zhirun(self):
+        ju_day_dict = {tuple(["甲子", "甲午", "己卯", "己酉"]):"上元", tuple(["甲寅","甲申", "己巳", "己亥"]):"中元", tuple(["甲辰", "甲戌", "己丑", "己未"]):"下元"}
+        jieqi = config.jq(self.year, self.month, self.day, self.hour, self.minute)
+        dgz = config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[2]
+        if dgz in ["甲子", "甲午", "己卯", "己酉", "甲寅","甲申", "己巳", "己亥", "甲辰", "甲戌", "己丑", "己未"]:
+            dgz_dist = "符頭"
+        else:
+            dgz_dist = "非符頭"
+        
+        return config.multi_key_dict_get(ju_day_dict, dict(zip(config.jiazi(),list(itertools.chain.from_iterable([[i]*5 for i in config.jiazi()[0::5]])))).get(dgz)), jieqi, dgz, dgz_dist
+    
     #值符
     def hourganghzi_zhifu(self):
         return config.multi_key_dict_get(dict(zip(list(map(lambda x: tuple(x), list(map(lambda x: config.new_list(config.jiazi(), x)[0:10], config.jiazi()[0::10])))), list(map(lambda x: config.jiazi()[0::10][x] + config.tian_gan[4:10][x], list(range(0,6)))))), config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[3])
@@ -308,13 +320,16 @@ class Qimen:
 
     def overall(self):
         return { "金函玉鏡(日家奇門)": self.gpan(), "時家奇門": self.pan(), "刻家奇門":self.pan_minute()}
+    
+    
 
 if __name__ == '__main__':
     tic = time.perf_counter()
     #print(Qimen(2023,11,27,10,4).pan())
     #print(Qimen(2024,1,16,0,0).pan_minute())
-    print(Qimen(2023,6,22,18,17).pan_minute())
-    print(config.qimen_ju_name_ke(2023,6,22,18,17))
-    print(config.jq(2023,6,22,18,17))
+    print(Qimen(2024,3,16,22,28).qimen_ju_day_zhirun())
+    print(Qimen(2024,3,20,5,56).qimen_ju_day_zhirun())
+    #print(config.qimen_ju_name_ke(2023,6,22,18,17))
+    #print(config.jq(2023,6,22,18,17))
     toc = time.perf_counter()
     print(f"{toc - tic:0.4f} seconds")

@@ -65,6 +65,10 @@ def Ganzhiwuxing(gangorzhi):
 def jieqicode(year,month, day, hour, minute):
     return multi_key_dict_get({("冬至", "驚蟄"): "一七四",  "小寒": "二八五",  ("大寒", "春分"): "三九六", "立春":"八五二","雨水":"九六三",  ("清明", "立夏"): "四一七", ("穀雨", "小滿"): "五二八", "芒種": "六三九", ("夏至", "白露"): "九三六", "小暑":"八二五",  ("大暑", "秋分"): "七一四", "立秋":"二五八",  "處暑":"一四七",  ("霜降", "小雪"): "五八二", ("寒露", "立冬"): "六九三", "大雪":"四七一"}, jq(year,month, day,hour, minute))
 
+def jieqicode_zhirun(year,month, day, hour, minute):
+    
+    return 
+
 def findyuen(year, month, day, hour, minute):
     return multi_key_dict_get(findyuen_dict(), gangzhi(year, month, day, hour, minute)[2])
 
@@ -204,12 +208,18 @@ def hourkong_minutekong(year, month, day, hour, minute):
 def find_shier_luck(gan):
     return {**dict(zip(tian_gan[0::2], list(map(lambda y: dict(zip(y, re.findall('..',"長生沐浴冠帶臨冠帝旺") + list("衰病死墓絕胎養"))),list(map(lambda i:new_list(di_zhi, i),list("亥寅寅巳申"))))))), **dict(zip(tian_gan[1::2], [dict(zip(y, list("死病衰") + re.findall('..',"帝旺臨冠冠帶沐浴長生") + list("養胎絕墓"))) for y in list(map(lambda i:new_list(di_zhi, i), list("亥寅寅巳申")))]))}.get(gan)
 
-#奇門排局
+#奇門排局拆補
 def qimen_ju_name(year, month, day, hour, minute):
     find_yingyang = multi_key_dict_get({tuple(new_list(jieqi_name, "冬至")[0:12]):"陽遁",tuple(new_list(jieqi_name, "夏至")[0:12]):"陰遁" }, jq(year, month, day, hour, minute))
     find_yuen = findyuen(year, month, day, hour, minute)
     jieqi_code = jieqicode(year, month, day, hour, minute)
     return "{}{}局{}".format(find_yingyang,{"上元":jieqi_code[0], "中元":jieqi_code[1], "下元":jieqi_code[2]}.get(find_yuen),find_yuen)
+
+#奇門排局置閏
+def qimen_ju_name_zhirun(year, month, day, hour, minute):
+    find_yingyang = multi_key_dict_get({tuple(new_list(jieqi_name, "冬至")[0:12]):"陽遁",tuple(new_list(jieqi_name, "夏至")[0:12]):"陰遁" }, jq(year, month, day, hour, minute))
+    jieqi_code = jieqicode(year, month, day, hour, minute)
+    return find_yingyang,  jieqi_code, jq(year, month, day, hour, minute)
 
 #奇門排局刻家
 def qimen_ju_name_ke(year, month, day, hour, minute):
@@ -406,4 +416,27 @@ def jq(year, month, day, hour, minute):#从当前时间开始连续输出未来n
         return list(result[1].values())[0]
     if current < j[1] and current < j[2]:
         return list(result[0].values())[0]
+    
+def jq_distance(year, month, day, hour, minute):#从当前时间开始连续输出未来n个节气的时间
+    #current =  datetime.strptime("{}/{}/{} {}:{}:00".format(str(year).zfill(4), str(month).zfill(2), str(day).zfill(2),str(hour).zfill(2), str(minute).zfill(2)), '%Y/%m/%d %H:%M:%S')
+    current = Date("{}/{}/{} {}:{}:00".format(str(year).zfill(4), str(month).zfill(2), str(day).zfill(2),str(hour).zfill(2), str(minute).zfill(2)))
+    jd = change(year, month, day, hour, minute)
+    #jd = Date("{}/{}/{} {}:{}:00.00".format(str(b.year).zfill(4), str(b.month).zfill(2), str(b.day).zfill(2), str(b.hour).zfill(2), str(b.minute).zfill(2)  ))
+    result = []
+    e=ecliptic_lon(jd)
+    n=int(e*180.0/math.pi/15)+1
+    for i in range(12):
+        if n>=24:
+            n-=24
+        jd=iteration(jd,sta)
+        d=Date(jd+1/3).tuple()
+        dt = "{}/{}/{} {}:{}:00.00".format(d[0],d[1],d[2],d[3],d[4]).split(".")[0]
+        time_info = {  dt:jieqi_name[n]}
+        n+=1    
+        result.append(time_info)
+    j = [list(i.keys())[0] for i in result]
+    return result
 
+
+
+print(jq_distance(2024,3,20,11, 20))
