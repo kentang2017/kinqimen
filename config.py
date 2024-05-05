@@ -8,9 +8,9 @@ Created on Wed May 17 11:55:49 2023
 import re
 from itertools import cycle, repeat
 import math
-from sxtwl import fromSolar
+import sxtwl
 import ephem
-from ephem import Sun, Date, Ecliptic, Equatorial
+import datetime
 
 cnum = list("一二三四五六七八九十")
 #干支
@@ -22,10 +22,14 @@ eight_gua = list("坎坤震巽中乾兌艮離")
 clockwise_eightgua = list("坎艮震巽離坤兌乾")
 golen_d = re.findall("..","太乙攝提軒轅招搖天符青龍咸池太陰天乙")
 wuxing = "火水金火木金水土土木,水火火金金木土水木土,火火金金木木土土水水,火木水金木水土火金土,木火金水水木火土土金"
-wuxing_relation_2 = dict(zip(list(map(lambda x: tuple(re.findall("..",x)), wuxing.split(","))), "尅我,我尅,比和,生我,我生".split(",")))
+wuxing_relation_2 = dict(zip(list(map(
+    lambda x: tuple(re.findall("..",x)), wuxing.split(","))),
+    "尅我,我尅,比和,生我,我生".split(",")))
 cmonth = list("一二三四五六七八九十") + ["十一","十二"]
-
 jieqi_name = re.findall('..', '春分清明穀雨立夏小滿芒種夏至小暑大暑立秋處暑白露秋分寒露霜降立冬小雪大雪冬至小寒大寒立春雨水驚蟄')
+def split_list(lst, chunk_size):
+    return [lst[i:i + chunk_size] for i in range(0, len(lst), chunk_size)]
+
 
 #%% 基本功能函數
 def multi_key_dict_get(d, k):
@@ -59,15 +63,29 @@ def jiazi():
     return list(map(lambda x: "{}{}".format(Gan[x % len(Gan)], Zhi[x % len(Zhi)]), list(range(60))))
 
 def Ganzhiwuxing(gangorzhi):
-    ganzhiwuxing = dict(zip(list(map(lambda x: tuple(x),"甲寅乙卯震巽,丙巳丁午離,壬亥癸子坎,庚申辛酉乾兌,未丑戊己未辰戌艮坤".split(","))), list("木火水金土")))
+    gz_list = "甲寅乙卯震巽,丙巳丁午離,壬亥癸子坎,庚申辛酉乾兌,未丑戊己未辰戌艮坤".split(",")
+    ganzhiwuxing = dict(zip(list(map(lambda x: tuple(x), gz_list
+                                     )), list("木火水金土")))
     return multi_key_dict_get(ganzhiwuxing, gangorzhi)
 
 def jieqicode(year,month, day, hour, minute):
-    return multi_key_dict_get({("冬至", "驚蟄"): "一七四",  "小寒": "二八五",  ("大寒", "春分"): "三九六", "立春":"八五二","雨水":"九六三",  ("清明", "立夏"): "四一七", ("穀雨", "小滿"): "五二八", "芒種": "六三九", ("夏至", "白露"): "九三六", "小暑":"八二五",  ("大暑", "秋分"): "七一四", "立秋":"二五八",  "處暑":"一四七",  ("霜降", "小雪"): "五八二", ("寒露", "立冬"): "六九三", "大雪":"四七一"}, jq(year,month, day,hour, minute))
-
-def jieqicode_zhirun(year,month, day, hour, minute):
-    
-    return 
+    return multi_key_dict_get({("冬至", "驚蟄"): "一七四",
+                               "小寒": "二八五",
+                               ("大寒", "春分"): "三九六",
+                               "立春":"八五二",
+                               "雨水":"九六三",
+                               ("清明", "立夏"): "四一七",
+                               ("穀雨", "小滿"): "五二八",
+                               "芒種": "六三九",
+                               ("夏至", "白露"): "九三六",
+                               "小暑":"八二五",
+                               ("大暑", "秋分"): "七一四",
+                               "立秋":"二五八",
+                               "處暑":"一四七",
+                               ("霜降", "小雪"): "五八二",
+                               ("寒露", "立冬"): "六九三",
+                               "大雪":"四七一"}, 
+                              jq(year,month, day,hour, minute))
 
 def findyuen(year, month, day, hour, minute):
     return multi_key_dict_get(findyuen_dict(), gangzhi(year, month, day, hour, minute)[2])
@@ -80,12 +98,28 @@ def find_wx_relation(zhi1, zhi2):
 #換算干支
 def gangzhi1(year, month, day, hour, minute):
     if hour == 23:
-        d = Date(round((Date("{}/{}/{} {}:00:00.00".format(str(year).zfill(4), str(month).zfill(2), str(day+1).zfill(2), str(0).zfill(2)))), 3))
+        d = ephem.Date(round((ephem.Date("{}/{}/{} {}:00:00.00".format(
+            str(year).zfill(4),
+            str(month).zfill(2),
+            str(day+1).zfill(2),
+            str(0).zfill(2)))),3))
     else:
-        d = Date("{}/{}/{} {}:00:00.00".format(str(year).zfill(4), str(month).zfill(2), str(day).zfill(2), str(hour).zfill(2) ))
+        d = ephem.Date("{}/{}/{} {}:00:00.00".format(
+            str(year).zfill(4),
+            str(month).zfill(2),
+            str(day).zfill(2),
+            str(hour).zfill(2)))
     dd = list(d.tuple())
-    cdate = fromSolar(dd[0], dd[1], dd[2])
-    yTG,mTG,dTG,hTG = "{}{}".format(tian_gan[cdate.getYearGZ().tg], di_zhi[cdate.getYearGZ().dz]), "{}{}".format(tian_gan[cdate.getMonthGZ().tg],di_zhi[cdate.getMonthGZ().dz]), "{}{}".format(tian_gan[cdate.getDayGZ().tg], di_zhi[cdate.getDayGZ().dz]), "{}{}".format(tian_gan[cdate.getHourGZ(dd[3]).tg], di_zhi[cdate.getHourGZ(dd[3]).dz])
+    cdate = sxtwl.fromSolar(dd[0], dd[1], dd[2])
+    yTG,mTG,dTG,hTG = "{}{}".format(
+        tian_gan[cdate.getYearGZ().tg],
+        di_zhi[cdate.getYearGZ().dz]), "{}{}".format(
+            tian_gan[cdate.getMonthGZ().tg],
+            di_zhi[cdate.getMonthGZ().dz]), "{}{}".format(
+                tian_gan[cdate.getDayGZ().tg],
+                di_zhi[cdate.getDayGZ().dz]), "{}{}".format(
+                    tian_gan[cdate.getHourGZ(dd[3]).tg],
+                    di_zhi[cdate.getHourGZ(dd[3]).dz])
     if year < 1900:
         mTG1 = find_lunar_month(yTG).get(lunar_date_d(year, month, day).get("月"))
     else:
@@ -95,12 +129,28 @@ def gangzhi1(year, month, day, hour, minute):
 
 def gangzhi(year, month, day, hour, minute):
     if hour == 23:
-        d = Date(round((Date("{}/{}/{} {}:00:00.00".format(str(year).zfill(4), str(month).zfill(2), str(day+1).zfill(2), str(0).zfill(2)))), 3))
+        d = ephem.Date(round((ephem.Date("{}/{}/{} {}:00:00.00".format(
+            str(year).zfill(4),
+            str(month).zfill(2),
+            str(day+1).zfill(2),
+            str(0).zfill(2)))),3))
     else:
-        d = Date("{}/{}/{} {}:00:00.00".format(str(year).zfill(4), str(month).zfill(2), str(day).zfill(2), str(hour).zfill(2) ))
+        d = ephem.Date("{}/{}/{} {}:00:00.00".format(
+            str(year).zfill(4),
+            str(month).zfill(2),
+            str(day).zfill(2),
+            str(hour).zfill(2)))
     dd = list(d.tuple())
-    cdate = fromSolar(dd[0], dd[1], dd[2])
-    yTG,mTG,dTG,hTG = "{}{}".format(tian_gan[cdate.getYearGZ().tg], di_zhi[cdate.getYearGZ().dz]), "{}{}".format(tian_gan[cdate.getMonthGZ().tg],di_zhi[cdate.getMonthGZ().dz]), "{}{}".format(tian_gan[cdate.getDayGZ().tg], di_zhi[cdate.getDayGZ().dz]), "{}{}".format(tian_gan[cdate.getHourGZ(dd[3]).tg], di_zhi[cdate.getHourGZ(dd[3]).dz])
+    cdate = sxtwl.fromSolar(dd[0], dd[1], dd[2])
+    yTG,mTG,dTG,hTG = "{}{}".format(
+        tian_gan[cdate.getYearGZ().tg],
+        di_zhi[cdate.getYearGZ().dz]), "{}{}".format(
+            tian_gan[cdate.getMonthGZ().tg],
+            di_zhi[cdate.getMonthGZ().dz]), "{}{}".format(
+                tian_gan[cdate.getDayGZ().tg],
+                di_zhi[cdate.getDayGZ().dz]), "{}{}".format(
+                    tian_gan[cdate.getHourGZ(dd[3]).tg],
+                    di_zhi[cdate.getHourGZ(dd[3]).dz])
     if year < 1900:
         mTG1 = find_lunar_month(yTG).get(lunar_date_d(year, month, day).get("月"))
     else:
@@ -124,7 +174,9 @@ def gangzhi(year, month, day, hour, minute):
     return [yTG, mTG1, dTG, hTG1, gangzhi_minute]
 #旬
 def shun(gz):
-    shun_value = dict(zip(di_zhi, list(range(1,13)))).get(gz[1]) - dict(zip(tian_gan, list(range(1,11)))).get(gz[0])
+    d_value1 = dict(zip(di_zhi, list(range(1,13)))).get(gz[1])
+    d_value2 =  dict(zip(tian_gan, list(range(1,11)))).get(gz[0])
+    shun_value = d_value1 - d_value2
     if shun_value < 0:
         shun_value = shun_value+12
     return {0:"戊", 10:"己", 8:"庚", 6:"辛", 4:"壬", 2:"癸"}.get(shun_value)
@@ -173,12 +225,15 @@ def find_lunar_ke(hour):
         result = multi_key_dict_get(fivehourses, hour[0])
     return new_list(jiazi(), result)
 
-
 def liujiashun_dict():
-    return dict(zip(list(map(lambda x: tuple(x), list(map(lambda x:new_list(jiazi(), x)[0:10], jiazi()[0::10])))), jiazi()[0::10]))
+    jz = jiazi()[0::10]
+    nlist = list(map(lambda x: tuple(x), list(map(lambda x:new_list(jiazi(), x)[0:10],jz))))
+    return dict(zip(nlist, jiazi()[0::10]))
 
 def findyuen_dict():
-    return dict(zip(list(map(lambda x:tuple(x), list(map(lambda i:new_list(jiazi(), i)[0:5], jiazi()[0::5])))), ["上元","中元","下元"]*4))
+    jz = jiazi()[0::5]
+    nlist = list(map(lambda x:tuple(x), list(map(lambda i:new_list(jiazi(), i)[0:5],jz))))
+    return dict(zip(nlist, ["上元","中元","下元"]*4))
 
 #分干支
 def minutes_jiazi_d():
@@ -193,83 +248,203 @@ def ke_jiazi_d(hour):
 
 #農曆
 def lunar_date_d(year, month, day):
-    day = fromSolar(year, month, day)
+    day = sxtwl.fromSolar(year, month, day)
     return {"年":day.getLunarYear(),  "月": day.getLunarMonth(), "日":day.getLunarDay()}
 
 #日空時空
 def daykong_shikong(year, month, day, hour, minute):
-    guxu = {'甲子':{'孤':'戌亥', '虛':'辰巳'}, '甲戌':{'孤':'申酉', '虛':'寅卯'},'甲申':{'孤':'午未', '虛':'子丑'},'甲午':{'孤':'辰巳', '虛':'戌亥'},'甲辰':{'孤':'寅卯', '虛':'申酉'},'甲寅':{'孤':'子丑', '虛':'午未'} }
-    return {"日空":multi_key_dict_get(guxu, multi_key_dict_get(liujiashun_dict(), gangzhi(year, month, day, hour, minute)[2])).get("孤"), "時空":multi_key_dict_get(guxu, multi_key_dict_get(liujiashun_dict(), gangzhi(year, month, day, hour, minute)[3])).get("孤")}
+    guxu = {'甲子':{'孤':'戌亥', '虛':'辰巳'},
+            '甲戌':{'孤':'申酉', '虛':'寅卯'},
+            '甲申':{'孤':'午未', '虛':'子丑'},
+            '甲午':{'孤':'辰巳', '虛':'戌亥'},
+            '甲辰':{'孤':'寅卯', '虛':'申酉'},
+            '甲寅':{'孤':'子丑', '虛':'午未'}}
+    gz=gangzhi(year, month, day, hour, minute)
+    daykong = multi_key_dict_get(guxu, multi_key_dict_get(liujiashun_dict(), gz[2])).get("孤")
+    shikong = multi_key_dict_get(guxu, multi_key_dict_get(liujiashun_dict(), gz[3])).get("孤")
+    return {"日空":daykong,
+            "時空":shikong}
 
 def hourkong_minutekong(year, month, day, hour, minute):
-    guxu = {'甲子':{'孤':'戌亥', '虛':'辰巳'}, '甲戌':{'孤':'申酉', '虛':'寅卯'},'甲申':{'孤':'午未', '虛':'子丑'},'甲午':{'孤':'辰巳', '虛':'戌亥'},'甲辰':{'孤':'寅卯', '虛':'申酉'},'甲寅':{'孤':'子丑', '虛':'午未'} }
-    return {"日空":multi_key_dict_get(guxu, multi_key_dict_get(liujiashun_dict(), gangzhi(year, month, day, hour, minute)[3])).get("孤"), "時空":multi_key_dict_get(guxu, multi_key_dict_get(liujiashun_dict(), gangzhi(year, month, day, hour, minute)[4])).get("孤")}
+    guxu = {'甲子':{'孤':'戌亥', '虛':'辰巳'},
+            '甲戌':{'孤':'申酉', '虛':'寅卯'},
+            '甲申':{'孤':'午未', '虛':'子丑'},
+            '甲午':{'孤':'辰巳', '虛':'戌亥'},
+            '甲辰':{'孤':'寅卯', '虛':'申酉'},
+            '甲寅':{'孤':'子丑', '虛':'午未'}}
+    gz=gangzhi(year, month, day, hour, minute)
+    daykong = multi_key_dict_get(guxu, multi_key_dict_get(liujiashun_dict(), gz[3])).get("孤")
+    shikong = multi_key_dict_get(guxu, multi_key_dict_get(liujiashun_dict(), gz[4])).get("孤")
+    return {"日空":daykong, "時空":shikong}
 
 def find_shier_luck(gan):
-    return {**dict(zip(tian_gan[0::2], list(map(lambda y: dict(zip(y, re.findall('..',"長生沐浴冠帶臨冠帝旺") + list("衰病死墓絕胎養"))),list(map(lambda i:new_list(di_zhi, i),list("亥寅寅巳申"))))))), **dict(zip(tian_gan[1::2], [dict(zip(y, list("死病衰") + re.findall('..',"帝旺臨冠冠帶沐浴長生") + list("養胎絕墓"))) for y in list(map(lambda i:new_list(di_zhi, i), list("亥寅寅巳申")))]))}.get(gan)
+    cs = re.findall('..',"長生沐浴冠帶臨冠帝旺")
+    return {**dict(zip(tian_gan[0::2], list(map(lambda y: dict(zip(y, cs + list("衰病死墓絕胎養"))),list(map(lambda i:new_list(di_zhi, i),list("亥寅寅巳申"))))))), **dict(zip(tian_gan[1::2], [dict(zip(y, list("死病衰") + re.findall('..',"帝旺臨冠冠帶沐浴長生") + list("養胎絕墓"))) for y in list(map(lambda i:new_list(di_zhi, i), list("亥寅寅巳申")))]))}.get(gan)
 
 #奇門排局拆補
 def qimen_ju_name(year, month, day, hour, minute):
-    find_yingyang = multi_key_dict_get({tuple(new_list(jieqi_name, "冬至")[0:12]):"陽遁",tuple(new_list(jieqi_name, "夏至")[0:12]):"陰遁" }, jq(year, month, day, hour, minute))
+    find_yingyang = multi_key_dict_get({tuple(new_list(jieqi_name, "冬至")[0:12]):"陽遁",
+                                        tuple(new_list(jieqi_name, "夏至")[0:12]):"陰遁" }, 
+                                       jq(year, month, day, hour, minute))
     find_yuen = findyuen(year, month, day, hour, minute)
     jieqi_code = jieqicode(year, month, day, hour, minute)
-    return "{}{}局{}".format(find_yingyang,{"上元":jieqi_code[0], "中元":jieqi_code[1], "下元":jieqi_code[2]}.get(find_yuen),find_yuen)
+    return "{}{}局{}".format(find_yingyang,{
+        "上元":jieqi_code[0],
+        "中元":jieqi_code[1],
+        "下元":jieqi_code[2]}.get(find_yuen),
+        find_yuen)
 
-#奇門排局置閏
+#奇門排局置閏，正授，有超神，有閏奇，有接氣
 def qimen_ju_name_zhirun(year, month, day, hour, minute):
-    find_yingyang = multi_key_dict_get({tuple(new_list(jieqi_name, "冬至")[0:12]):"陽遁",tuple(new_list(jieqi_name, "夏至")[0:12]):"陰遁" }, jq(year, month, day, hour, minute))
+    Jieqi = jq(year, month, day, hour, minute)
+    jlist = split_list(jiazi(), 5)
+    jlist = [tuple(i) for i in jlist]
+    fuhead = dict(zip(jlist, jiazi()[0::5]))
+    yy = {tuple(new_list(jieqi_name, "冬至")[0:12]):"陽遁",
+          tuple(new_list(jieqi_name, "夏至")[0:12]):"陰遁" }
+    find_yingyang = multi_key_dict_get(yy,Jieqi)
     jieqi_code = jieqicode(year, month, day, hour, minute)
-    return find_yingyang,  jieqi_code, jq(year, month, day, hour, minute)
-
+    dgz = gangzhi(year, month, day, hour, minute)[2]
+    fd = multi_key_dict_get(fuhead, dgz)
+    ju_day_dict = {tuple(["甲子", "甲午", "己卯", "己酉"]):"上元",
+                   tuple(["甲寅","甲申", "己巳", "己亥"]):"中元",
+                   tuple(["甲辰", "甲戌", "己丑", "己未"]):"下元"}
+    three_yuen = multi_key_dict_get(ju_day_dict, fd)
+    if dgz in ["甲子", "甲午", "己卯", "己酉", "甲寅","甲申", "己巳", "己亥", "甲辰", "甲戌", "己丑", "己未"]:
+        dgz_dist = "日干是符頭"
+    else:
+        dgz_dist = "日干非符頭"
+    Jieqi_disance = jq_distance(year, month, day, hour, minute)[0].get(Jieqi)
+    current = jq_distance(year, month, day, hour, minute)[1]
+    difference = (datetime.datetime.strptime(current, "%Y/%m/%d %H:%M:%S") -
+                  datetime.datetime.strptime(Jieqi_disance, "%Y/%m/%d %H:%M:%S")).days
+    kooks =  {"上元":jieqi_code[0], "中元":jieqi_code[1], "下元":jieqi_code[2]}.get(three_yuen)
+    if dgz_dist == "日干是符頭" and difference > 9:
+        return "超神","{}{}局{}".format(find_yingyang, kooks, three_yuen )
+    if dgz_dist == "日干非符頭" and difference == 15:
+        return "接氣","{}{}局{}".format(find_yingyang, kooks, three_yuen)
+    if dgz_dist == "日干是符頭" and difference == 0 :
+        return  "正授","{}{}局{}".format(find_yingyang, kooks, three_yuen)
+    else:
+        return  "正常","{}{}局{}".format(find_yingyang, kooks, three_yuen)
 #奇門排局刻家
 def qimen_ju_name_ke(year, month, day, hour, minute):
     hgz = gangzhi(year, month, day, hour, minute)[3]
-    find_yingyang = multi_key_dict_get({tuple(list('子丑寅卯辰巳')):"陽遁",tuple(list('午未申酉戌亥')):"陰遁" }, hgz[1])
-    #qu = {"陽遁": multi_key_dict_get({tuple(new_list(jieqi_name, "冬至")[0:12]): "一七四", tuple(new_list(jieqi_name, "夏至")[0:12]): "九三六"}, jq(year,month, day,hour, minute)),  "陰遁": multi_key_dict_get({tuple(new_list(jieqi_name, "夏至")[0:12]): "一七四", tuple(new_list(jieqi_name, "冬至")[0:12]): "九三六"}, jq(year,month, day,hour, minute))}.get( find_yingyang)
-    qu = multi_key_dict_get({tuple(new_list(jieqi_name, "冬至")[0:12]): "一七四", tuple(new_list(jieqi_name, "夏至")[0:12]): "九三六"}, jq(year,month, day,hour, minute))
+    find_yingyang = multi_key_dict_get({tuple(list('子丑寅卯辰巳')):"陽遁",
+                                        tuple(list('午未申酉戌亥')):"陰遁" },
+                                       hgz[1])
+    qu = multi_key_dict_get({tuple(new_list(jieqi_name, "冬至")[0:12]): "一七四",
+                             tuple(new_list(jieqi_name, "夏至")[0:12]): "九三六"},
+                            jq(year,month, day,hour, minute))
     find_yuen = findyuen_minute(year, month, day, hour, minute)
-    return "{}{}局{}".format(find_yingyang, qu[dict(zip(["上元","中元", "下元"], [0,1,2])).get(find_yuen)],find_yuen)
-
-
+    return "{}{}局{}".format(find_yingyang, qu[dict(zip(["上元","中元", "下元"],
+                                                       [0,1,2])).get(find_yuen)],
+                                                        find_yuen)
 def getgtw():
     gtw = re.findall("..","地籥六賊五符天曹地符風伯雷公雨師風雲唐符國印天關")
     newgtw_list = list(map(lambda y: dict(zip(di_zhi, y)) ,list(map(lambda i: new_list(gtw, i),re.findall("..","地籥天關唐符風雲唐符風雲雷公風伯天曹五符")))))
     return dict(zip(tian_gan, newgtw_list))
 #排值符
-def zhifu_pai(year, month, day, hour, minute):
-    yinyang = qimen_ju_name(year, month, day, hour, minute)[0]
-    kook = qimen_ju_name(year, month, day, hour, minute)[2]
-    pai = {"陽":{"一":"九八七一二三四五六","二":"一九八二三四五六七","三":"二一九三四五六七八","四":"三二一四五六七八九","五":"四三二五六七八九一","六":"五四三六七八九一二","七":"六五四七八九一二三","八":"七六五八九一二三四","九":"八七六九一二三四五"},
-                  "陰":{"九":"一二三九八七六五四","八":"九一二八七六五四三","七":"八九一七六五四三二","六":"七八九六五四三二一","五":"六七八五四三二一九","四":"五六七四三二一九八","三":"四五六三二一九八七","二":"三四五二一九八七六","一":"二三四一九八七六五"}}.get(yinyang).get(kook)
-    return {"陰":dict(zip(jiazi()[0::10], list(map(lambda x: x+pai, new_list_r(cnumber, kook)[0:6])))), "陽":dict(zip(jiazi()[0::10], list(map(lambda x: x+pai, new_list(cnumber, kook)[0:6]))))}.get(yinyang)
+def zhifu_pai(year, month, day, hour, minute, option):
+    chaibu = qimen_ju_name(year, month, day, hour, minute)
+    zhirun = qimen_ju_name_zhirun(year, month, day, hour, minute)
+    select = {1:{"陰陽":chaibu[0],
+                  "局":chaibu[2]
+                  }, 
+               2: {"陰陽":zhirun[1][0],
+                   "局": zhirun[1][2]
+                  }}.get(option) #1拆補 #2置閏
+    yinyang = select.get("陰陽")
+    kook =  select.get("局")
+    pai = {"陽":{"一":"九八七一二三四五六",
+                "二":"一九八二三四五六七",
+                "三":"二一九三四五六七八",
+                "四":"三二一四五六七八九",
+                "五":"四三二五六七八九一",
+                "六":"五四三六七八九一二",
+                "七":"六五四七八九一二三",
+                "八":"七六五八九一二三四",
+                "九":"八七六九一二三四五"},
+           "陰":{"九":"一二三九八七六五四",
+                "八":"九一二八七六五四三",
+                "七":"八九一七六五四三二",
+                "六":"七八九六五四三二一",
+                "五":"六七八五四三二一九",
+                "四":"五六七四三二一九八",
+                "三":"四五六三二一九八七",
+                "二":"三四五二一九八七六",
+                "一":"二三四一九八七六五"}}.get(yinyang).get(kook)
+    return {"陰":dict(zip(jiazi()[0::10], list(map(lambda x: x+pai, new_list_r(cnumber, kook)[0:6])))), 
+            "陽":dict(zip(jiazi()[0::10], list(map(lambda x: x+pai, new_list(cnumber, kook)[0:6]))))}.get(yinyang)
 
-def zhifu_pai_ke(year, month, day, hour, minute):
-    yinyang = qimen_ju_name_ke(year, month, day, hour, minute)[0]
-    kook = qimen_ju_name_ke(year, month, day, hour, minute)[2]
-    pai = {"陽":{"一":"九八七一二三四五六","二":"一九八二三四五六七","三":"二一九三四五六七八","四":"三二一四五六七八九","五":"四三二五六七八九一","六":"五四三六七八九一二","七":"六五四七八九一二三","八":"七六五八九一二三四","九":"八七六九一二三四五"},
-                  "陰":{"九":"一二三九八七六五四","八":"九一二八七六五四三","七":"八九一七六五四三二","六":"七八九六五四三二一","五":"六七八五四三二一九","四":"五六七四三二一九八","三":"四五六三二一九八七","二":"三四五二一九八七六","一":"二三四一九八七六五"}}.get(yinyang).get(kook)
-    return {"陰":dict(zip(jiazi()[0::10], list(map(lambda x: x+pai, new_list_r(cnumber, kook)[0:6])))), "陽":dict(zip(jiazi()[0::10], list(map(lambda x: x+pai, new_list(cnumber, kook)[0:6]))))}.get(yinyang)
-
-#排值使
-def zhishi_pai(year, month, day, hour, minute):
-    yinyang = qimen_ju_name(year, month, day, hour, minute)[0]
-    kook = qimen_ju_name(year, month, day, hour, minute)[2]
+def zhifu_pai_ke(year, month, day, hour, minute, option):
+    chaibu = qimen_ju_name(year, month, day, hour, minute)
+    zhirun = qimen_ju_name_zhirun(year, month, day, hour, minute)
+    select = {1:{"陰陽":chaibu[0],
+                  "局":chaibu[2]
+                  }, 
+               2: {"陰陽":zhirun[1][0],
+                   "局": zhirun[1][2]
+                  }}.get(option) #1拆補 #2置閏
+    yinyang = select.get("陰陽")
+    kook =  select.get("局")
+    pai = {"陽":{"一":"九八七一二三四五六",
+                 "二":"一九八二三四五六七",
+                 "三":"二一九三四五六七八",
+                 "四":"三二一四五六七八九",
+                 "五":"四三二五六七八九一",
+                 "六":"五四三六七八九一二",
+                 "七":"六五四七八九一二三",
+                 "八":"七六五八九一二三四",
+                 "九":"八七六九一二三四五"},
+           "陰":{"九":"一二三九八七六五四",
+                 "八":"九一二八七六五四三",
+                 "七":"八九一七六五四三二",
+                 "六":"七八九六五四三二一",
+                 "五":"六七八五四三二一九",
+                 "四":"五六七四三二一九八",
+                 "三":"四五六三二一九八七",
+                 "二":"三四五二一九八七六",
+                 "一":"二三四一九八七六五"}}.get(yinyang).get(kook)
+    return {"陰":dict(zip(jiazi()[0::10], list(map(lambda x: x+pai, new_list_r(cnumber, kook)[0:6])))),
+            "陽":dict(zip(jiazi()[0::10], list(map(lambda x: x+pai, new_list(cnumber, kook)[0:6]))))}.get(yinyang)
+#1拆補 #2置閏
+def zhishi_pai(year, month, day, hour, minute, option):
+    chaibu = qimen_ju_name(year, month, day, hour, minute)
+    zhirun = qimen_ju_name_zhirun(year, month, day, hour, minute)
+    select = {1:{"陰陽":chaibu[0],
+                  "局":chaibu[2]
+                  }, 
+               2: {"陰陽":zhirun[1][0],
+                   "局": zhirun[1][2]
+                  }}.get(option) #1拆補 #2置閏
+    yinyang = select.get("陰陽")
+    kook =  select.get("局")
     yanglist = "".join(new_list(cnumber, kook))+"".join(new_list(cnumber, kook))+"".join(new_list(cnumber, kook))
     yinlist =  "".join(new_list_r(cnumber, kook))+"".join(new_list_r(cnumber, kook))+"".join(new_list_r(cnumber, kook))
-    return {"陰":dict(zip(jiazi()[0::10], list(map(lambda i: i+ yinlist[yinlist.index(i)+1:][0:11],new_list_r(cnumber, kook)[0:6])))), "陽":dict(zip(jiazi()[0::10], list(map(lambda i:i+ yanglist[yanglist.index(i)+1:][0:11], new_list(cnumber, kook)[0:6]))))}.get(yinyang)
+    return {"陰":dict(zip(jiazi()[0::10], list(map(lambda i: i+ yinlist[yinlist.index(i)+1:][0:11],new_list_r(cnumber, kook)[0:6])))), 
+            "陽":dict(zip(jiazi()[0::10], list(map(lambda i:i+ yanglist[yanglist.index(i)+1:][0:11],new_list(cnumber, kook)[0:6]))))}.get(yinyang)
 
-def zhishi_pai_ke(year, month, day, hour, minute):
-    yinyang = qimen_ju_name_ke(year, month, day, hour, minute)[0]
-    kook = qimen_ju_name_ke(year, month, day, hour, minute)[2]
+def zhishi_pai_ke(year, month, day, hour, minute, option):
+    chaibu = qimen_ju_name(year, month, day, hour, minute)
+    zhirun = qimen_ju_name_zhirun(year, month, day, hour, minute)
+    select = {1:{"陰陽":chaibu[0],
+                  "局":chaibu[2]
+                  }, 
+               2: {"陰陽":zhirun[1][0],
+                   "局": zhirun[1][2]
+                  }}.get(option) #1拆補 #2置閏
+    yinyang = select.get("陰陽")
+    kook =  select.get("局")
     yanglist = "".join(new_list(cnumber, kook))+"".join(new_list(cnumber, kook))+"".join(new_list(cnumber, kook))
     yinlist =  "".join(new_list_r(cnumber, kook))+"".join(new_list_r(cnumber, kook))+"".join(new_list_r(cnumber, kook))
-    return {"陰":dict(zip(jiazi()[0::10], list(map(lambda i: i+ yinlist[yinlist.index(i)+1:][0:11],new_list_r(cnumber, kook)[0:6])))), "陽":dict(zip(jiazi()[0::10], list(map(lambda i:i+ yanglist[yanglist.index(i)+1:][0:11], new_list(cnumber, kook)[0:6]))))}.get(yinyang)
-
+    return {"陰":dict(zip(jiazi()[0::10], list(map(lambda i: i+ yinlist[yinlist.index(i)+1:][0:11],new_list_r(cnumber, kook)[0:6])))),
+            "陽":dict(zip(jiazi()[0::10], list(map(lambda i:i+ yanglist[yanglist.index(i)+1:][0:11], new_list(cnumber, kook)[0:6]))))}.get(yinyang)
 
 #八門
-def pan_door(year, month, day, hour, minute):
-    starting_door = zhifu_n_zhishi(year, month, day, hour, minute).get("值使門宮")[0]
-    starting_gong = zhifu_n_zhishi(year, month, day, hour, minute).get("值使門宮")[1]
+def pan_door(year, month, day, hour, minute, option):
+    starting_door = zhifu_n_zhishi(year, month, day, hour, minute, option).get("值使門宮")[0]
+    starting_gong = zhifu_n_zhishi(year, month, day, hour, minute, option).get("值使門宮")[1]
     rotate = {"陽":clockwise_eightgua, "陰":list(reversed(clockwise_eightgua))}.get(qimen_ju_name(year, month, day, hour, minute)[0])
     if starting_gong == "中":
         gong_reorder = new_list(rotate, "坤")
@@ -287,10 +462,10 @@ def pan_door_minute(year, month, day, hour, minute):
         gong_reorder = new_list(rotate, starting_gong)
     return dict(zip(gong_reorder,{"陽":new_list(door_r, starting_door), "陰":new_list(list(reversed(door_r)), starting_door)}.get(qimen_ju_name_ke(year, month, day, hour, minute)[0])))
 #九星
-def pan_star(year, month, day, hour, minute):
+def pan_star(year, month, day, hour, minute, option):
     star_r = list("蓬任沖輔英禽柱心")
-    starting_star = zhifu_n_zhishi(year, month, day, hour, minute).get("值符星宮")[0].replace("芮", "禽")
-    starting_gong = zhifu_n_zhishi(year, month, day, hour, minute).get("值符星宮")[1]
+    starting_star = zhifu_n_zhishi(year, month, day, hour, minute, option).get("值符星宮")[0].replace("芮", "禽")
+    starting_gong = zhifu_n_zhishi(year, month, day, hour, minute, option).get("值符星宮")[1]
     rotate = {"陽":clockwise_eightgua, "陰":list(reversed(clockwise_eightgua))}.get(qimen_ju_name(year, month, day, hour, minute)[0])
     star_reorder = {"陽":new_list(star_r, starting_star), "陰":new_list(list(reversed(star_r)), starting_star)}.get(qimen_ju_name(year, month, day, hour, minute)[0])
     if starting_gong == "中":
@@ -311,8 +486,8 @@ def pan_star_minute(year, month, day, hour, minute):
         gong_reorder = new_list(rotate, starting_gong)
     return dict(zip(gong_reorder,star_reorder)), dict(zip(star_reorder, gong_reorder))
 #八神
-def pan_god(year, month, day, hour, minute):
-    starting_gong = zhifu_n_zhishi(year, month, day, hour, minute).get("值符星宮")[1]
+def pan_god(year, month, day, hour, minute, option):
+    starting_gong = zhifu_n_zhishi(year, month, day, hour, minute, option).get("值符星宮")[1]
     rotate = {"陽":clockwise_eightgua, "陰":list(reversed(clockwise_eightgua)) }.get(qimen_ju_name(year, month, day, hour, minute)[0])
     if starting_gong == "中":
         gong_reorder = new_list(rotate, "坤")
@@ -330,14 +505,14 @@ def pan_god_minute(year, month, day, hour, minute):
     return dict(zip(gong_reorder,{"陽":list("符蛇陰合勾雀地天"),"陰":list("符蛇陰合虎玄地天")}.get(qimen_ju_name_ke(year, month, day, hour, minute)[0])))
 
 #找值符及值使
-def zhifu_n_zhishi(year, month, day, hour, minute):
+def zhifu_n_zhishi(year, month, day, hour, minute, option):
     gongs_code = dict(zip(cnumber, eight_gua))
     hgan = dict(zip(tian_gan,range(0,11))).get(gangzhi(year, month, day, hour, minute)[3][0])
     chour = multi_key_dict_get(liujiashun_dict(), gangzhi(year, month, day, hour, minute)[3])
-    door = dict(zip(list(zhishi_pai(year, month, day, hour, minute).keys()), list(map(lambda i: dict(zip(cnumber, list("休死傷杜中開驚生景"))).get(i[0]), list(zhishi_pai(year, month, day, hour, minute).values()))))).get(chour)
+    door = dict(zip(list(zhishi_pai(year, month, day, hour, minute, option).keys()), list(map(lambda i: dict(zip(cnumber, list("休死傷杜中開驚生景"))).get(i[0]), list(zhishi_pai(year, month, day, hour, minute, option).values()))))).get(chour)
     if door == "中":
         door = "死"
-    return {"值符星宮":[dict(zip(list(zhifu_pai(year, month, day, hour, minute).keys()), list(map(lambda i:dict(zip(cnumber, list("蓬芮沖輔禽心柱任英"))).get(i[0]) , list(zhifu_pai(year, month, day, hour, minute).values()))))).get(chour),dict(zip(list(zhifu_pai(year, month, day, hour, minute).keys()), list(map(lambda i:gongs_code.get(i[hgan]), list(zhifu_pai(year, month, day, hour, minute).values()))))).get(chour)], "值使門宮":[door,dict(zip(list(zhishi_pai(year, month, day, hour, minute).keys()),list(map(lambda i:gongs_code.get(i[hgan]), list(zhishi_pai(year, month, day, hour, minute).values()))))).get(chour)]}
+    return {"值符星宮":[dict(zip(list(zhifu_pai(year, month, day, hour, minute, option).keys()), list(map(lambda i:dict(zip(cnumber, list("蓬芮沖輔禽心柱任英"))).get(i[0]) , list(zhifu_pai(year, month, day, hour, minute, option).values()))))).get(chour),dict(zip(list(zhifu_pai(year, month, day, hour, minute, option).keys()), list(map(lambda i:gongs_code.get(i[hgan]), list(zhifu_pai(year, month, day, hour, minute, option).values()))))).get(chour)], "值使門宮":[door,dict(zip(list(zhishi_pai(year, month, day, hour, minute, option).keys()),list(map(lambda i:gongs_code.get(i[hgan]), list(zhishi_pai(year, month, day, hour, minute, option).values()))))).get(chour)]}
 
 def zhifu_n_zhishi_ke(year, month, day, hour, minute):
     gongs_code = dict(zip(cnumber, eight_gua))
@@ -359,12 +534,14 @@ def gong_wangzhuai():
                         ('立冬','小雪','大雪'):'立冬',
                         ('冬至','小寒','大寒'):'冬至',
                         ('立春','雨水','驚蟄'):'立春'}
-    return dict(zip(new_list(wangzhuai_num, dict(zip(jieqi_name[0::3],wangzhuai_num )).get(multi_key_dict_get(wangzhuai_jieqi, "霜降"))), wangzhuai))
+    wzhuai = multi_key_dict_get(wangzhuai_jieqi, "霜降")
+    new_dict = new_list(wangzhuai_num, dict(zip(jieqi_name[0::3],wangzhuai_num)).get(wzhuai))
+    return dict(zip(new_dict, wangzhuai))
 
 def ecliptic_lon(jd_utc):
-    s=Sun(jd_utc)
-    equ=Equatorial(s.ra,s.dec,epoch=jd_utc)
-    e=Ecliptic(equ)
+    s=ephem.Sun(jd_utc)
+    equ=ephem.Equatorial(s.ra,s.dec,epoch=jd_utc)
+    e=ephem.Ecliptic(equ)
     return e.lon
 
 def sta(jd):
@@ -387,14 +564,20 @@ def iteration(jd,sta):
     return jd
 
 def change(year, month, day, hour, minute):
-    changets = Date("{}/{}/{} {}:{}:00".format(str(year).zfill(4), str(month).zfill(2), str(day).zfill(2),str(hour).zfill(2), str(minute).zfill(2)))
-    return Date(changets - 24 * ephem.hour *30)
+    changets = ephem.Date("{}/{}/{} {}:{}:00".format(str(year).zfill(4),
+                                               str(month).zfill(2),
+                                               str(day).zfill(2),
+                                               str(hour).zfill(2),
+                                               str(minute).zfill(2)))
+    return ephem.Date(changets - 24 * ephem.hour *30)
 
-def jq(year, month, day, hour, minute):#从当前时间开始连续输出未来n个节气的时间
-    #current =  datetime.strptime("{}/{}/{} {}:{}:00".format(str(year).zfill(4), str(month).zfill(2), str(day).zfill(2),str(hour).zfill(2), str(minute).zfill(2)), '%Y/%m/%d %H:%M:%S')
-    current = Date("{}/{}/{} {}:{}:00".format(str(year).zfill(4), str(month).zfill(2), str(day).zfill(2),str(hour).zfill(2), str(minute).zfill(2)))
+def jq(year, month, day, hour, minute):
+    current = ephem.Date("{}/{}/{} {}:{}:00".format(str(year).zfill(4),
+                                              str(month).zfill(2),
+                                              str(day).zfill(2),
+                                              str(hour).zfill(2),
+                                              str(minute).zfill(2)))
     jd = change(year, month, day, hour, minute)
-    #jd = Date("{}/{}/{} {}:{}:00.00".format(str(b.year).zfill(4), str(b.month).zfill(2), str(b.day).zfill(2), str(b.hour).zfill(2), str(b.minute).zfill(2)  ))
     result = []
     e=ecliptic_lon(jd)
     n=int(e*180.0/math.pi/15)+1
@@ -402,10 +585,14 @@ def jq(year, month, day, hour, minute):#从当前时间开始连续输出未来n
         if n>=24:
             n-=24
         jd=iteration(jd,sta)
-        d=Date(jd+1/3).tuple()
-        dt = Date("{}/{}/{} {}:{}:00.00".format(d[0],d[1],d[2],d[3],d[4]).split(".")[0])
-        time_info = {  dt:jieqi_name[n]}
-        n+=1    
+        d=ephem.Date(jd+1/3).tuple()
+        dt = ephem.Date("{}/{}/{} {}:{}:00.00".format(d[0],
+                                                d[1],
+                                                d[2],
+                                                d[3],
+                                                d[4]).split(".")[0])
+        time_info = {dt:jieqi_name[n]}
+        n+=1
         result.append(time_info)
     j = [list(i.keys())[0] for i in result]
     if current > j[0] and current > j[1] and current > j[2]:
@@ -416,12 +603,13 @@ def jq(year, month, day, hour, minute):#从当前时间开始连续输出未来n
         return list(result[1].values())[0]
     if current < j[1] and current < j[2]:
         return list(result[0].values())[0]
-    
+
 def jq_distance(year, month, day, hour, minute):#从当前时间开始连续输出未来n个节气的时间
-    #current =  datetime.strptime("{}/{}/{} {}:{}:00".format(str(year).zfill(4), str(month).zfill(2), str(day).zfill(2),str(hour).zfill(2), str(minute).zfill(2)), '%Y/%m/%d %H:%M:%S')
-    current = "{}/{}/{} {}:{}:00".format(str(year).zfill(4), str(month).zfill(2), str(day).zfill(2),str(hour).zfill(2), str(minute).zfill(2))
+    current = "{}/{}/{} {}:{}:00".format(str(year).zfill(4),
+                                         str(month).zfill(2),
+                                         str(day).zfill(2),str(hour).zfill(2),
+                                         str(minute).zfill(2))
     jd = change(year, month, day, hour, minute)
-    #jd = Date("{}/{}/{} {}:{}:00.00".format(str(b.year).zfill(4), str(b.month).zfill(2), str(b.day).zfill(2), str(b.hour).zfill(2), str(b.minute).zfill(2)  ))
     result = {}
     e=ecliptic_lon(jd)
     n=int(e*180.0/math.pi/15)+1
@@ -429,11 +617,12 @@ def jq_distance(year, month, day, hour, minute):#从当前时间开始连续输�
         if n>=24:
             n-=24
         jd=iteration(jd,sta)
-        d=Date(jd+1/3).tuple()
-        dt = "{}/{}/{} {}:{}:00.00".format(d[0],d[1],d[2],str(d[3]).zfill(2),str(d[4]).zfill(2)).split(".")[0]
-        time_info = {  jieqi_name[n]:dt}
-        n+=1    
+        d=ephem.Date(jd+1/3).tuple()
+        dt = "{}/{}/{} {}:{}:00.00".format(d[0],d[1],d[2],
+                                           str(d[3]).zfill(2),
+                                           str(d[4]).zfill(2)).split(".")[0]
+        time_info = {jieqi_name[n]:dt}
+        n+=1
         result.update(time_info)
-    #j = [list(i.keys())[0] for i in result]
     return result, current
 
