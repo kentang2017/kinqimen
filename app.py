@@ -34,7 +34,9 @@ with st.sidebar:
     pp_date=st.date_input("日期",pdlm.now(tz='Asia/Shanghai').date())
     pp_time=st.time_input("時間",pdlm.now(tz='Asia/Shanghai').time())
     option = st.selectbox( '起盤方式', ( ' 時家奇門 ', ' 刻家奇門 '))
+    option2 = st.selectbox( '排盤', (' 拆補 ',' 置閏 '))
     num = dict(zip([' 時家奇門 ', ' 刻家奇門 '],[1,2])).get(option)
+    pai = dict(zip([' 拆補 ',' 置閏 '],[1,2])).get(option2)
     p = str(pp_date).split("-")
     pp = str(pp_time).split(":")
     y = int(p[0])
@@ -60,7 +62,7 @@ with pan:
                 eg = list("巽離坤震兌艮坎乾")
                 lunar_month = dict(zip(range(1,13), config.cmonth)).get(config.lunar_date_d(y,m,d).get("月"))
                 if num == 1:
-                    qtext = kinqimen.Qimen(y,m,d,h,min).pan()
+                    qtext = kinqimen.Qimen(y,m,d,h,min).pan(pai)
                     lr = kinliuren.Liuren( qtext.get("節氣"),lunar_month, gz[2], gz[3]).result(0)
                     qd = [qtext.get("地盤").get(i) for i in eg]
                     e_to_s = lr.get("地轉天盤")
@@ -94,7 +96,7 @@ with pan:
                     expander = st.expander("原始碼")
                     expander.write(str(qtext))
                 if num == 2:
-                    qtext = kinqimen.Qimen(y,m,d,h,min).pan_minute()
+                    qtext = kinqimen.Qimen(y,m,d,h,min).pan_minute(pai)
                     lr = kinliuren.Liuren( qtext.get("節氣"),lunar_month, gz[3], gz[4]).result(0)
                     qd = [qtext.get("地盤").get(i) for i in eg]
                     e_to_s = lr.get("地轉天盤")
@@ -131,7 +133,6 @@ with pan:
                     output4 = st.empty()
         except ValueError:
             st.empty()
-            
             if instant:
                 output4 = st.empty()
                 now = datetime.datetime.now(pytz.timezone('Asia/Hong_Kong'))
@@ -145,7 +146,7 @@ with pan:
                 eg = list("巽離坤震兌艮坎乾")
                 lunar_month = dict(zip(range(1,13), config.cmonth)).get(config.lunar_date_d(y,m,d).get("月"))
                 if num == 1:
-                    qtext = kinqimen.Qimen(y,m,d,h,min).pan()
+                    qtext = kinqimen.Qimen(y,m,d,h,min).pan(pai)
                     lr = kinliuren.Liuren( qtext.get("節氣"),lunar_month, gz[2], gz[3]).result(0)
                     qd = [qtext.get("地盤").get(i) for i in eg]
                     e_to_s = lr.get("地轉天盤")
