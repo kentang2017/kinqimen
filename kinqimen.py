@@ -8,6 +8,15 @@ import time
 import itertools
 import config
 import datetime
+from datetime import timedelta
+
+
+def split_list(lst, chunk_size):
+    return [lst[i:i + chunk_size] for i in range(0, len(lst), chunk_size)]
+
+jlist = split_list(config.jiazi(), 5)
+jlist = [tuple(i) for i in jlist]
+fuhead = dict(zip(jlist, config.jiazi()[0::5]))
 
 
 class Qimen:
@@ -33,23 +42,24 @@ class Qimen:
         return find_d
     #有正授，有超神，有閏奇，有接氣
     def qimen_ju_day_zhirun(self):
-        ju_day_dict = {tuple(["甲子", "甲午", "己卯", "己酉"]):"上元", tuple(["甲寅","甲申", "己巳", "己亥"]):"中元", tuple(["甲辰", "甲戌", "己丑", "己未"]):"下元"}
         Jieqi = config.jq(self.year, self.month, self.day, self.hour, self.minute)
         dgz = config.gangzhi(self.year, self.month, self.day, self.hour, self.minute)[2]
+        fd = config.multi_key_dict_get(fuhead, dgz)
+        ju_day_dict = {tuple(["甲子", "甲午", "己卯", "己酉"]):"上元", tuple(["甲寅","甲申", "己巳", "己亥"]):"中元", tuple(["甲辰", "甲戌", "己丑", "己未"]):"下元"}
+        three_yuen = config.multi_key_dict_get(ju_day_dict, fd)
         if dgz in ["甲子", "甲午", "己卯", "己酉", "甲寅","甲申", "己巳", "己亥", "甲辰", "甲戌", "己丑", "己未"]:
             dgz_dist = "日干是符頭"
         else:
             dgz_dist = "日干非符頭"
         Jieqi_disance = config.jq_distance(self.year, self.month, self.day, self.hour, self.minute)[0].get(Jieqi)
         current = config.jq_distance(self.year, self.month, self.day, self.hour, self.minute)[1]
-        difference = datetime.datetime.strptime(current, "%Y/%m/%d %H:%M:%S") >  datetime.datetime.strptime(Jieqi_disance, "%Y/%m/%d %H:%M:%S")
-        difference1 = datetime.datetime.strptime(current, "%Y/%m/%d %H:%M:%S") - datetime.datetime.strptime(Jieqi_disance, "%Y/%m/%d %H:%M:%S")
+        difference = (datetime.datetime.strptime(current, "%Y/%m/%d %H:%M:%S") - datetime.datetime.strptime(Jieqi_disance, "%Y/%m/%d %H:%M:%S")).days
         
-        if dgz_dist == "日干是符頭" and difference == True:
+        if dgz_dist == "日干是符頭" and difference > 10:
             return "超神"
-        if dgz_dist == "日干非符頭" and difference == True:
+        if dgz_dist == "日干非符頭" and difference == 15:
             return "接氣"
-        if dgz_dist == "日干是符頭" and difference1 > 0:
+        if dgz_dist == "日干是符頭" and difference == 0 :
             return  "正授"
         #return config.multi_key_dict_get(ju_day_dict, dict(zip(config.jiazi(),list(itertools.chain.from_iterable([[i]*5 for i in config.jiazi()[0::5]])))).get(dgz)), Jieqi, dgz, dgz_dist, difference, current,Jieqi_disance 
     
@@ -336,10 +346,14 @@ class Qimen:
 
 if __name__ == '__main__':
     tic = time.perf_counter()
+    #print(dict(zip(jlist, config.jiazi()[0::5])))
+    
     #print(Qimen(2023,11,27,10,4).pan())
     #print(Qimen(2024,1,16,0,0).pan_minute())
-    print(Qimen(2024,7,22,22,28).qimen_ju_day_zhirun())
-    print(Qimen(2024,7,24,11,56).qimen_ju_day_zhirun())
+    print(Qimen(2024,3,16,22,28).qimen_ju_day_zhirun())
+    print(Qimen(2024,9,7,22,28).qimen_ju_day_zhirun())
+    print(Qimen(2024,7,22,10,28).qimen_ju_day_zhirun())
+    #print(Qimen(2024,7,24,11,56).qimen_ju_day_zhirun())
     #print(config.qimen_ju_name_ke(2023,6,22,18,17))
     #print(config.jq(2023,6,22,18,17))
     toc = time.perf_counter()
