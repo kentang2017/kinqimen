@@ -32,7 +32,8 @@ Qimen Dunjia is based on astronomical observations, and consists of various aspe
 ## **3. 起課方式 Quickstart**
 ```python
 	from kinqimen import kinqimen
-	kinqimen.Qimen(year, month, day, hour).pan() (時家奇門)
+
+	kinqimen.Qimen(year, month, day, hour).pan(1) #1:拆補 2:置閏
 	kinqimenQimen(year, month, day, hour).gpan() (金函日家)
 	kinqimen.Qimen(year, month, day, hour).overall() (時家奇門 + 金函日家)
 	
