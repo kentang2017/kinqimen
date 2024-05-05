@@ -62,7 +62,9 @@ def repeat_list(n, thelist):
 def jiazi():
     tian_gan = '甲乙丙丁戊己庚辛壬癸'
     di_zhi = '子丑寅卯辰巳午未申酉戌亥'
-    return list(map(lambda x: "{}{}".format(tian_gan[x % len(tian_gan)], di_zhi[x % len(di_zhi)]), list(range(60))))
+    return list(map(lambda x: "{}{}".format(tian_gan[x % len(tian_gan)], 
+                                            di_zhi[x % len(di_zhi)]), 
+                                            list(range(60))))
 
 def Ganzhiwuxing(gangorzhi):
     gz_list = "甲寅乙卯震巽,丙巳丁午離,壬亥癸子坎,庚申辛酉乾兌,未丑戊己未辰戌艮坤".split(",")
