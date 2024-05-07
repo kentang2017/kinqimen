@@ -542,26 +542,16 @@ def pan_god_minute(year, month, day, hour, minute, option):
         gong_reorder = new_list(rotate, starting_gong)
     return dict(zip(gong_reorder,{"陽":list("符蛇陰合勾雀地天"),
                                   "陰":list("符蛇陰合虎玄地天")}.get(qmke[0])))
+
 #找值符及值使
 def zhifu_n_zhishi(year, month, day, hour, minute, option):
     gongs_code = dict(zip(cnumber, eight_gua))
-    gz = gangzhi(year, month, day, hour, minute)
-    hgan = dict(zip(tian_gan,range(0,11))).get(gz[3][0])
-    chour = multi_key_dict_get(liujiashun_dict(), gz[3])
-    zhishipai_key = zhishi_pai(year, month, day, hour, minute, option).keys()
-    zhishipai_value = zhishi_pai(year, month, day, hour, minute, option).values()
-    doorlist = list(map(lambda i: dict(zip(cnumber, list("休死傷杜中開驚生景"))).get(i[0]), list(zhishipai_value)))
-    door = dict(zip(list(zhishipai_key), doorlist)).get(chour)
+    hgan = dict(zip(tian_gan,range(0,11))).get(gangzhi(year, month, day, hour, minute)[3][0])
+    chour = multi_key_dict_get(liujiashun_dict(), gangzhi(year, month, day, hour, minute)[3])
+    door = dict(zip(list(zhishi_pai(year, month, day, hour, minute, option).keys()), list(map(lambda i: dict(zip(cnumber, list("休死傷杜中開驚生景"))).get(i[0]), list(zhishi_pai(year, month, day, hour, minute, option).values()))))).get(chour)
     if door == "中":
         door = "死"
-    zhipai_keys = list(zhifu_pai(year, month, day, hour, minute, option).keys())
-    zhipai_values =list(zhifu_pai(year, month, day, hour, minute, option).values())
-    zhipai_list = list(map(lambda i:gongs_code.get(i[hgan]), zhipai_values))
-    godlist = list(map(lambda i:dict(zip(cnumber, list("蓬芮沖輔禽心柱任英"))).get(i[0]), zhipai_values))
-    hgan_list = list(map(lambda i:gongs_code.get(i[hgan]),zhipai_values))
-    k = dict(zip(zhipai_keys, zhipai_list)).get(chour)
-    return {"值符星宮":[dict(zip(zhipai_keys, godlist)).get(chour),k],
-            "值使門宮":[door,dict(zip(zhipai_keys, hgan_list)).get(chour)]}
+    return {"值符星宮":[dict(zip(list(zhifu_pai(year, month, day, hour, minute, option).keys()), list(map(lambda i:dict(zip(cnumber, list("蓬芮沖輔禽心柱任英"))).get(i[0]) , list(zhifu_pai(year, month, day, hour, minute, option).values()))))).get(chour),dict(zip(list(zhifu_pai(year, month, day, hour, minute, option).keys()), list(map(lambda i:gongs_code.get(i[hgan]), list(zhifu_pai(year, month, day, hour, minute, option).values()))))).get(chour)], "值使門宮":[door,dict(zip(list(zhishi_pai(year, month, day, hour, minute, option).keys()),list(map(lambda i:gongs_code.get(i[hgan]), list(zhishi_pai(year, month, day, hour, minute, option).values()))))).get(chour)]}
 
 def zhifu_n_zhishi_ke(year, month, day, hour, minute, option):
     gongs_code = dict(zip(cnumber, eight_gua))
@@ -685,3 +675,5 @@ def jq_distance(year, month, day, hour, minute):#从当前时间开始连续输�
         n+=1
         result.update(time_info)
     return result, current
+
+print(zhifu_n_zhishi(2024, 5, 7, 21, 32, 1))
