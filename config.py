@@ -676,4 +676,3 @@ def jq_distance(year, month, day, hour, minute):#从当前时间开始连续输�
         result.update(time_info)
     return result, current
 
-print(zhifu_n_zhishi(2024, 5, 7, 21, 32, 1))
