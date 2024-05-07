@@ -29,7 +29,7 @@ def get_file_content_as_string1(path):
     return response.read().decode("utf-8")
 
 st.set_page_config(layout="wide",page_title="堅奇門 - 奇門遁甲排盘")
-pan,example,guji,links = st.tabs([' 排盤 ', ' 案例 ', ' 古籍 ',' 連結 ' ])
+pan,example,guji,log,links = st.tabs([' 排盤 ', ' 案例 ', ' 古籍 ',' 更新 ',' 連結 ' ])
 with st.sidebar:
     pp_date=st.date_input("日期",pdlm.now(tz='Asia/Shanghai').date())
     pp_time=st.time_input("時間",pdlm.now(tz='Asia/Shanghai').time())
@@ -50,7 +50,11 @@ with st.sidebar:
 with links:
     st.header('連結')
     st.markdown(get_file_content_as_string1("update.md"))
-    
+
+with log:
+    st.header('更新')
+    st.markdown(get_file_content_as_string1("log.md"))
+
 with pan:
     st.header('堅奇門')
     output4 = st.empty()
