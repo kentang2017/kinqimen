@@ -614,6 +614,6 @@ class Qimen:
 
 if __name__ == '__main__':
     tic = time.perf_counter()
-    print(Qimen(2024,5,6,21,33).pan(2))
+    print(Qimen(2024,5,6,10,17).pan(2))
     toc = time.perf_counter()
     print(f"{toc - tic:0.4f} seconds")

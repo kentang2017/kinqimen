@@ -12,7 +12,6 @@ from itertools import cycle, repeat
 import sxtwl
 import ephem
 
-
 cnum = list("一二三四五六七八九十")
 #干支
 tian_gan = '甲乙丙丁戊己庚辛壬癸'
@@ -30,7 +29,6 @@ cmonth = list("一二三四五六七八九十") + ["十一","十二"]
 jieqi_name = re.findall('..', '春分清明穀雨立夏小滿芒種夏至小暑大暑立秋處暑白露秋分寒露霜降立冬小雪大雪冬至小寒大寒立春雨水驚蟄')
 def split_list(lst, chunk_size):
     return [lst[i:i + chunk_size] for i in range(0, len(lst), chunk_size)]
-
 
 #%% 基本功能函數
 def multi_key_dict_get(d, k):
@@ -544,7 +542,6 @@ def pan_god_minute(year, month, day, hour, minute, option):
         gong_reorder = new_list(rotate, starting_gong)
     return dict(zip(gong_reorder,{"陽":list("符蛇陰合勾雀地天"),
                                   "陰":list("符蛇陰合虎玄地天")}.get(qmke[0])))
-
 #找值符及值使
 def zhifu_n_zhishi(year, month, day, hour, minute, option):
     gongs_code = dict(zip(cnumber, eight_gua))
@@ -688,3 +685,5 @@ def jq_distance(year, month, day, hour, minute):#从当前时间开始连续输�
         n+=1
         result.update(time_info)
     return result, current
+
+print(pan_door(2024,5,6,10,22,2))
