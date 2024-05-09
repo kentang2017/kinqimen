@@ -141,9 +141,17 @@ class Qimen:
                 gong_reorder= config.new_list(rotate, fu_head_location)
                 return dict(zip(gong_reorder, gan_reorder))
             except ValueError:
-                a = list(map(lambda x: earth.get(x), rotate))
-                return dict(zip(gong_reorder,
+                if config.pan_god(self.year,
+                                    self.month,
+                                    self.day,
+                                    self.hour,
+                                    self.minute, option).get("坤") != "符":
+                    a = list(map(lambda x: earth.get(x), rotate))
+                    return dict(zip(gong_reorder,
                                 config.new_list(a, self.pan_earth(option).get("坤"))))
+                else:
+                    a = list(map(lambda x: earth.get(x), rotate))
+                    return dict(zip(gong_reorder, config.new_list(a, list(reversed(a))[0]))) 
         if fu_head_location != "中" and zhifu != "禽" and fu_head_location2 != "中":
             newlist = list(map(lambda x:self.pan_earth(option).get(x), list(rotate)))
             gan_reorder = config.new_list(newlist, fu_head)
@@ -615,6 +623,6 @@ class Qimen:
 
 if __name__ == '__main__':
     tic = time.perf_counter()
-    print(Qimen(2024,5,9,0,0).pan_sky(2))
+    print(Qimen(2024,5,9,19,0).pan_sky(2))
     toc = time.perf_counter()
     print(f"{toc - tic:0.4f} seconds")
