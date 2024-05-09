@@ -131,6 +131,7 @@ class Qimen:
         fu_location = self.pan_earth_r(option).get(gz[3][0])
         fu_head_location = zhifu_n_zhishi.get("值符星宮")[1]
         fu_head_location2 = self.pan_earth_r(option).get(fu_head)
+        gan_head = zhifu_n_zhishi.get("值符天干")[1]
         zhifu = zhifu_n_zhishi["值符星宮"][0]
         earth = self.pan_earth(option)
         if fu_head_location == "中":
@@ -150,8 +151,11 @@ class Qimen:
                     return dict(zip(gong_reorder,
                                 config.new_list(a, self.pan_earth(option).get("坤"))))
                 else:
-                    a = list(map(lambda x: earth.get(x), rotate))
-                    return dict(zip(gong_reorder, config.new_list(a, list(reversed(a))[0]))) 
+                    if earth.get("坤") == gan_head:
+                        a = list(map(lambda x: earth.get(x), rotate))
+                        return dict(zip(gong_reorder, config.new_list(a, list(reversed(a))[0])))
+                    else:
+                        return dict(zip(gong_reorder, config.new_list(a, gan_head)))          
         if fu_head_location != "中" and zhifu != "禽" and fu_head_location2 != "中":
             newlist = list(map(lambda x:self.pan_earth(option).get(x), list(rotate)))
             gan_reorder = config.new_list(newlist, fu_head)
@@ -623,6 +627,7 @@ class Qimen:
 
 if __name__ == '__main__':
     tic = time.perf_counter()
-    print(Qimen(2024,5,9,19,0).pan_sky(2))
+    print(Qimen(2024,5,11,19,0).pan_sky(2))
+    #print(config.zhifu_n_zhishi(2024,5,11,19,0,2))
     toc = time.perf_counter()
     print(f"{toc - tic:0.4f} seconds")
