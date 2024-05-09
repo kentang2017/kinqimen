@@ -141,7 +141,7 @@ class Qimen:
                 gong_reorder= config.new_list(rotate, fu_head_location)
                 return dict(zip(gong_reorder, gan_reorder))
             except ValueError:
-                a = list(map(lambda x: earth.get(x), list(reversed(rotate))))
+                a = list(map(lambda x: earth.get(x), rotate))
                 return dict(zip(gong_reorder,
                                 config.new_list(a, self.pan_earth(option).get("坤"))))
         if fu_head_location != "中" and zhifu != "禽" and fu_head_location2 != "中":
