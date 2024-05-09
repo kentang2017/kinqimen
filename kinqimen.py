@@ -142,7 +142,7 @@ class Qimen:
                 return dict(zip(gong_reorder, gan_reorder))
             except ValueError:
                 a = list(map(lambda x: earth.get(x), list(reversed(rotate))))
-                return dict(zip(list(reversed(gong_reorder)),
+                return dict(zip(gong_reorder,
                                 config.new_list(a, self.pan_earth(option).get("坤"))))
         if fu_head_location != "中" and zhifu != "禽" and fu_head_location2 != "中":
             newlist = list(map(lambda x:self.pan_earth(option).get(x), list(rotate)))
@@ -171,6 +171,7 @@ class Qimen:
             if fu_head in gan_reorder:
                 return {**dict(zip(gong_reorder,gan_reorder)),
                         **{"中":self.pan_earth(option)[0].get("中")}}
+
     #天盤分
     def pan_sky_minute(self, option):
         rotate = {"陽":config.clockwise_eightgua,"陰":
@@ -614,6 +615,6 @@ class Qimen:
 
 if __name__ == '__main__':
     tic = time.perf_counter()
-    print(Qimen(2024,5,6,10,17).pan(2))
+    print(Qimen(2024,5,9,0,0).pan_sky(2))
     toc = time.perf_counter()
     print(f"{toc - tic:0.4f} seconds")
