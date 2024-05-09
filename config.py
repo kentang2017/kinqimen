@@ -675,4 +675,3 @@ def jq_distance(year, month, day, hour, minute):#从当前时间开始连续输�
         n+=1
         result.update(time_info)
     return result, current
-
