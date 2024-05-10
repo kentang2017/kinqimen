@@ -89,6 +89,25 @@ def jieqicode(year,month, day, hour, minute):
                                "大雪":"四七一"}, 
                               jq(year,month, day,hour, minute))
 
+def jieqicode_jq(jq):
+    return multi_key_dict_get({("冬至", "驚蟄"): "一七四",
+                               "小寒": "二八五",
+                               ("大寒", "春分"): "三九六",
+                               "立春":"八五二",
+                               "雨水":"九六三",
+                               ("清明", "立夏"): "四一七",
+                               ("穀雨", "小滿"): "五二八",
+                               "芒種": "六三九",
+                               ("夏至", "白露"): "九三六",
+                               "小暑":"八二五",
+                               ("大暑", "秋分"): "七一四",
+                               "立秋":"二五八",
+                               "處暑":"一四七",
+                               ("霜降", "小雪"): "五八二",
+                               ("寒露", "立冬"): "六九三",
+                               "大雪":"四七一"}, 
+                              jq)
+
 def findyuen(year, month, day, hour, minute):
     gz = gangzhi(year, month, day, hour, minute)
     return multi_key_dict_get(findyuen_dict(), gz[2])
@@ -339,7 +358,21 @@ def qimen_ju_name_zhirun(year, month, day, hour, minute):
               "中元":jieqi_code[1],
               "下元":jieqi_code[2]}.get(three_yuen)
     if dgz_dist == "日干是符頭" and difference > 9: #超神
-        return "{}{}局{}".format(find_yingyang, kooks, three_yuen )
+        new_jq = new_list(jieqi_name, Jieqi)[1]
+        jieqi_code = jieqicode_jq(new_jq)
+        kooks =  {"上元":jieqi_code[0],
+                  "中元":jieqi_code[1],
+                  "下元":jieqi_code[2]}.get(three_yuen)
+        find_yingyang = multi_key_dict_get(yy,new_jq)
+        return "{}{}局{}".format(find_yingyang, kooks, three_yuen)
+    if dgz_dist != "日干是符頭" and difference > 9 and difference < 15: #超神
+        new_jq = new_list(jieqi_name, Jieqi)[1]
+        jieqi_code = jieqicode_jq(new_jq)
+        kooks =  {"上元":jieqi_code[0],
+                  "中元":jieqi_code[1],
+                  "下元":jieqi_code[2]}.get(three_yuen)
+        find_yingyang = multi_key_dict_get(yy,new_jq)
+        return "{}{}局{}".format(find_yingyang, kooks, three_yuen)
     if dgz_dist == "日干非符頭" and difference == 15: #接氣
         return "{}{}局{}".format(find_yingyang, kooks, three_yuen)
     if dgz_dist == "日干是符頭" and difference == 0 :#正授
@@ -675,3 +708,4 @@ def jq_distance(year, month, day, hour, minute):#从当前时间开始连续输�
         n+=1
         result.update(time_info)
     return result, current
+

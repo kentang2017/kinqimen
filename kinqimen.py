@@ -627,7 +627,8 @@ class Qimen:
 
 if __name__ == '__main__':
     tic = time.perf_counter()
-    print(Qimen(2024,5,11,19,0).pan_sky(2))
+    print(Qimen(2024,2,2,4,15).pan_sky(2))
+    print(Qimen(2024,2,2,4,15).pan_earth(2))
     #print(config.zhifu_n_zhishi(2024,5,11,19,0,2))
     toc = time.perf_counter()
     print(f"{toc - tic:0.4f} seconds")
