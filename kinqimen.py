@@ -9,23 +9,27 @@ import itertools
 import config
 
 class Qimen:
+    """奇門函數"""
     def __init__(self, year, month, day, hour, minute):
         self.year = year
         self.month = month
         self.day = day
         self.hour = hour
         self.minute = minute
-     #上中下元
+
     def year_yuen(self):
+        """搵上中下元"""
         yuen_list = [(i * 60) + 4 for i in range(22,100)]
         three_yuen = itertools.cycle([i+"元甲子" for i in list("上中下")])
-        for i in yuen_list:
-            if self.year < i:
+        for yuen in yuen_list:
+            if self.year < yuen:
                 break
-        yuen = dict(zip(yuen_list, three_yuen)).get(yuen_list[yuen_list.index(i)-1])
-        return [yuen, yuen_list[yuen_list.index(i)-1]]
-    #奇門局日
+            yuen1 = dict(zip(yuen_list, three_yuen)).get(yuen_list[yuen_list.index(yuen)-1])
+            return [yuen1, yuen_list[yuen_list.index(yuen)-1]]
+        return None
+
     def qimen_ju_day(self):
+        """奇門局日"""
         ju_day_dict = {tuple(list("甲己")):"甲己日",
                        tuple(list("乙庚")):"乙庚日",
                        tuple(list("丙辛")):"丙辛日",
@@ -155,7 +159,7 @@ class Qimen:
                         a = list(map(lambda x: earth.get(x), rotate))
                         return dict(zip(gong_reorder, config.new_list(a, list(reversed(a))[0])))
                     else:
-                        return dict(zip(gong_reorder, config.new_list(a, gan_head)))          
+                        return dict(zip(gong_reorder, config.new_list(a, gan_head)))
         if fu_head_location != "中" and zhifu != "禽" and fu_head_location2 != "中":
             newlist = list(map(lambda x:self.pan_earth(option).get(x), list(rotate)))
             gan_reorder = config.new_list(newlist, fu_head)
@@ -558,14 +562,17 @@ class Qimen:
                 "神": config.getgtw().get(dgz[0])}
     #鶴神
     def crane_god(self):
-        newc_list = list(map(lambda i:[list("巽離坤兌乾坎天艮震")[i][:5]]*[6,5,6,5,6,5,16,6,5][i],list(range(0,8))))
+        d = list("巽離坤兌乾坎天艮震")
+        dd = [6,5,6,5,6,5,16,6,5]
+        newc_list = list(map(lambda i:[d[i][:5]]*dd[i],list(range(0,8))))
         return dict(zip(config.new_list(config.jiazi(), "庚申"), newc_list))
 
     def gpan_html(self):
         gpan_data = self.gpan()
         door = gpan_data.get("門")
         star = gpan_data.get("星")
-        html_output = '''<div class="container"><table style="width:100%"><tr>'''
+        html_output = '''<div class="container"><table
+                        style="width:100%"><tr>'''
         html_output += "".join(['''<td align="center">''' + star.get(i) + "<br>" + door.get(i) + i + '''</td>''' for i in list("巽離坤")])
         html_output += "</tr>"
         html_output += ''.join(['''<td align="center">''' + star.get(i) + "<br>" + door.get(i) + i + '''</td>''' for i in list("震中兌")])
@@ -629,6 +636,5 @@ if __name__ == '__main__':
     tic = time.perf_counter()
     print(Qimen(2024,2,2,4,15).pan_sky(2))
     print(Qimen(2024,2,2,4,15).pan_earth(2))
-    #print(config.zhifu_n_zhishi(2024,5,11,19,0,2))
     toc = time.perf_counter()
     print(f"{toc - tic:0.4f} seconds")
