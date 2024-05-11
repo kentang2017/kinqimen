@@ -114,25 +114,25 @@ class Qimen:
         return dict(zip(pan_earth_v, pan_earth_k))
     #天盤
     def pan_sky(self, option):
-        """時家奇門天盤設置, option 1:拆補 2:置閏"""
-        qmju = {1:config.qimen_ju_name_chaibu(self.year,
-                                              self.month,
-                                              self.day,
-                                              self.hour,
-                                              self.minute),
-                2:config.qimen_ju_name_zhirun(self.year,
-                                              self.month,
-                                              self.day,
-                                              self.hour,
-                                              self.minute)}.get(option)
-        rotate = {"陽":config.clockwise_eightgua,
-                  "陰":list(reversed(config.clockwise_eightgua))}.get(qmju[0])
-        zhifu_n_zhishi = config.zhifu_n_zhishi(self.year,
-                                               self.month,
-                                               self.day,
-                                               self.hour,
-                                               self.minute,
-                                               option)
+        qmju = {
+            1: config.qimen_ju_name_chaibu,
+            2: config.qimen_ju_name_zhirun
+        }.get(option)(self.year,
+                      self.month,
+                      self.day,
+                      self.hour,
+                      self.minute)
+        rotate = {
+            "陽": config.clockwise_eightgua,
+            "陰": list(reversed(config.clockwise_eightgua))
+        }.get(qmju[0])
+        zhifu_n_zhishi = config.zhifu_n_zhishi(
+            self.year,
+            self.month,
+            self.day,
+            self.hour,
+            self.minute,
+            option)
         fu_head = self.hourganghzi_zhifu()[2]
         gz = config.gangzhi(self.year,
                             self.month,
@@ -145,54 +145,30 @@ class Qimen:
         gan_head = zhifu_n_zhishi.get("值符天干")[1]
         zhifu = zhifu_n_zhishi["值符星宮"][0]
         earth = self.pan_earth(option)
+        gong_reorder = config.new_list(rotate, "坤")
         if fu_head_location == "中":
-            gong_reorder = config.new_list(rotate, "坤")
             try:
-                a = list(map(lambda x: earth.get(x), list(rotate)))
+                a = list(map(earth.get, rotate))
                 gan_reorder = config.new_list(a, fu_head)
-                gong_reorder= config.new_list(rotate, fu_head_location)
+                gong_reorder = config.new_list(rotate, fu_head_location)
                 return dict(zip(gong_reorder, gan_reorder))
             except ValueError:
                 if config.pan_god(self.year,
-                                    self.month,
-                                    self.day,
-                                    self.hour,
-                                    self.minute, option).get("坤") != "符":
-                    a = list(map(lambda x: earth.get(x), rotate))
-                    return dict(zip(gong_reorder,
-                                config.new_list(a, self.pan_earth(option).get("坤"))))
+                                  self.month,
+                                  self.day,
+                                  self.hour,
+                                  self.minute,
+                                  option).get("坤") != "符":
+                    a = list(map(earth.get, rotate))
+                    return dict(zip(gong_reorder, config.new_list(a, self.pan_earth(option).get("坤"))))
                 if earth.get("坤") == gan_head:
-                    a = list(map(lambda x: earth.get(x), rotate))
+                    a = list(map(earth.get, rotate))
                     return dict(zip(gong_reorder, config.new_list(a, list(reversed(a))[0])))
                 else:
-                    return dict(zip(gong_reorder, config.new_list(a, gan_head)))
-        if fu_head_location != "中" and zhifu != "禽" and fu_head_location2 != "中":
-            newlist = list(map(lambda x:self.pan_earth(option).get(x), list(rotate)))
-            gan_reorder = config.new_list(newlist, fu_head)
-            gong_reorder = config.new_list(rotate,  fu_head_location)
-            if fu_head not in gan_reorder:
-                start = dict(zip(config.cnumber, gan_reorder)).get(qmju[2])
-                rgan_reorder = config.new_list(gan_reorder, start)
-                rgong_reorder = config.new_list(gong_reorder, fu_location)
-                aa = dict(zip(rgong_reorder, rgan_reorder))
-                bb = dict(zip(rgan_reorder, rgong_reorder))
-                return aa, bb
-            if fu_head in gan_reorder:
-                if fu_location == None:
-                    return  self.pan_earth(option)
-                elif fu_location != None:
-                    return {**dict(zip(gong_reorder,gan_reorder)),
-                            **{"中":self.pan_earth(option).get("中")}}
-        if fu_head_location != "中" and zhifu == "禽" and fu_head_location2 == "中":
-            gg = list(map(lambda x: self.pan_earth(option).get(x), list(rotate)))
-            gan_reorder = config.new_list(gg, self.pan_earth(option).get("坤"))
-            gong_reorder = config.new_list(rotate,  fu_head_location)
-            if fu_head not in gan_reorder:
-                rgong_reorder = config.new_list(gong_reorder , fu_location)
-                return dict(zip(rgong_reorder, gan_reorder))
-            if fu_head in gan_reorder:
-                return {**dict(zip(gong_reorder,gan_reorder)),
-                        **{"中":self.pan_earth(option)[0].get("中")}}
+                    try:
+                        return dict(zip(gong_reorder, config.new_list(a, gan_head)))
+                    except ValueError:
+                        return dict(zip(gong_reorder, config.new_list(a, self.pan_earth(option).get("坤"))))
 
     #天盤分
     def pan_sky_minute(self, option):
