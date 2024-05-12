@@ -360,8 +360,7 @@ class Qimen:
                 "天馬": self.moonhorse(),
                 "丁馬": self.dinhorse(),
                 "驛馬": self.hourhorse()
-            },
-            "長生運": self.gong_chengsun(option)}
+            }}
 
     def pan_minute(self, option):
         """刻家奇門起盤綜合, option 1:拆補 2:置閏"""
