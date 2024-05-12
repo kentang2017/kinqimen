@@ -71,10 +71,7 @@ with pan:
                     qd = [qtext.get("地盤").get(i) for i in eg]
                     e_to_s = lr.get("地轉天盤")
                     e_to_g = lr.get("地轉天將")
-                    try:
-                        qt = [qtext.get("天盤").get(i)[0] for i in eg]
-                    except KeyError:
-                        qt = [qtext.get("天盤").get(i) for i in eg]
+                    qt = [qtext.get("天盤").get(i) for i in eg]
                     god = [qtext.get("神").get(i) for i in eg]
                     door = [qtext.get("門").get(i) for i in eg]
                     star = [qtext.get("星").get(i) for i in eg]
@@ -105,10 +102,7 @@ with pan:
                     qd = [qtext.get("地盤").get(i) for i in eg]
                     e_to_s = lr.get("地轉天盤")
                     e_to_g = lr.get("地轉天將")
-                    try:
-                        qt = [qtext.get("天盤").get(i)[0] for i in eg]
-                    except KeyError:
-                        qt = [qtext.get("天盤").get(i) for i in eg]
+                    qt = [qtext.get("天盤").get(i) for i in eg]
                     god = [qtext.get("神").get(i) for i in eg]
                     door = [qtext.get("門").get(i) for i in eg]
                     star = [qtext.get("星").get(i) for i in eg]
@@ -155,10 +149,7 @@ with pan:
                     qd = [qtext.get("地盤").get(i) for i in eg]
                     e_to_s = lr.get("地轉天盤")
                     e_to_g = lr.get("地轉天將")
-                    try:
-                        qt = [qtext.get("天盤").get(i)[0] for i in eg]
-                    except KeyError:
-                        qt = [qtext.get("天盤").get(i) for i in eg]
+                    qt = [qtext.get("天盤").get(i) for i in eg]
                     god = [qtext.get("神").get(i) for i in eg]
                     door = [qtext.get("門").get(i) for i in eg]
                     star = [qtext.get("星").get(i) for i in eg]
@@ -189,10 +180,7 @@ with pan:
                     qd = [qtext.get("地盤").get(i) for i in eg]
                     e_to_s = lr.get("地轉天盤")
                     e_to_g = lr.get("地轉天將")
-                    try:
-                        qt = [qtext.get("天盤").get(i)[0] for i in eg]
-                    except KeyError:
-                        qt = [qtext.get("天盤").get(i) for i in eg]
+                    qt = [qtext.get("天盤").get(i) for i in eg]
                     god = [qtext.get("神").get(i) for i in eg]
                     door = [qtext.get("門").get(i) for i in eg]
                     star = [qtext.get("星").get(i) for i in eg]
