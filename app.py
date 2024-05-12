@@ -71,16 +71,7 @@ with pan:
                     qd = [qtext.get("地盤").get(i) for i in eg]
                     e_to_s = lr.get("地轉天盤")
                     e_to_g = lr.get("地轉天將")
-                    if '天盤' in qtext:
-                        print("天盤 exists in qtext:", qtext)
-                        qt = [qtext['天盤'].get(i) for i in eg]
-                        print("qt:", qt)
-                        # Your remaining code here
-                    else:
-                        print(qtext)
-                        # Handle the case where '天盤' key is missing
-                        st.error("天盤 key is missing in qtext dictionary.")
-
+                    qt = [qtext['天盤'].get(i) for i in eg]
                     god = [qtext.get("神").get(i) for i in eg]
                     door = [qtext.get("門").get(i) for i in eg]
                     star = [qtext.get("星").get(i) for i in eg]
