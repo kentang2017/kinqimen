@@ -77,7 +77,7 @@ with pan:
                         print("qt:", qt)
                         # Your remaining code here
                     else:
-                        print("天盤 does not exist in qtext")
+                        print(qtext)
                         # Handle the case where '天盤' key is missing
                         st.error("天盤 key is missing in qtext dictionary.")
 
