@@ -72,7 +72,7 @@ with pan:
                     e_to_s = lr.get("地轉天盤")
                     e_to_g = lr.get("地轉天將")
                     if '天盤' in qtext:
-                        print("天盤 exists in qtext:", qtext['天盤'])
+                        print("天盤 exists in qtext:", qtext.get("天盤"))
                         qt = [qtext['天盤'].get(i) for i in eg]
                         print("qt:", qt)
                         # Your remaining code here
