@@ -730,3 +730,4 @@ def jq_distance(year, month, day, hour, minute):
         result.update(time_info)
     return result, current
 
+

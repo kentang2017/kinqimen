@@ -170,6 +170,32 @@ class Qimen:
                     except ValueError:
                         return dict(zip(gong_reorder, config.new_list(a, self.pan_earth(option).get("坤"))))
 
+        if fu_head_location != "中" and zhifu != "禽" and fu_head_location2 != "中":
+            newlist = list(map(earth.get, rotate))
+            gan_reorder = config.new_list(newlist, fu_head)
+            gong_reorder = config.new_list(rotate, fu_head_location)
+            if fu_head not in gan_reorder:
+                start = dict(zip(config.cnumber, gan_reorder)).get(qmju[2])
+                rgan_reorder = config.new_list(gan_reorder, start)
+                rgong_reorder = config.new_list(gong_reorder, fu_location)
+                aa = dict(zip(rgong_reorder, rgan_reorder))
+                bb = dict(zip(rgan_reorder, rgong_reorder))
+                return aa, bb
+            if fu_head in gan_reorder:
+                if fu_location is None:
+                    return self.pan_earth(option)
+                return {**dict(zip(gong_reorder, gan_reorder)),
+                        **{"中": self.pan_earth(option).get("中")}}
+        if fu_head_location != "中" and zhifu == "禽" and fu_head_location2 == "中":
+            gg = list(map(earth.get, rotate))
+            gan_reorder = config.new_list(gg, self.pan_earth(option).get("坤"))
+            gong_reorder = config.new_list(rotate, fu_head_location)
+            if fu_head not in gan_reorder:
+                rgong_reorder = config.new_list(gong_reorder, fu_location)
+                return dict(zip(rgong_reorder, gan_reorder))
+            return {**dict(zip(gong_reorder, gan_reorder)),
+                    **{"中": self.pan_earth(option)[0].get("中")}}
+
     #天盤分
     def pan_sky_minute(self, option):
         """刻家奇門天盤設置, option 1:拆補 2:置閏"""
@@ -360,7 +386,8 @@ class Qimen:
                 "天馬": self.moonhorse(),
                 "丁馬": self.dinhorse(),
                 "驛馬": self.hourhorse()
-            }}
+            },
+            "長生運": self.gong_chengsun(option)}
 
     def pan_minute(self, option):
         """刻家奇門起盤綜合, option 1:拆補 2:置閏"""
@@ -629,7 +656,12 @@ class Qimen:
 
 if __name__ == '__main__':
     tic = time.perf_counter()
-    print(Qimen(2024,2,2,4,15).pan(2))
+    qtext = Qimen(2024,5,12,23,7).pan(2)
+    q = list("巽離坤震兌艮坎乾")
+    a = [qtext.get("天盤").get(i) for i in q]
+    print(a)
+
+    #print(Qimen(2024,2,2,4,15).pan_earth(2))
     #print(Qimen(2024,2,2,4,15).pan_earth(2))
     toc = time.perf_counter()
     print(f"{toc - tic:0.4f} seconds")
