@@ -368,7 +368,7 @@ def qimen_ju_name_zhirun(year, month, day, hour, minute):
                   "下元":jieqi_code[2]}.get(three_yuen)
         find_yingyang = multi_key_dict_get(yy,new_jq)
         return "{}{}局{}".format(find_yingyang, kooks, three_yuen)
-    if dgz_dist != "日干是符頭" and difference > 9 and difference < 15: #超神
+    if dgz_dist != "日干是符頭" and difference >= 9 and difference < 15: #超神
         new_jq = new_list(jieqi_name, Jieqi)[1]
         jieqi_code = jieqicode_jq(new_jq)
         kooks =  {"上元":jieqi_code[0],
