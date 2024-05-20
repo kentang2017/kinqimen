@@ -7,6 +7,8 @@ import kinqimen
 from kinliuren import kinliuren
 import config
 
+BASE_URL_KINLIUREN = 'https://raw.githubusercontent.com/kentang2017/kinliuren/master/'
+
 @contextmanager
 def st_capture(output_func):
     with StringIO() as stdout, redirect_stdout(stdout):
@@ -49,7 +51,7 @@ with st.sidebar:
    
 with links:
     st.header('連結')
-    st.markdown(get_file_content_as_string1("update.md"), unsafe_allow_html=True)
+    st.markdown(get_file_content_as_string1(BASE_URL_KINLIUREN, "update.md"), unsafe_allow_html=True)
 
 with log:
     st.header('更新')
