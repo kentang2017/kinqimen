@@ -360,7 +360,7 @@ def qimen_ju_name_zhirun(year, month, day, hour, minute):
     kooks =  {"上元":jieqi_code[0],
               "中元":jieqi_code[1],
               "下元":jieqi_code[2]}.get(three_yuen)
-    if dgz_dist == "日干是符頭" and difference > 9: #超神
+    if dgz_dist == "日干是符頭" and difference >= 9: #超神
         new_jq = new_list(jieqi_name, Jieqi)[1]
         jieqi_code = jieqicode_jq(new_jq)
         kooks =  {"上元":jieqi_code[0],
@@ -731,3 +731,5 @@ def jq_distance(year, month, day, hour, minute):
     return result, current
 
 
+if __name__ == '__main__':
+    print(qimen_ju_name_zhirun(2024, 5, 30, 8, 30))
