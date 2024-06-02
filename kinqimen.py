@@ -7,6 +7,7 @@ import re
 import time
 import itertools
 import config
+from bidict import bidict
 
 class Qimen:
     """奇門函數"""
@@ -647,7 +648,42 @@ class Qimen:
         new = list(map(lambda i:tuple(i), tg))
         new_dict = dict(zip(new, list("寅申巳亥")))
         return config.multi_key_dict_get(new_dict, Gangzhi[3][1])
-
+    
+    def green_dragon(self, option):
+        sky = self.pan_sky(option)
+        earth = self.pan_earth(option)
+        earth_gong = bidict(earth).inverse["丙"]
+        sky_gong = bidict(sky).inverse["戊"]
+        if earth_gong == sky_gong:
+            return {"青龍返首": sky_gong}
+        else:
+            return {"青龍返首": "沒有"}
+            
+    def fly_bird(self, option):
+        sky = self.pan_sky(option)
+        earth = self.pan_earth(option)
+        earth_gong = bidict(earth).inverse["戊"]
+        sky_gong = bidict(sky).inverse["丙"]
+        if earth_gong == sky_gong:
+            return {"飛鳥跌穴": sky_gong}
+        else:
+            return {"飛鳥跌穴": "沒有"}
+        
+    def jade_girl(self, option):
+        earth = self.pan_earth(option)
+        earth_gong = bidict(earth).inverse["丁"]
+        zhishi = config.zhifu_n_zhishi(
+            self.year,
+            self.month,
+            self.day,
+            self.hour,
+            self.minute,
+            option).get('值使門宮')[1]
+        if zhishi == earth_gong:
+            return {"玉女守門": zhishi}
+        else:
+            return {"玉女守門": "沒有"}, zhishi
+        
     def overall(self, option):
         """整體奇門起盤綜合, option 1:拆補 2:置閏"""
         return {"金函玉鏡(日家奇門)": self.gpan(),
@@ -656,10 +692,11 @@ class Qimen:
 
 if __name__ == '__main__':
     tic = time.perf_counter()
-    qtext = Qimen(2024,5,12,23,7).pan(2)
+    qtext1 = Qimen(2024,6,29,12,7).pan(2)
+    qtext = Qimen(2024,6,29,12,7).jade_girl(2)
     q = list("巽離坤震兌艮坎乾")
-    a = [qtext.get("天盤").get(i) for i in q]
-    print(a)
+    #a = [qtext.get("天盤").get(i) for i in q]
+    print(qtext1)
 
     #print(Qimen(2024,2,2,4,15).pan_earth(2))
     #print(Qimen(2024,2,2,4,15).pan_earth(2))
