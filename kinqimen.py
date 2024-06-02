@@ -682,7 +682,7 @@ class Qimen:
         if zhishi == earth_gong:
             return {"玉女守門": zhishi}
         else:
-            return {"玉女守門": "沒有"}, zhishi
+            return {"玉女守門": "沒有"}
         
     def overall(self, option):
         """整體奇門起盤綜合, option 1:拆補 2:置閏"""
@@ -692,11 +692,10 @@ class Qimen:
 
 if __name__ == '__main__':
     tic = time.perf_counter()
-    qtext1 = Qimen(2024,6,29,12,7).pan(2)
-    qtext = Qimen(2024,6,29,12,7).jade_girl(2)
+    qtext = Qimen(2024,6,29,12,7).door_pan(2)
     q = list("巽離坤震兌艮坎乾")
     #a = [qtext.get("天盤").get(i) for i in q]
-    print(qtext1)
+    print(qtext)
 
     #print(Qimen(2024,2,2,4,15).pan_earth(2))
     #print(Qimen(2024,2,2,4,15).pan_earth(2))
