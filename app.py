@@ -43,6 +43,11 @@ with st.sidebar:
     pai = dict(zip([' 拆補 ',' 置閏 '],[1,2])).get(option2)
     p = str(pp_date).split("-")
     pp = str(pp_time).split(":")
+    y = int(p[0])
+    m = int(p[1])
+    d = int(p[2])
+    h = int(pp[0])
+    min = int(pp[1])
     manual = st.button('手動盤')
     instant = st.button('即時盤')
    
@@ -60,11 +65,6 @@ with pan:
     with st_capture(output4.code):
         try:
             if manual:
-                y = int(p[0])
-                m = int(p[1])
-                d = int(p[2])
-                h = int(pp[0])
-                min = int(pp[1])
                 gz = config.gangzhi(y,m,d,h,mintue)
                 j_q =  config.jq(y, m, d, h, mintue)
                 eg = list("巽離坤震兌艮坎乾")
