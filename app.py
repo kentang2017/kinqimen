@@ -36,7 +36,6 @@ pan,example,guji,log,links = st.tabs([' 🧮排盤 ', ' 📜案例 ', ' 📚古�
 with st.sidebar:
     pp_date=st.date_input("日期",pdlm.now(tz='Asia/Shanghai').date())
     pp_time=st.time_input("時間",pdlm.now(tz='Asia/Shanghai').time())
-    #pp_time = st.text_input('輸入時間(如: 18:30)', '')
     option = st.selectbox( '起盤方式', ( ' 時家奇門 ', ' 刻家奇門 '))
     option2 = st.selectbox( '排盤', (' 置閏 ',' 拆補 '))
     num = dict(zip([' 時家奇門 ', ' 刻家奇門 '],[1,2])).get(option)
@@ -47,7 +46,7 @@ with st.sidebar:
     m = int(p[1])
     d = int(p[2])
     h = int(pp[0])
-    min = int(pp[1])
+    mintue = int(pp[1])
     manual = st.button('手動盤')
     instant = st.button('即時盤')
    
@@ -131,6 +130,10 @@ with pan:
                     print("／  {}{}  　 │  {}{}　 │  {}{}　 │  　 {}{}　 ＼".format(e_to_s.get("寅"),e_to_g.get("寅"),e_to_s.get("丑"),e_to_g.get("丑"),e_to_s.get("子"),e_to_g.get("子"),e_to_s.get("亥"),e_to_g.get("亥")))
                     expander = st.expander("原始碼")
                     expander.write(str(qtext))
+                else:
+                    output4 = st.empty()
+        except ValueError:
+            st.empty()
             if instant:
                 output4 = st.empty()
                 now = datetime.datetime.now(pytz.timezone('Asia/Hong_Kong'))
