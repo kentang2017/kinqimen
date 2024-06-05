@@ -60,8 +60,6 @@ with pan:
     with st_capture(output4.code):
         try:
             if manual:
-                p = str(pp_date).split("/")
-                pp = str(pp_time).split(":")
                 y = int(p[0])
                 m = int(p[1])
                 d = int(p[2])
