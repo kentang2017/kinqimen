@@ -68,7 +68,7 @@ with pan:
                 j_q =  config.jq(y, m, d, h, mintue)
                 eg = list("巽離坤震兌艮坎乾")
                 lunar_month = dict(zip(range(1,13), config.cmonth)).get(config.lunar_date_d(y,m,d).get("月"))
-                qtext = {3:kinqimen.Qimen(y,m,d,h,mintue).pan(pai), 4:kinqimen.Qimen(y,m,d,h,mintue).pan_minute(pai)}.get(num)
+                qtext = {4:kinqimen.Qimen(y,m,d,h,mintue).pan(pai), 3:kinqimen.Qimen(y,m,d,h,mintue).pan_minute(pai)}.get(num)
                 lr = kinliuren.Liuren( qtext.get("節氣"),lunar_month, gz[3], gz[4]).result(0)
                 qd = [qtext.get("地盤").get(i) for i in eg]
                 e_to_s = lr.get("地轉天盤")
@@ -114,7 +114,7 @@ with pan:
                 j_q =  config.jq(y, m, d, h, mintue)
                 eg = list("巽離坤震兌艮坎乾")
                 lunar_month = dict(zip(range(1,13), config.cmonth)).get(config.lunar_date_d(y,m,d).get("月"))
-                qtext = {3:kinqimen.Qimen(y,m,d,h,mintue).pan(pai), 4:kinqimen.Qimen(y,m,d,h,mintue).pan_minute(pai)}.get(num)
+                qtext = {4:kinqimen.Qimen(y,m,d,h,mintue).pan(pai), 3:kinqimen.Qimen(y,m,d,h,mintue).pan_minute(pai)}.get(num)
                 lr = kinliuren.Liuren( qtext.get("節氣"),lunar_month, gz[3], gz[4]).result(0)
                 qd = [qtext.get("地盤").get(i) for i in eg]
                 e_to_s = lr.get("地轉天盤")
