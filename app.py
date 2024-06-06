@@ -46,8 +46,10 @@ with st.sidebar:
     y = int(p[0])
     m = int(p[1])
     d = int(p[2])
-    h = int(pp[0])
-    mintue = int(pp[1])
+    try:
+        h = int(pp[0])
+        mintue = int(pp[1])
+        pass
     manual = st.button('起盤')
     instant = st.button('即時')
    
