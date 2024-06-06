@@ -85,15 +85,9 @@ class Qimen:
                                              self.hour,
                                              self.minute)
         qmju = {1:chaibu,2:zhirun}.get(option)
-        if option == 1:
-            return dict(zip(list(map(lambda x: dict(zip(config.cnumber, config.eight_gua)).get(x),
-                                     config.new_list(config.cnumber, qmju[2]))),
-                                    {"陽遁":list("戊己庚辛壬癸丁丙乙"),
-                                     "陰遁":list("戊乙丙丁癸壬辛庚己")}.get(qmju[0:2])))
-        if option == 2:
-            return dict(zip(list(map(lambda x: dict(zip(config.cnumber, config.eight_gua)).get(x),
+        return dict(zip(list(map(lambda x: dict(zip(config.cnumber, config.eight_gua)).get(x),
                          config.new_list(config.cnumber, qmju[2]))),
-                        {"陽遁":list("己庚辛壬癸丁丙乙戊"),
+                        {"陽遁":list("戊己庚辛壬癸丁丙乙"),
                          "陰遁":list("戊乙丙丁癸壬辛庚己")}.get(qmju[0:2])))
     #地盤
     def pan_earth_minute(self):
@@ -202,9 +196,7 @@ class Qimen:
                 return dict(zip(rgong_reorder, gan_reorder))
             return {**dict(zip(gong_reorder, gan_reorder)),
                     **{"中": self.pan_earth(option)[0].get("中")}}
-        else:
-            a = list(map(earth.get, rotate))
-            return dict(zip(gong_reorder, config.new_list(a, self.pan_earth(option).get("坤"))))
+    
     #天盤分
     def pan_sky_minute(self, option):
         """刻家奇門天盤設置, option 1:拆補 2:置閏"""
@@ -705,11 +697,12 @@ class Qimen:
 
 if __name__ == '__main__':
     tic = time.perf_counter()
-    qtext = Qimen(2024,6,29,12,7).door_pan(2)
+    qtext1 = Qimen(2024,6,6,16,37).pan_earth(2)
+    qtext2 = Qimen(2024,6,6,16,37).pan_sky(2)
     q = list("巽離坤震兌艮坎乾")
     #a = [qtext.get("天盤").get(i) for i in q]
-    print(qtext)
-
+    print(qtext1)
+    print(qtext2)
     #print(Qimen(2024,2,2,4,15).pan_earth(2))
     #print(Qimen(2024,2,2,4,15).pan_earth(2))
     toc = time.perf_counter()
