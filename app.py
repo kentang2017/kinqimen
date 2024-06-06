@@ -103,7 +103,7 @@ with pan:
             print("  ／────────┬──┴─────┬─────┴──┬────────＼")
             print("／  {}{}  　 │  {}{}　 │  {}{}　 │  　 {}{}　 ＼".format(ne_to_s.get("寅"),ne_to_g.get("寅"),ne_to_s.get("丑"),ne_to_g.get("丑"),ne_to_s.get("子"),ne_to_g.get("子"),ne_to_s.get("亥"),ne_to_g.get("亥")))
             expander = st.expander("原始碼")
-            expander.write(str(qtext))
+            expander.write(str(nqtext))
         if manual:
             gz = config.gangzhi(y,m,d,h,mintue)
             j_q =  config.jq(y, m, d, h, mintue)
