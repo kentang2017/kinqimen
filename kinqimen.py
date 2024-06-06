@@ -403,16 +403,11 @@ class Qimen:
                             self.hour,
                             self.minute)
         gzd = "{}年{}月{}日{}時{}分".format(gz[0], gz[1], gz[2], gz[3], gz[4])
-        qmju = {1:config.qimen_ju_name_chaibu(self.year,
+        qmju = config.qimen_ju_name_ke(self.year,
                                               self.month,
                                               self.day,
                                               self.hour,
-                                              self.minute),
-                2:config.qimen_ju_name_zhirun(self.year,
-                                              self.month,
-                                              self.day,
-                                              self.hour,
-                                              self.minute)}.get(option)
+                                              self.minute)
         shunhead = config.shun(gz[3])
         shunkong = config.hourkong_minutekong(self.year,
                                               self.month,
