@@ -68,6 +68,7 @@ with pan:
     nh = now.hour
     nmintue = now.minute
     if not manual:
+        eg = list("巽離坤震兌艮坎乾")
         j_q =  config.jq(ny,nm,nd,nh,nmintue)
         gz = config.gangzhi(ny,nm,nd,nh,nmintue)
         qtext = kinqimen.Qimen(ny,nm,nd,nh,nmintue).pan(pai)
