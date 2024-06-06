@@ -67,8 +67,8 @@ with pan:
     nd = now.day
     nh = now.hour
     nmintue = now.minute
+    eg = list("巽離坤震兌艮坎乾")
     if not manual:
-        eg = list("巽離坤震兌艮坎乾")
         j_q =  config.jq(ny,nm,nd,nh,nmintue)
         gz = config.gangzhi(ny,nm,nd,nh,nmintue)
         qtext = kinqimen.Qimen(ny,nm,nd,nh,nmintue).pan(pai)
@@ -105,7 +105,6 @@ with pan:
     if manual:
         gz = config.gangzhi(y,m,d,h,mintue)
         j_q =  config.jq(y, m, d, h, mintue)
-        eg = list("巽離坤震兌艮坎乾")
         lunar_month = dict(zip(range(1,13), config.cmonth)).get(config.lunar_date_d(y,m,d).get("月"))
         if num == 1:
             qtext = kinqimen.Qimen(y,m,d,h,mintue).pan(pai)
