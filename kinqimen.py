@@ -202,7 +202,9 @@ class Qimen:
                 return dict(zip(rgong_reorder, gan_reorder))
             return {**dict(zip(gong_reorder, gan_reorder)),
                     **{"中": self.pan_earth(option)[0].get("中")}}
-
+        else:
+            a = list(map(earth.get, rotate))
+            return dict(zip(gong_reorder, config.new_list(a, self.pan_earth(option).get("坤"))))
     #天盤分
     def pan_sky_minute(self, option):
         """刻家奇門天盤設置, option 1:拆補 2:置閏"""
