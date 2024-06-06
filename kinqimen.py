@@ -85,10 +85,16 @@ class Qimen:
                                              self.hour,
                                              self.minute)
         qmju = {1:chaibu,2:zhirun}.get(option)
-        return dict(zip(list(map(lambda x: dict(zip(config.cnumber, config.eight_gua)).get(x),
-                                 config.new_list(config.cnumber, qmju[2]))),
-                                {"陽遁":list("戊己庚辛壬癸丁丙乙"),
-                                 "陰遁":list("戊乙丙丁癸壬辛庚己")}.get(qmju[0:2])))
+        if option == 1:
+            return dict(zip(list(map(lambda x: dict(zip(config.cnumber, config.eight_gua)).get(x),
+                                     config.new_list(config.cnumber, qmju[2]))),
+                                    {"陽遁":list("戊己庚辛壬癸丁丙乙"),
+                                     "陰遁":list("戊乙丙丁癸壬辛庚己")}.get(qmju[0:2])))
+        if option == 2:
+            return dict(zip(list(map(lambda x: dict(zip(config.cnumber, config.eight_gua)).get(x),
+                         config.new_list(config.cnumber, qmju[2]))),
+                        {"陽遁":list("己庚辛壬癸丁丙乙戊"),
+                         "陰遁":list("戊乙丙丁癸壬辛庚己")}.get(qmju[0:2])))
     #地盤
     def pan_earth_minute(self):
         """刻家奇門地盤設置"""
