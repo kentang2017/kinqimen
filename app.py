@@ -49,6 +49,7 @@ with st.sidebar:
     try:
         h = int(pp[0])
         mintue = int(pp[1])
+    except ValueError:
         pass
     manual = st.button('起盤')
     instant = st.button('即時')
