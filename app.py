@@ -61,6 +61,7 @@ with log:
 
 with pan:
     st.header('堅奇門')
+    output4 = st.empty()
     with st_capture(output4.code):
         now = datetime.datetime.now(pytz.timezone('Asia/Hong_Kong'))
         ny = now.year
