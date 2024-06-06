@@ -9,7 +9,6 @@ import kinqimen
 from kinliuren import kinliuren
 import config
 
-
 BASE_URL_KINLIUREN = 'https://raw.githubusercontent.com/kentang2017/kinliuren/master/'
 
 @contextmanager
@@ -62,20 +61,21 @@ with log:
 
 with pan:
     st.header('堅奇門')
-    output4 = st.empty()
     with st_capture(output4.code):
+        now = datetime.datetime.now(pytz.timezone('Asia/Hong_Kong'))
+        ny = now.year
+        nm = now.month
+        nd = now.day
+        nh = now.hour
+        nmintue = now.minute
+        gz = config.gangzhi(y,m,d,h,mintue)
+        j_q =  config.jq(y, m, d, h, mintue)
+        eg = list("巽離坤震兌艮坎乾")
         if not manual:
-            now = datetime.datetime.now(pytz.timezone('Asia/Hong_Kong'))
-            y = now.year
-            m = now.month
-            d = now.day
-            h = now.hour
-            mintue = now.minute
-            gz = config.gangzhi(y,m,d,h,mintue)
-            j_q =  config.jq(y, m, d, h, mintue)
-            eg = list("巽離坤震兌艮坎乾")
-            lunar_month = dict(zip(range(1,13), config.cmonth)).get(config.lunar_date_d(y,m,d).get("月"))
-            qtext = kinqimen.Qimen(y,m,d,h,mintue).pan(pai)
+            j_q =  config.jq(ny,nm,nd,nh,nmintue)
+            gz = config.gangzhi(ny,nm,nd,nh,nmintue)
+            qtext = kinqimen.Qimen(ny,nm,nd,nh,nmintue).pan(pai)
+            lunar_month = dict(zip(range(1,13), config.cmonth)).get(config.lunar_date_d(ny,nm,nd).get("月"))
             lr = kinliuren.Liuren( qtext.get("節氣"),lunar_month, gz[2], gz[3]).result(0)
             qd = [qtext.get("地盤").get(i) for i in eg]
             e_to_s = lr.get("地轉天盤")
