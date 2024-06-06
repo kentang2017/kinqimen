@@ -278,6 +278,11 @@ class Qimen:
             if fu_head in gan_reorder:
                 return {**dict(zip(gong_reorder,gan_reorder)),
                         **{"中":self.pan_earth_minute()[0].get("中")}}
+        else:
+            g = list(map(lambda x: self.pan_earth(option).get(x), list(rotate)))
+            gan_reorder = config.new_list(g, fu_head)
+            gong_reorder = config.new_list(rotate, fu_head_location)
+            return dict(zip(gong_reorder,gan_reorder))
     #九宮長生十二神
     def gong_chengsun(self, option):
         sky = self.pan_sky(option)
