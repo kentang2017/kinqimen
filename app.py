@@ -38,8 +38,8 @@ with st.sidebar:
     pp_time=st.time_input("時間",pdlm.now(tz='Asia/Shanghai').time())
     option = st.selectbox( '起盤方式', ( ' 時家奇門 ', ' 刻家奇門 '))
     option2 = st.selectbox( '排盤', (' 置閏 ',' 拆補 '))
-    num = dict(zip([' 時家奇門 ', ' 刻家奇門 '],[1,2])).get(option)
-    pai = dict(zip([' 拆補 ',' 置閏 '],[3,4])).get(option2)
+    num = dict(zip([' 時家奇門 ', ' 刻家奇門 '],[3,4])).get(option)
+    pai = dict(zip([' 拆補 ',' 置閏 '],[1,2])).get(option2)
     p = str(pp_date).split("-")
     pp = str(pp_time).split(":")
     y = int(p[0])
@@ -68,7 +68,7 @@ with pan:
                 j_q =  config.jq(y, m, d, h, mintue)
                 eg = list("巽離坤震兌艮坎乾")
                 lunar_month = dict(zip(range(1,13), config.cmonth)).get(config.lunar_date_d(y,m,d).get("月"))
-                qtext = {2:kinqimen.Qimen(y,m,d,h,mintue).pan(pai), 1:kinqimen.Qimen(y,m,d,h,mintue).pan_minute(pai)}.get(num)
+                qtext = {3:kinqimen.Qimen(y,m,d,h,mintue).pan(pai), 4:kinqimen.Qimen(y,m,d,h,mintue).pan_minute(pai)}.get(num)
                 lr = kinliuren.Liuren( qtext.get("節氣"),lunar_month, gz[3], gz[4]).result(0)
                 qd = [qtext.get("地盤").get(i) for i in eg]
                 e_to_s = lr.get("地轉天盤")
@@ -114,7 +114,7 @@ with pan:
                 j_q =  config.jq(y, m, d, h, mintue)
                 eg = list("巽離坤震兌艮坎乾")
                 lunar_month = dict(zip(range(1,13), config.cmonth)).get(config.lunar_date_d(y,m,d).get("月"))
-                qtext = {1:kinqimen.Qimen(y,m,d,h,mintue).pan(pai), 2:kinqimen.Qimen(y,m,d,h,mintue).pan_minute(pai)}.get(num)
+                qtext = {3:kinqimen.Qimen(y,m,d,h,mintue).pan(pai), 4:kinqimen.Qimen(y,m,d,h,mintue).pan_minute(pai)}.get(num)
                 lr = kinliuren.Liuren( qtext.get("節氣"),lunar_month, gz[3], gz[4]).result(0)
                 qd = [qtext.get("地盤").get(i) for i in eg]
                 e_to_s = lr.get("地轉天盤")
