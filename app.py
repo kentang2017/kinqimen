@@ -72,7 +72,7 @@ with pan:
     ngz = config.gangzhi(ny,nm,nd,nh,nmintue)
     nqtext = kinqimen.Qimen(ny,nm,nd,nh,nmintue).pan(pai)
     nlunar_month = dict(zip(range(1,13), config.cmonth)).get(config.lunar_date_d(ny,nm,nd).get("月"))
-    nlr = kinliuren.Liuren( qtext.get("節氣"),nlunar_month, ngz[2], ngz[3]).result(0)
+    nlr = kinliuren.Liuren( nqtext.get("節氣"),nlunar_month, ngz[2], ngz[3]).result(0)
     nqd = [nqtext.get("地盤").get(i) for i in eg]
     ne_to_s = nlr.get("地轉天盤")
     ne_to_g = nlr.get("地轉天將")
