@@ -674,14 +674,21 @@ class Qimen:
     def green_dragon(self, option):
         sky = self.pan_sky(option)
         earth = self.pan_earth(option)
-        zhishi_gong = bidict(earth).zhifu_n_zhishi.get("值符天干")[1]
-        earth_gong = bidict(earth).inverse["丙"]
+        zhishi = config.zhifu_n_zhishi(
+            self.year,
+            self.month,
+            self.day,
+            self.hour,
+            self.minute,
+            option).get("值符天干")[1]
+        zhishi_gong = bidict(earth).inverse[zhishi]
         sky_gong = bidict(sky).inverse["戊"]
         try:
+            earth_gong = bidict(earth).inverse["丙"]
             if earth_gong == sky_gong:
                 return {"青龍返首": sky_gong}
-            if zhishi_gong == sky_gong:
-                return {"青龍返首": sky_gong}
+            if zhishi_gong == earth_gong:
+                return {"青龍返首": earth_gong}
             else:
                 return {"青龍返首": "沒有"}
         except KeyError:
@@ -690,13 +697,20 @@ class Qimen:
     def fly_bird(self, option):
         sky = self.pan_sky(option)
         earth = self.pan_earth(option)
-        zhishi = bidict(earth).zhifu_n_zhishi.get("值符天干")[1]
+        zhishi = config.zhifu_n_zhishi(
+            self.year,
+            self.month,
+            self.day,
+            self.hour,
+            self.minute,
+            option).get("值符天干")[1]
+        zhishi_gong = bidict(earth).inverse[zhishi]
         earth_gong = bidict(earth).inverse["戊"]
-        sky_gong = bidict(sky).inverse["丙"]
         try:
+            sky_gong = bidict(sky).inverse["丙"]        
             if earth_gong == sky_gong:
                 return {"飛鳥跌穴": sky_gong}
-            if earth_gong == earth_gong:
+            if sky_gong == zhishi_gong:
                 return {"飛鳥跌穴": sky_gong}
             else:
                 return {"飛鳥跌穴": "沒有"}
@@ -737,7 +751,7 @@ if __name__ == '__main__':
     
 
     #qtext1 = Qimen(2024,6,6,16,37).pan_earth(2)
-    qtext2 = Qimen(2024,5,10,23,0).fly_bird(2)
+    qtext2 = Qimen(2024,5,9,19,30).fly_bird(2)
     print(qtext2)
     #q = list("巽離坤震兌艮坎乾")
     #a = [qtext.get("天盤").get(i) for i in q]
