@@ -674,10 +674,13 @@ class Qimen:
     def green_dragon(self, option):
         sky = self.pan_sky(option)
         earth = self.pan_earth(option)
+        zhishi_gong = bidict(earth).zhifu_n_zhishi.get("值符天干")[1]
         earth_gong = bidict(earth).inverse["丙"]
         sky_gong = bidict(sky).inverse["戊"]
         try:
             if earth_gong == sky_gong:
+                return {"青龍返首": sky_gong}
+            if zhishi_gong == sky_gong:
                 return {"青龍返首": sky_gong}
             else:
                 return {"青龍返首": "沒有"}
@@ -687,10 +690,13 @@ class Qimen:
     def fly_bird(self, option):
         sky = self.pan_sky(option)
         earth = self.pan_earth(option)
+        zhishi = bidict(earth).zhifu_n_zhishi.get("值符天干")[1]
         earth_gong = bidict(earth).inverse["戊"]
         sky_gong = bidict(sky).inverse["丙"]
         try:
             if earth_gong == sky_gong:
+                return {"飛鳥跌穴": sky_gong}
+            if earth_gong == earth_gong:
                 return {"飛鳥跌穴": sky_gong}
             else:
                 return {"飛鳥跌穴": "沒有"}
