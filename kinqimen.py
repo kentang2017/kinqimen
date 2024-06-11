@@ -8,6 +8,28 @@ import time
 import itertools
 import config
 from bidict import bidict
+from datetime import datetime, timedelta
+
+def test_qimen(start_datetime, end_datetime):
+    # Ensure end_datetime is greater than start_datetime
+    if end_datetime <= start_datetime:
+        raise ValueError("End datetime must be greater than start datetime")
+    # Initialize current_datetime to start_datetime
+    current_datetime = start_datetime
+    # Loop through each hour from start_datetime to end_datetime
+    while current_datetime <= end_datetime:
+        year = current_datetime.year
+        month = current_datetime.month
+        day = current_datetime.day
+        hour = current_datetime.hour
+        minute = current_datetime.minute  # Keep it 0 for each hour
+        try:
+            p = Qimen(year, month, day, hour, minute).pan(2)
+            print(f"Successfully executed for {current_datetime}")
+        except Exception as e:
+            print(f"Error at {current_datetime}: {e}")
+        # Move to the next hour
+        current_datetime += timedelta(hours=1)
 
 class Qimen:
     """奇門函數"""
@@ -654,9 +676,12 @@ class Qimen:
         earth = self.pan_earth(option)
         earth_gong = bidict(earth).inverse["丙"]
         sky_gong = bidict(sky).inverse["戊"]
-        if earth_gong == sky_gong:
-            return {"青龍返首": sky_gong}
-        else:
+        try:
+            if earth_gong == sky_gong:
+                return {"青龍返首": sky_gong}
+            else:
+                return {"青龍返首": "沒有"}
+        except KeyError:
             return {"青龍返首": "沒有"}
             
     def fly_bird(self, option):
@@ -664,9 +689,12 @@ class Qimen:
         earth = self.pan_earth(option)
         earth_gong = bidict(earth).inverse["戊"]
         sky_gong = bidict(sky).inverse["丙"]
-        if earth_gong == sky_gong:
-            return {"飛鳥跌穴": sky_gong}
-        else:
+        try:
+            if earth_gong == sky_gong:
+                return {"飛鳥跌穴": sky_gong}
+            else:
+                return {"飛鳥跌穴": "沒有"}
+        except KeyError:
             return {"飛鳥跌穴": "沒有"}
         
     def jade_girl(self, option):
@@ -679,9 +707,12 @@ class Qimen:
             self.hour,
             self.minute,
             option).get('值使門宮')[1]
-        if zhishi == earth_gong:
-            return {"玉女守門": zhishi}
-        else:
+        try:
+            if zhishi == earth_gong:
+                return {"玉女守門": zhishi}
+            else:
+                return {"玉女守門": "沒有"}
+        except KeyError:
             return {"玉女守門": "沒有"}
         
     def overall(self, option):
@@ -689,15 +720,23 @@ class Qimen:
         return {"金函玉鏡(日家奇門)": self.gpan(),
                 "時家奇門": self.pan(option),
                 "刻家奇門":self.pan_minute(option)}
+    
+
 
 if __name__ == '__main__':
     tic = time.perf_counter()
-    qtext1 = Qimen(2024,6,6,16,37).pan_earth(2)
-    qtext2 = Qimen(2024,6,6,16,37).pan_sky(2)
-    q = list("巽離坤震兌艮坎乾")
-    #a = [qtext.get("天盤").get(i) for i in q]
-    print(qtext1)
+    #start_datetime = datetime(2024, 5, 1, 0, 0)
+    #end_datetime = datetime(2024, 5, 30, 23, 0)  # Adjust as needed
+    #print(test_qimen(start_datetime, end_datetime))
+    
+
+    #qtext1 = Qimen(2024,6,6,16,37).pan_earth(2)
+    qtext2 = Qimen(2024,5,10,23,0).fly_bird(2)
     print(qtext2)
+    #q = list("巽離坤震兌艮坎乾")
+    #a = [qtext.get("天盤").get(i) for i in q]
+    #print(qtext1)
+    #print(qtext2)
     #print(Qimen(2024,2,2,4,15).pan_earth(2))
     #print(Qimen(2024,2,2,4,15).pan_earth(2))
     toc = time.perf_counter()
