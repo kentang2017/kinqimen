@@ -681,9 +681,9 @@ class Qimen:
             self.hour,
             self.minute,
             option).get("值符天干")[1]
-        zhishi_gong = bidict(earth).inverse[zhishi]
-        sky_gong = bidict(sky).inverse["戊"]
         try:
+            zhishi_gong = bidict(earth).inverse[zhishi]
+            sky_gong = bidict(sky).inverse["戊"]
             earth_gong = bidict(earth).inverse["丙"]
             if earth_gong == sky_gong:
                 return {"青龍返首": sky_gong}
@@ -704,9 +704,9 @@ class Qimen:
             self.hour,
             self.minute,
             option).get("值符天干")[1]
-        zhishi_gong = bidict(earth).inverse[zhishi]
-        earth_gong = bidict(earth).inverse["戊"]
         try:
+            zhishi_gong = bidict(earth).inverse[zhishi]
+            earth_gong = bidict(earth).inverse["戊"]
             sky_gong = bidict(sky).inverse["丙"]        
             if earth_gong == sky_gong:
                 return {"飛鳥跌穴": sky_gong}
@@ -719,15 +719,15 @@ class Qimen:
         
     def jade_girl(self, option):
         earth = self.pan_earth(option)
-        earth_gong = bidict(earth).inverse["丁"]
-        zhishi = config.zhifu_n_zhishi(
-            self.year,
-            self.month,
-            self.day,
-            self.hour,
-            self.minute,
-            option).get('值使門宮')[1]
         try:
+            earth_gong = bidict(earth).inverse["丁"]
+            zhishi = config.zhifu_n_zhishi(
+                self.year,
+                self.month,
+                self.day,
+                self.hour,
+                self.minute,
+                option).get('值使門宮')[1]
             if zhishi == earth_gong:
                 return {"玉女守門": zhishi}
             else:
@@ -748,11 +748,15 @@ if __name__ == '__main__':
     #start_datetime = datetime(2024, 5, 1, 0, 0)
     #end_datetime = datetime(2024, 5, 30, 23, 0)  # Adjust as needed
     #print(test_qimen(start_datetime, end_datetime))
-    
-
+    try:
+        for y in range(0,23):
+            for i in range(1,32):
+                qtext2 = Qimen(2024,7,i,y,0).green_dragon(2)
+                print(qtext2)
+    except KeyError:
+        print([2024,7,i,y,0])
     #qtext1 = Qimen(2024,6,6,16,37).pan_earth(2)
-    qtext2 = Qimen(2024,5,9,19,30).fly_bird(2)
-    print(qtext2)
+   
     #q = list("巽離坤震兌艮坎乾")
     #a = [qtext.get("天盤").get(i) for i in q]
     #print(qtext1)
