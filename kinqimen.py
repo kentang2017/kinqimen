@@ -672,6 +672,7 @@ class Qimen:
         return config.multi_key_dict_get(new_dict, Gangzhi[3][1])
     
     def green_dragon(self, option):
+        """青龍返首"""
         sky = self.pan_sky(option)
         earth = self.pan_earth(option)
         zhishi = config.zhifu_n_zhishi(
@@ -695,6 +696,7 @@ class Qimen:
             return {"青龍返首": "沒有"}
             
     def fly_bird(self, option):
+        """飛鳥跌穴"""
         sky = self.pan_sky(option)
         earth = self.pan_earth(option)
         zhishi = config.zhifu_n_zhishi(
@@ -718,6 +720,7 @@ class Qimen:
             return {"飛鳥跌穴": "沒有"}
         
     def jade_girl(self, option):
+        """玉女守門"""
         earth = self.pan_earth(option)
         try:
             earth_gong = bidict(earth).inverse["丁"]
@@ -734,7 +737,19 @@ class Qimen:
                 return {"玉女守門": "沒有"}
         except KeyError:
             return {"玉女守門": "沒有"}
+
+    def tianhen(self, option):
+        """天顯時格"""
+        gz = config.gangzhi(self.year,
+                         self.month,
+                         self.day,
+                         self.hour,
+                         self.minute)
+        dgz = gz[2]
+        hgz = gz[3]
         
+        return 
+    
     def overall(self, option):
         """整體奇門起盤綜合, option 1:拆補 2:置閏"""
         return {"金函玉鏡(日家奇門)": self.gpan(),
