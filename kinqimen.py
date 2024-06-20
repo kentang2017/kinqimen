@@ -763,18 +763,12 @@ if __name__ == '__main__':
     #start_datetime = datetime(2024, 5, 1, 0, 0)
     #end_datetime = datetime(2024, 5, 30, 23, 0)  # Adjust as needed
     #print(test_qimen(start_datetime, end_datetime))
-    try:
-        for y in range(0,23):
-            for i in range(1,32):
-                qtext2 = Qimen(2024,7,i,y,0).green_dragon(2)
-                print(qtext2)
-    except KeyError:
-        print([2024,7,i,y,0])
-    #qtext1 = Qimen(2024,6,6,16,37).pan_earth(2)
+
+    qtext1 = Qimen(1918,10,16,4,0).pan(2)
    
     #q = list("巽離坤震兌艮坎乾")
     #a = [qtext.get("天盤").get(i) for i in q]
-    #print(qtext1)
+    print(qtext1)
     #print(qtext2)
     #print(Qimen(2024,2,2,4,15).pan_earth(2))
     #print(Qimen(2024,2,2,4,15).pan_earth(2))
