@@ -344,6 +344,7 @@ def qimen_ju_name_zhirun(year, month, day, hour, minute):
     jieqi_code = jieqicode(year, month, day, hour, minute)
     dgz = gangzhi(year, month, day, hour, minute)[2]
     fd = multi_key_dict_get(fuhead, dgz)
+    zftg = zhifu_tiangan(year, month, day, hour, minute)
     ju_day_dict = {tuple(["甲子","甲午","己卯","己酉"]):"上元",
                    tuple(["甲寅","甲申","己巳","己亥"]):"中元",
                    tuple(["甲辰","甲戌","己丑","己未"]):"下元"}
@@ -403,13 +404,22 @@ def qimen_ju_name_zhirun(year, month, day, hour, minute):
         find_yingyang = multi_key_dict_get(yy,new_jq)
         return "{}{}局{}".format(find_yingyang, kooks, three_yuen)
     if dgz_dist != "日干是符頭" and difference < 9: #接氣
-        new_jq = new_list(jieqi_name, Jieqi)[1]
-        jieqi_code = jieqicode_jq(new_jq)
-        kooks =  {"上元":jieqi_code[0],
-                  "中元":jieqi_code[1],
-                  "下元":jieqi_code[2]}.get(three_yuen)
-        find_yingyang = multi_key_dict_get(yy,new_jq)
-        return "{}{}局{}".format(find_yingyang, kooks, three_yuen)
+        if dgz[0] == zftg:
+            new_jq = new_list(jieqi_name, Jieqi)[1]
+            jieqi_code = jieqicode_jq(Jieqi)
+            kooks =  {"上元":jieqi_code[0],
+                      "中元":jieqi_code[1],
+                      "下元":jieqi_code[2]}.get(three_yuen)
+            find_yingyang = multi_key_dict_get(yy,new_jq)
+            return "{}{}局{}".format(find_yingyang, kooks, three_yuen)
+        else:
+            new_jq = new_list(jieqi_name, Jieqi)[1]
+            jieqi_code = jieqicode_jq(new_jq)
+            kooks =  {"上元":jieqi_code[0],
+                      "中元":jieqi_code[1],
+                      "下元":jieqi_code[2]}.get(three_yuen)
+            find_yingyang = multi_key_dict_get(yy,new_jq)
+            return "{}{}局{}".format(find_yingyang, kooks, three_yuen)
     else:
         return "{}{}局{}".format(find_yingyang, kooks, three_yuen)
 #奇門排局刻家
@@ -570,6 +580,9 @@ def pan_star(year, month, day, hour, minute, option):
         gong_reorder = new_list(rotate, starting_gong)
     return dict(zip(gong_reorder,star_reorder)), dict(zip(star_reorder, gong_reorder))
 
+
+
+
 def pan_star_minute(year, month, day, hour, minute, option):
     star_r = list("蓬任沖輔英禽柱心")
     zhifu_n_zhishi = zhifu_n_zhishi_ke(year, month, day, hour, minute, option)
@@ -636,7 +649,13 @@ def zhifu_n_zhishi(year, month, day, hour, minute, option):
         door = "死"
     return {"值符天干": [chour, jj.get(chour)],
             "值符星宮":[dict(zip(zf_keys, b)).get(chour),dict(zip(zf_keys, c)).get(chour)], 
-            "值使門宮":[door,dict(zip(zspai_keys,d)).get(chour)]}
+            "值使門宮":[door,dict(zip(zspai_keys,d)).get(chour)]}, dict(zip(zf_keys, b))
+
+def zhifu_tiangan(year, month, day, hour, minute):
+    gz = gangzhi(year, month, day, hour, minute)
+    jj = {"甲子":"戊","甲戌":"己","甲申":"庚","甲午":"辛","甲辰":"壬","甲寅":"癸"}
+    chour = multi_key_dict_get(liujiashun_dict(), gz[3])
+    return jj.get(chour)
 
 def zhifu_n_zhishi_ke(year, month, day, hour, minute, option):
     gongs_code = dict(zip(cnumber, eight_gua))
@@ -766,4 +785,5 @@ def jq_distance(year, month, day, hour, minute):
 
 
 if __name__ == '__main__':
-    print(qimen_ju_name_zhirun(1994, 5, 21, 2, 0))
+    print(qimen_ju_name_zhirun(2024, 6, 9, 22, 0))
+    print(zhifu_n_zhishi(2024, 6, 9, 22, 0, 2))
