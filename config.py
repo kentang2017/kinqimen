@@ -340,8 +340,8 @@ def qimen_ju_name_zhirun(year, month, day, hour, minute):
     fuhead = dict(zip(jlist, jiazi()[0::5]))
     yy = {tuple(new_list(jieqi_name, "冬至")[0:12]):"陽遁",
           tuple(new_list(jieqi_name, "夏至")[0:12]):"陰遁" }
-    find_yingyang = multi_key_dict_get(yy,Jieqi)
     jieqi_code = jieqicode(year, month, day, hour, minute)
+    hgz = gangzhi(year, month, day, hour, minute)[3][0]
     dgz = gangzhi(year, month, day, hour, minute)[2]
     fd = multi_key_dict_get(fuhead, dgz)
     zftg = zhifu_tiangan(year, month, day, hour, minute)
@@ -349,79 +349,43 @@ def qimen_ju_name_zhirun(year, month, day, hour, minute):
                    tuple(["甲寅","甲申","己巳","己亥"]):"中元",
                    tuple(["甲辰","甲戌","己丑","己未"]):"下元"}
     three_yuen = multi_key_dict_get(ju_day_dict, fd)
-    if dgz in ["甲子","甲午","己卯","己酉","甲寅","甲申","己巳","己亥","甲辰","甲戌","己丑","己未"]:
-        dgz_dist = "日干是符頭"
-    else:
-        dgz_dist = "日干非符頭"
     Jieqi_disance = jq_distance(year, month, day, hour, minute)[0].get(Jieqi)
     current = jq_distance(year, month, day, hour, minute)[1]
     current_ts = datetime.datetime.strptime(current, "%Y/%m/%d %H:%M:%S")
     jq_distance_ts = datetime.datetime.strptime(Jieqi_disance,"%Y/%m/%d %H:%M:%S")
     difference = (current_ts-jq_distance_ts).days
+    
     kooks =  {"上元":jieqi_code[0],
               "中元":jieqi_code[1],
               "下元":jieqi_code[2]}.get(three_yuen)
-    if dgz_dist == "日干是符頭" and difference > 9: #超神
-        new_jq = new_list(jieqi_name, Jieqi)[1]
-        jieqi_code = jieqicode_jq(new_jq)
-        kooks =  {"上元":jieqi_code[0],
-                  "中元":jieqi_code[1],
-                  "下元":jieqi_code[2]}.get(three_yuen)
-        find_yingyang = multi_key_dict_get(yy,new_jq)
-        return "{}{}局{}".format(find_yingyang, kooks, three_yuen)
-    if dgz_dist != "日干是符頭" and difference >= 9 and difference < 15: #超神
-        new_jq = new_list(jieqi_name, Jieqi)[1]
-        jieqi_code = jieqicode_jq(new_jq)
-        kooks =  {"上元":jieqi_code[0],
-                  "中元":jieqi_code[1],
-                  "下元":jieqi_code[2]}.get(three_yuen)
-        find_yingyang = multi_key_dict_get(yy,new_jq)
-        return "{}{}局{}".format(find_yingyang, kooks, three_yuen)
-    if dgz_dist == "日干非符頭" and difference == 15: #接氣
-        new_jq = new_list(jieqi_name, Jieqi)[1]
-        jieqi_code = jieqicode_jq(Jieqi)
-        kooks =  {"上元":jieqi_code[0],
-                  "中元":jieqi_code[1],
-                  "下元":jieqi_code[2]}.get(three_yuen)
-        find_yingyang = multi_key_dict_get(yy,new_jq)
-        return "{}{}局{}".format(find_yingyang, kooks, three_yuen)
-    if dgz_dist != "日干非符頭" and difference == 15: #接氣
-        new_jq = new_list(jieqi_name, Jieqi)[1]
-        jieqi_code = jieqicode_jq(new_jq)
-        kooks =  {"上元":jieqi_code[0],
-                  "中元":jieqi_code[1],
-                  "下元":jieqi_code[2]}.get(three_yuen)
-        find_yingyang = multi_key_dict_get(yy,new_jq)
-        return "{}{}局{}".format(find_yingyang, kooks, three_yuen)
-    if dgz_dist == "日干是符頭" and difference == 0 :#正授
-        return "{}{}局{}".format(find_yingyang, kooks, three_yuen)
-    if dgz_dist == "日干是符頭" and difference < 9: #接氣
-        new_jq = new_list(jieqi_name, Jieqi)[1]
-        jieqi_code = jieqicode_jq(Jieqi)
-        kooks =  {"上元":jieqi_code[0],
-                  "中元":jieqi_code[1],
-                  "下元":jieqi_code[2]}.get(three_yuen)
-        find_yingyang = multi_key_dict_get(yy,new_jq)
-        return "{}{}局{}".format(find_yingyang, kooks, three_yuen)
-    if dgz_dist != "日干是符頭" and difference < 9: #接氣
-        if dgz[0] == zftg:
-            new_jq = new_list(jieqi_name, Jieqi)[1]
-            jieqi_code = jieqicode_jq(Jieqi)
-            kooks =  {"上元":jieqi_code[0],
-                      "中元":jieqi_code[1],
-                      "下元":jieqi_code[2]}.get(three_yuen)
-            find_yingyang = multi_key_dict_get(yy,new_jq)
-            return "{}{}局{}".format(find_yingyang, kooks, three_yuen)
+    new_jq = new_list(jieqi_name, Jieqi)[1]
+    jieqi_code1 = jieqicode_jq(new_jq)
+    kooks1 =  {"上元":jieqi_code1[0],
+                  "中元":jieqi_code1[1],
+                  "下元":jieqi_code1[2]}.get(three_yuen)
+    r= {"超神": "{}{}局{}".format(multi_key_dict_get(yy,new_jq), kooks1, three_yuen), 
+     "正常": "{}{}局{}".format(multi_key_dict_get(yy,Jieqi), kooks, three_yuen), 
+     "接氣": "{}{}局{}".format(multi_key_dict_get(yy,new_jq), kooks1, three_yuen), 
+     "正授": "{}{}局{}".format(multi_key_dict_get(yy,new_jq), kooks1, three_yuen), 
+     }
+    if difference >= 9 and difference < 15:
+        if zftg == hgz:
+            return r.get("正常")
         else:
-            new_jq = new_list(jieqi_name, Jieqi)[1]
-            jieqi_code = jieqicode_jq(new_jq)
-            kooks =  {"上元":jieqi_code[0],
-                      "中元":jieqi_code[1],
-                      "下元":jieqi_code[2]}.get(three_yuen)
-            find_yingyang = multi_key_dict_get(yy,new_jq)
-            return "{}{}局{}".format(find_yingyang, kooks, three_yuen)
-    else:
-        return "{}{}局{}".format(find_yingyang, kooks, three_yuen)
+            return r.get("超神")
+    if difference == 15:
+        if zftg == hgz:
+            return r.get("正常")
+        else:
+            return r.get("接氣")
+    if difference < 9:
+        if zftg == hgz:
+            return r.get("接氣")
+        else:
+            return r.get("正常")
+    if difference == 0:
+        return r.get("正授")
+
 #奇門排局刻家
 def qimen_ju_name_ke(year, month, day, hour, minute):
     hgz = gangzhi(year, month, day, hour, minute)[3]
@@ -581,8 +545,6 @@ def pan_star(year, month, day, hour, minute, option):
     return dict(zip(gong_reorder,star_reorder)), dict(zip(star_reorder, gong_reorder))
 
 
-
-
 def pan_star_minute(year, month, day, hour, minute, option):
     star_r = list("蓬任沖輔英禽柱心")
     zhifu_n_zhishi = zhifu_n_zhishi_ke(year, month, day, hour, minute, option)
@@ -649,7 +611,7 @@ def zhifu_n_zhishi(year, month, day, hour, minute, option):
         door = "死"
     return {"值符天干": [chour, jj.get(chour)],
             "值符星宮":[dict(zip(zf_keys, b)).get(chour),dict(zip(zf_keys, c)).get(chour)], 
-            "值使門宮":[door,dict(zip(zspai_keys,d)).get(chour)]}, dict(zip(zf_keys, b))
+            "值使門宮":[door,dict(zip(zspai_keys,d)).get(chour)]}
 
 def zhifu_tiangan(year, month, day, hour, minute):
     gz = gangzhi(year, month, day, hour, minute)
@@ -785,5 +747,14 @@ def jq_distance(year, month, day, hour, minute):
 
 
 if __name__ == '__main__':
-    print(qimen_ju_name_zhirun(2024, 6, 9, 22, 0))
-    print(zhifu_n_zhishi(2024, 6, 9, 22, 0, 2))
+    year = 1918
+    month = 10
+    day = 16
+    hour = 4
+    minute = 0
+    print(qimen_ju_name_zhirun(year, month, day, hour, minute))
+    #print(qimen_ju_name_chaibu(year, month, day, hour, minute))
+    #print(zhifu_n_zhishi(year, month, day, hour, minute, 1))
+    #print(zhifu_n_zhishi(year, month, day, hour, minute, 2))
+    #print(zhifu_pai(year, month, day, hour, minute, 1))
+    #print(zhifu_pai(year, month, day, hour, minute, 2))
