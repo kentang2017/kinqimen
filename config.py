@@ -380,12 +380,12 @@ def qimen_ju_name_zhirun(year, month, day, hour, minute):
             return r.get("接氣")
     if difference < 9:
         if zftg == hgz:
-            if difference >= 7:
+            if difference >= 9:
                 return r.get("正常")
             else:
                 return r.get("接氣")
         else:
-            if difference >= 7:
+            if difference >= 9:
                 return r.get("接氣")
             else:
                 return r.get("正常")
@@ -755,8 +755,8 @@ def jq_distance(year, month, day, hour, minute):
 if __name__ == '__main__':
     year = 2024
     month = 6
-    day = 30
-    hour = 0
+    day = 28
+    hour = 11
     minute = 0
     print(qimen_ju_name_zhirun(year, month, day, hour, minute))
     #print(qimen_ju_name_chaibu(year, month, day, hour, minute))
