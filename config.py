@@ -359,23 +359,30 @@ def qimen_ju_name_zhirun(year, month, day, hour, minute):
               "中元":jieqi_code[1],
               "下元":jieqi_code[2]}.get(three_yuen)
     new_jq = new_list(jieqi_name, Jieqi)[1]
+    new_jq1 = new_list(jieqi_name, Jieqi)[0]
+    new_jq2 = new_list(jieqi_name, Jieqi)[-1]
     jieqi_code1 = jieqicode_jq(new_jq)
+    jieqi_code2 = jieqicode_jq(new_jq1)
+    jieqi_code0 =  jieqicode_jq(new_jq2)
     kooks1 =  {"上元":jieqi_code1[0],
                   "中元":jieqi_code1[1],
                   "下元":jieqi_code1[2]}.get(three_yuen)
+    kooks2 =  {"上元":jieqi_code2[0],
+                  "中元":jieqi_code2[1],
+                  "下元":jieqi_code2[2]}.get(three_yuen)
+    kooks3 =  {"上元":jieqi_code0[0],
+                  "中元":jieqi_code0[1],
+                  "下元":jieqi_code0[2]}.get(three_yuen)
     r= {"超神": "{}{}局{}".format(multi_key_dict_get(yy,new_jq), kooks1, three_yuen), 
      "正常": "{}{}局{}".format(multi_key_dict_get(yy,Jieqi), kooks, three_yuen), 
      "接氣": "{}{}局{}".format(multi_key_dict_get(yy,new_jq), kooks1, three_yuen), 
      "正授": "{}{}局{}".format(multi_key_dict_get(yy,new_jq), kooks1, three_yuen), 
+     "其他":  "{}{}局{}".format(multi_key_dict_get(yy,new_jq2), kooks3, three_yuen), 
      }
     if difference >= 9 and difference < 15:
-        return r.get("超神")
+        
+        return r.get("正常")
     if difference == 15:
-        if zftg == hgz:
-            return r.get("正常")
-        else:
-            return r.get("接氣")
-    if difference <9:
         if zftg == hgz:
             if difference > 7:
                 return r.get("正常")
@@ -385,8 +392,34 @@ def qimen_ju_name_zhirun(year, month, day, hour, minute):
                 else:
                     return r.get("接氣")
         else:
-            return r.get("接氣")
-
+            if difference > 7:
+                return r.get("正常")
+            if difference == 7:
+                if zftg == hgz:
+                    return r.get("正常")
+                else:
+                    return r.get("接氣")
+    if difference < 9:
+        if zftg == hgz:
+            if difference > 7:
+                return r.get("正常")
+            if difference == 7:
+                if zftg == hgz:
+                    return r.get("正常")
+                else:
+                    return r.get("接氣")
+            else:
+                if difference < 3:
+                    return r.get("正常")
+                if difference >= 3 :
+                    return r.get("其他")
+        else:
+            if difference < 3:
+                return r.get("其他")
+            if difference >= 3 :
+                return r.get("正常")
+            else:
+                return r.get("正常")
     if difference == 0:
         return r.get("正授")
 
@@ -751,10 +784,10 @@ def jq_distance(year, month, day, hour, minute):
 
 
 if __name__ == '__main__':
-    year = 2024
+    year = 2025
     month = 12
-    day = 29
-    hour = 1
+    day = 10
+    hour = 23
     minute = 0
     print(qimen_ju_name_zhirun(year, month, day, hour, minute))
     #print(qimen_ju_name_chaibu(year, month, day, hour, minute))
