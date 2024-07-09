@@ -424,7 +424,7 @@ def qimen_ju_name_zhirun(year, month, day, hour, minute):
                 if difference >= 3 :
                     return r.get("其他")
         else:
-            if difference <= 1:
+            if difference == 0:
                 return r.get("其他")
             if difference > 7 :
                 return r.get("接氣")
@@ -796,10 +796,10 @@ def jq_distance(year, month, day, hour, minute):
 
 
 if __name__ == '__main__':
-    year = 1846
-    month = 1
-    day = 3
-    hour = 8
+    year = 2024
+    month = 7
+    day = 9
+    hour = 23
     minute = 30
     print(qimen_ju_name_zhirun(year, month, day, hour, minute))
     #print(qimen_ju_name_chaibu(year, month, day, hour, minute))
