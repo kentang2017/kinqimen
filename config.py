@@ -380,8 +380,16 @@ def qimen_ju_name_zhirun(year, month, day, hour, minute):
      "其他":  "{}{}局{}".format(multi_key_dict_get(yy,new_jq2), kooks3, three_yuen), 
      }
     if difference >= 9 and difference < 15:
-        
-        return r.get("正常")
+        if zftg == hgz:
+            if difference > 7 and difference <10:
+                return r.get("正常"), 
+            else:
+                return r.get("超神")
+        else:
+            if difference >= 9 and difference <=10 : 
+                return r.get("正常")
+            else:
+                return r.get("超神")
     if difference == 15:
         if zftg == hgz:
             if difference > 7:
@@ -414,9 +422,11 @@ def qimen_ju_name_zhirun(year, month, day, hour, minute):
                 if difference >= 3 :
                     return r.get("其他")
         else:
-            if difference == 1:
+            if difference <= 1:
                 return r.get("其他")
-            if difference >= 3 :
+            if difference > 7 :
+                return r.get("接氣")
+            if difference < 3:
                 return r.get("正常")
             else:
                 return r.get("正常")
@@ -785,10 +795,10 @@ def jq_distance(year, month, day, hour, minute):
 
 if __name__ == '__main__':
     year = 2024
-    month = 7
-    day = 9
-    hour = 16
-    minute = 0
+    month = 3
+    day = 1
+    hour = 8
+    minute = 30
     print(qimen_ju_name_zhirun(year, month, day, hour, minute))
     #print(qimen_ju_name_chaibu(year, month, day, hour, minute))
     #print(zhifu_n_zhishi(year, month, day, hour, minute, 1))
