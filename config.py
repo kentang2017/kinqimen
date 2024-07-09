@@ -369,26 +369,21 @@ def qimen_ju_name_zhirun(year, month, day, hour, minute):
      "正授": "{}{}局{}".format(multi_key_dict_get(yy,new_jq), kooks1, three_yuen), 
      }
     if difference >= 9 and difference < 15:
-        if zftg == hgz:
-            return r.get("正常")
-        else:
-            return r.get("超神")
+        return r.get("超神")
     if difference == 15:
         if zftg == hgz:
             return r.get("正常")
         else:
             return r.get("接氣")
-    if difference < 9:
+    if difference <9:
         if zftg == hgz:
-            if difference >= 9:
+            if difference > 7:
                 return r.get("正常")
             else:
-                return r.get("正常")
-        else:
-            if difference >= 9:
                 return r.get("接氣")
-            else:
-                return r.get("正常")
+        else:
+            return r.get("接氣")
+
     if difference == 0:
         return r.get("正授")
 
@@ -754,9 +749,9 @@ def jq_distance(year, month, day, hour, minute):
 
 if __name__ == '__main__':
     year = 2024
-    month = 6
-    day = 28
-    hour = 11
+    month = 12
+    day = 19
+    hour = 1
     minute = 0
     print(qimen_ju_name_zhirun(year, month, day, hour, minute))
     #print(qimen_ju_name_chaibu(year, month, day, hour, minute))
