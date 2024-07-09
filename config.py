@@ -382,14 +382,16 @@ def qimen_ju_name_zhirun(year, month, day, hour, minute):
     if difference >= 9 and difference < 15:
         if zftg == hgz:
             if difference > 7 and difference <10:
-                return r.get("正常"), 
-            else:
-                return r.get("超神")
-        else:
-            if difference >= 9 and difference <=10 : 
                 return r.get("正常")
             else:
                 return r.get("超神")
+        else:
+            if difference <= 9:
+                return r.get("正常")
+            if difference > 9 and difference < 11: 
+               return r.get("超神")
+            else:
+                return r.get("正常")
     if difference == 15:
         if zftg == hgz:
             if difference > 7:
@@ -794,9 +796,9 @@ def jq_distance(year, month, day, hour, minute):
 
 
 if __name__ == '__main__':
-    year = 2024
-    month = 3
-    day = 1
+    year = 1846
+    month = 1
+    day = 3
     hour = 8
     minute = 30
     print(qimen_ju_name_zhirun(year, month, day, hour, minute))
