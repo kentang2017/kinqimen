@@ -383,7 +383,7 @@ def qimen_ju_name_zhirun(year, month, day, hour, minute):
             if difference >= 9:
                 return r.get("正常")
             else:
-                return r.get("接氣")
+                return r.get("正常")
         else:
             if difference >= 9:
                 return r.get("接氣")
