@@ -373,116 +373,27 @@ def qimen_ju_name_zhirun_raw(year, month, day, hour, minute):
     kooks3 =  {"上元":jieqi_code0[0],
                   "中元":jieqi_code0[1],
                   "下元":jieqi_code0[2]}.get(three_yuen)
-    return {"節氣":Jieqi, 
+    return {"日期時間":"{}年{}月{}日{}時{}分".format(year, month, day, hour, minute),
+            "節氣":Jieqi, 
             "距節氣差日數":difference, 
             "三元":three_yuen, 
             "當前節氣日期":Jieqi_disance,
             "值符天干":zftg,
-            "局":"{}{}局".format(multi_key_dict_get(yy,new_jq), kooks1)
+            "節氣排局":jieqi_code2,
+            "當前排局":"{}{}局".format(multi_key_dict_get(yy,new_jq), kooks2),
+            "超神接氣正授排局":"{}{}局".format(multi_key_dict_get(yy,new_jq), kooks1),
             }
 
 #奇門排局置閏，正授，有超神，有閏奇，有接氣
 def qimen_ju_name_zhirun(year, month, day, hour, minute):
-    Jieqi = jq(year, month, day, hour, minute)
-    jlist = split_list(jiazi(), 5)
-    jlist = [tuple(i) for i in jlist]
-    fuhead = dict(zip(jlist, jiazi()[0::5]))
-    yy = {tuple(new_list(jieqi_name, "冬至")[0:12]):"陽遁",
-          tuple(new_list(jieqi_name, "夏至")[0:12]):"陰遁" }
-    jieqi_code = jieqicode(year, month, day, hour, minute)
-    hgz = gangzhi(year, month, day, hour, minute)[3][0]
-    dgz = gangzhi(year, month, day, hour, minute)[2]
-    fd = multi_key_dict_get(fuhead, dgz)
-    zftg = zhifu_tiangan(year, month, day, hour, minute)
-    ju_day_dict = {tuple(["甲子","甲午","己卯","己酉"]):"上元",
-                   tuple(["甲寅","甲申","己巳","己亥"]):"中元",
-                   tuple(["甲辰","甲戌","己丑","己未"]):"下元"}
-    three_yuen = multi_key_dict_get(ju_day_dict, fd)
-    Jieqi_disance = jq_distance(year, month, day, hour, minute)[0].get(Jieqi)
-    current = jq_distance(year, month, day, hour, minute)[1]
-    current_ts = datetime.datetime.strptime(current, "%Y/%m/%d %H:%M:%S")
-    jq_distance_ts = datetime.datetime.strptime(Jieqi_disance,"%Y/%m/%d %H:%M:%S")
-    difference = (current_ts-jq_distance_ts).days
-    
-    kooks =  {"上元":jieqi_code[0],
-              "中元":jieqi_code[1],
-              "下元":jieqi_code[2]}.get(three_yuen)
-    new_jq = new_list(jieqi_name, Jieqi)[1]
-    new_jq1 = new_list(jieqi_name, Jieqi)[0]
-    new_jq2 = new_list(jieqi_name, Jieqi)[-1]
-    jieqi_code1 = jieqicode_jq(new_jq)
-    jieqi_code2 = jieqicode_jq(new_jq1)
-    jieqi_code0 =  jieqicode_jq(new_jq2)
-    kooks1 =  {"上元":jieqi_code1[0],
-                  "中元":jieqi_code1[1],
-                  "下元":jieqi_code1[2]}.get(three_yuen)
-    kooks2 =  {"上元":jieqi_code2[0],
-                  "中元":jieqi_code2[1],
-                  "下元":jieqi_code2[2]}.get(three_yuen)
-    kooks3 =  {"上元":jieqi_code0[0],
-                  "中元":jieqi_code0[1],
-                  "下元":jieqi_code0[2]}.get(three_yuen)
-    r= {"超神": "{}{}局{}".format(multi_key_dict_get(yy,new_jq), kooks1, three_yuen), 
-     "正常": "{}{}局{}".format(multi_key_dict_get(yy,Jieqi), kooks, three_yuen), 
-     "接氣": "{}{}局{}".format(multi_key_dict_get(yy,new_jq), kooks1, three_yuen), 
-     "正授": "{}{}局{}".format(multi_key_dict_get(yy,new_jq), kooks1, three_yuen), 
-     "其他":  "{}{}局{}".format(multi_key_dict_get(yy,new_jq2), kooks3, three_yuen), 
-     }
-    if difference >= 9 and difference < 15:
-        if zftg == hgz:
-            if difference > 7 and difference <10:
-                return r.get("正常")
-            else:
-                return r.get("超神")
-        else:
-            if difference <= 9:
-                return r.get("正常")
-            if difference > 9 and difference < 11: 
-               return r.get("超神")
-            else:
-                return r.get("正常")
-    if difference == 15:
-        if zftg == hgz:
-            if difference > 7:
-                return r.get("正常")
-            if difference == 7:
-                if zftg == hgz:
-                    return r.get("正常")
-                else:
-                    return r.get("接氣")
-        else:
-            if difference > 7:
-                return r.get("正常")
-            if difference == 7:
-                if zftg == hgz:
-                    return r.get("正常")
-                else:
-                    return r.get("接氣")
-    if difference < 9:
-        if zftg == hgz:
-            if difference > 7:
-                return r.get("正常")
-            if difference == 7:
-                if zftg == hgz:
-                    return r.get("正常")
-                else:
-                    return r.get("接氣")
-            else:
-                if difference < 3:
-                    return r.get("正常")
-                if difference >= 3 :
-                    return r.get("其他")
-        else:
-            if difference == 0:
-                return r.get("其他")
-            if difference > 7 :
-                return r.get("接氣")
-            if difference < 3:
-                return r.get("正常")
-            else:
-                return r.get("正常")
-    if difference == 0:
-        return r.get("正授")
+    qdict = qimen_ju_name_zhirun_raw(year, month, day, hour, minute)
+    d = qdict.get("距節氣差日數")
+    if d > 6:
+        return "{}{}".format(qdict.get('超神接氣正授排局'), qdict.get('三元'))
+    if d == 0 or d == 9:
+        return "{}{}".format(qdict.get('當前排局'), qdict.get('三元'))
+    if d > 10 and d <= 15 or d < 9:
+        return "{}{}".format(qdict.get('當前排局'), qdict.get('三元'))
 
 #奇門排局刻家
 def qimen_ju_name_ke(year, month, day, hour, minute):
@@ -845,10 +756,10 @@ def jq_distance(year, month, day, hour, minute):
 
 
 if __name__ == '__main__':
-    year = 2024
+    year = 2001
     month = 7
-    day = 8
-    hour = 9
+    day = 15
+    hour = 4
     minute = 30
     print(qimen_ju_name_zhirun_raw(year, month, day, hour, minute))
     print(qimen_ju_name_zhirun(year, month, day, hour, minute))
