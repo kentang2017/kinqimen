@@ -673,6 +673,11 @@ class Qimen:
     
     def green_dragon(self, option):
         """青龍返首"""
+        hg = config.gangzhi(self.year,
+            self.month,
+            self.day,
+            self.hour,
+            self.minute)[3][0]
         sky = self.pan_sky(option)
         earth = self.pan_earth(option)
         zhishi = config.zhifu_n_zhishi(
@@ -682,18 +687,33 @@ class Qimen:
             self.hour,
             self.minute,
             option).get("值符天干")[1]
+        zf_gong = config.zhifu_n_zhishi(
+            self.year,
+            self.month,
+            self.day,
+            self.hour,
+            self.minute,
+            option).get("值符星宮")[1]
+        zhishi_gong = bidict(earth).inverse[zhishi]
         try:
-            zhishi_gong = bidict(earth).inverse[zhishi]
             sky_gong = bidict(sky).inverse["戊"]
             earth_gong = bidict(earth).inverse["丙"]
             if earth_gong == sky_gong:
                 return {"青龍返首": sky_gong}
             if zhishi_gong == earth_gong:
                 return {"青龍返首": earth_gong}
+            if sky_gong == "中":
+                return {"青龍返首": earth_gong}
             else:
                 return {"青龍返首": "沒有"}
         except KeyError:
-            return {"青龍返首": "沒有"}
+            if hg == "戊" or hg == "丙":
+                if zhishi_gong == "中":
+                    return {"青龍返首": zf_gong}
+                if zf_gong == "中":
+                    return  {"青龍返首": bidict(sky).inverse[earth.get("坤")]}
+            else:
+                return {"青龍返首": "沒有"}
             
     def fly_bird(self, option):
         """飛鳥跌穴"""
@@ -706,6 +726,13 @@ class Qimen:
             self.hour,
             self.minute,
             option).get("值符天干")[1]
+        zf_gong = config.zhifu_n_zhishi(
+            self.year,
+            self.month,
+            self.day,
+            self.hour,
+            self.minute,
+            option).get("值符星宮")[1]
         try:
             zhishi_gong = bidict(earth).inverse[zhishi]
             earth_gong = bidict(earth).inverse["戊"]
@@ -717,7 +744,14 @@ class Qimen:
             else:
                 return {"飛鳥跌穴": "沒有"}
         except KeyError:
-            return {"飛鳥跌穴": "沒有"}
+            if zhishi_gong == "中":
+                return {"飛鳥跌穴": config.zhifu_n_zhishi(
+                    self.year,
+                    self.month,
+                    self.day,
+                    self.hour,
+                    self.minute,
+                    option).get("值符星宮")[1]}
         
     def jade_girl(self, option):
         """玉女守門"""
@@ -764,8 +798,8 @@ if __name__ == '__main__':
     #end_datetime = datetime(2024, 5, 30, 23, 0)  # Adjust as needed
     #print(test_qimen(start_datetime, end_datetime))
 
-    qtext1 = Qimen(2024,6,9,22,0).pan(2)
-   
+    #qtext1 = Qimen(2024,7,12,19,0).fly_bird(2)
+    qtext1 = Qimen(2024,7,11,18,0).jade_girl(2)
     #q = list("巽離坤震兌艮坎乾")
     #a = [qtext.get("天盤").get(i) for i in q]
     print(qtext1)
