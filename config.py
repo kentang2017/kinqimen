@@ -277,7 +277,7 @@ def ke_jiazi_d(hour):
 def lunar_date_d(year, month, day):
     day = fromSolar(year, month, day)
     return {"年":day.getLunarYear(),
-            "月": day.getLunarMonth(),
+            "月":day.getLunarMonth(),
             "日":day.getLunarDay()}
 
 #日空時空
@@ -373,7 +373,9 @@ def qimen_ju_name_zhirun_raw(year, month, day, hour, minute):
     kooks3 =  {"上元":jieqi_code0[0],
                   "中元":jieqi_code0[1],
                   "下元":jieqi_code0[2]}.get(three_yuen)
+    lr = lunar_date_d(year, month, day)
     return {"日期時間":"{}年{}月{}日{}時{}分".format(year, month, day, hour, minute),
+            "農曆": lr,
             "節氣":Jieqi, 
             "距節氣差日數":difference, 
             "三元":three_yuen, 
@@ -392,7 +394,12 @@ def qimen_ju_name_zhirun(year, month, day, hour, minute):
         return "{}{}".format(qdict.get('超神接氣正授排局'), qdict.get('三元'))
     if d == 0 or d == 9:
         return "{}{}".format(qdict.get('當前排局'), qdict.get('三元'))
-    if d >= 10 and d <= 15:
+    if d >= 10 and d <= 15 and lunar_date_d(year, month, day).get("月") != 1 and lunar_date_d(year, month, day).get("月") != 11:
+        return "{}{}".format(qdict.get('當前排局'), qdict.get('三元'))
+    if d >= 10 and d <= 15 and lunar_date_d(year, month, day).get("月") == 1:
+        return "{}{}".format(qdict.get('超神接氣正授排局'), qdict.get('三元'))
+    
+    if d >= 10 and d <= 15 and lunar_date_d(year, month, day).get("月") == 11:
         return "{}{}".format(qdict.get('當前排局'), qdict.get('三元'))
     if d <= 6:
         return "{}{}".format(qdict.get('當前排局'), qdict.get('三元'))
@@ -758,13 +765,14 @@ def jq_distance(year, month, day, hour, minute):
 
 
 if __name__ == '__main__':
-    year = 2019
-    month = 1
-    day = 16
+    year = 2024
+    month = 3
+    day = 4
     hour = 0
     minute = 30
     print(qimen_ju_name_zhirun_raw(year, month, day, hour, minute))
     print(qimen_ju_name_zhirun(year, month, day, hour, minute))
+
     #print(qimen_ju_name_chaibu(year, month, day, hour, minute))
     #print(zhifu_n_zhishi(year, month, day, hour, minute, 1))
     #print(zhifu_n_zhishi(year, month, day, hour, minute, 2))
