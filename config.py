@@ -394,7 +394,7 @@ def qimen_ju_name_zhirun(year, month, day, hour, minute):
         return "{}{}".format(qdict.get('當前排局'), qdict.get('三元'))
     if d > 9 and d <= 15:
         return "{}{}".format(qdict.get('當前排局'), qdict.get('三元'))
-    if d < 6:
+    if d <= 6:
         return "{}{}".format(qdict.get('當前排局'), qdict.get('三元'))
 
 #奇門排局刻家
@@ -760,7 +760,7 @@ def jq_distance(year, month, day, hour, minute):
 if __name__ == '__main__':
     year = 2024
     month = 7
-    day = 11
+    day = 13
     hour = 14
     minute = 30
     print(qimen_ju_name_zhirun_raw(year, month, day, hour, minute))
