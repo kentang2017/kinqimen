@@ -388,11 +388,11 @@ def qimen_ju_name_zhirun_raw(year, month, day, hour, minute):
 def qimen_ju_name_zhirun(year, month, day, hour, minute):
     qdict = qimen_ju_name_zhirun_raw(year, month, day, hour, minute)
     d = qdict.get("距節氣差日數")
-    if d > 6:
+    if d > 6  and d <9 and d != 9:
         return "{}{}".format(qdict.get('超神接氣正授排局'), qdict.get('三元'))
     if d == 0 or d == 9:
         return "{}{}".format(qdict.get('當前排局'), qdict.get('三元'))
-    if d > 10 and d <= 15 or d < 9:
+    if d > 9 and d <= 15:
         return "{}{}".format(qdict.get('當前排局'), qdict.get('三元'))
 
 #奇門排局刻家
@@ -756,10 +756,10 @@ def jq_distance(year, month, day, hour, minute):
 
 
 if __name__ == '__main__':
-    year = 2001
-    month = 7
-    day = 15
-    hour = 4
+    year = 2020
+    month = 1
+    day = 16
+    hour = 0
     minute = 30
     print(qimen_ju_name_zhirun_raw(year, month, day, hour, minute))
     print(qimen_ju_name_zhirun(year, month, day, hour, minute))
