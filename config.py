@@ -393,38 +393,54 @@ def qimen_ju_name_zhirun_raw(year, month, day, hour, minute):
 #奇門排局置閏，正授，有超神，有閏奇，有接氣
 def qimen_ju_name_zhirun(year, month, day, hour, minute):
     qdict = qimen_ju_name_zhirun_raw(year, month, day, hour, minute)
+    jQ = qdict.get("節氣")
     d = qdict.get("距節氣差日數")
     if d > 6  and d <9 and d != 9 and lunar_date_d(year, month, day).get("農曆月") != "腊月" and lunar_date_d(year, month, day).get("農曆月") != "冬月" and lunar_date_d(year, month, day).get("月")>=9:
         return "{}{}".format(qdict.get('超神接氣正授排局'), qdict.get('三元'))
-    if d > 6  and d <9 and d != 9 and lunar_date_d(year, month, day).get("農曆月") != "腊月" and lunar_date_d(year, month, day).get("農曆月") != "冬月" and lunar_date_d(year, month, day).get("月")<9:
+    if d > 6  and d <9 and d != 9 and lunar_date_d(year, month, day).get("農曆月") != "腊月" and lunar_date_d(year, month, day).get("農曆月") != "冬月" and lunar_date_d(year, month, day).get("月")<= 6 and lunar_date_d(year, month, day).get("農曆月") != "正月":
+        return "{}{}".format(qdict.get('當前排局'), qdict.get('三元'))
+    if d > 6  and d <9 and d != 9 and lunar_date_d(year, month, day).get("農曆月") != "腊月" and lunar_date_d(year, month, day).get("農曆月") != "冬月" and lunar_date_d(year, month, day).get("月")<= 6 and lunar_date_d(year, month, day).get("農曆月") == "正月" :
         return "{}{}".format(qdict.get('其他排局1'), qdict.get('三元'))
-
     if d > 6  and d <9 and d != 9 and lunar_date_d(year, month, day).get("農曆月") == "腊月" and lunar_date_d(year, month, day).get("農曆月") != "冬月":
         return "{}{}".format(qdict.get('當前排局'), qdict.get('三元'))
-
+    if d > 6  and d <9 and d != 9 and lunar_date_d(year, month, day).get("農曆月") != "腊月" and lunar_date_d(year, month, day).get("農曆月") == "冬月":
+        return "{}{}".format(qdict.get('其他排局1'), qdict.get('三元'))
     if d > 6  and d <9 and d != 9 and lunar_date_d(year, month, day).get("農曆月") != "腊月" and lunar_date_d(year, month, day).get("農曆月") != "冬月":
         return "{}{}".format(qdict.get('超神接氣正授排局'), qdict.get('三元'))
-
-
-    if d == 0 or d == 9 and lunar_date_d(year, month, day).get("農曆月") != "腊月" and lunar_date_d(year, month, day).get("農曆月") != "冬月":
-        return "{}{}".format(qdict.get('當前排局'), qdict.get('三元'))
+    #若距節氣差日數等於0或9天
+    if d == 0 and lunar_date_d(year, month, day).get("農曆月") != "腊月" and lunar_date_d(year, month, day).get("農曆月") != "冬月":
+        return "{}{}".format(qdict.get('超神接氣正授排局'), qdict.get('三元'))
     
-    
-    if d >= 10 and d <= 15 and lunar_date_d(year, month, day).get("農曆月") != "腊月" and lunar_date_d(year, month, day).get("農曆月") != "冬月":
+    if d == 0 or d == 9 and lunar_date_d(year, month, day).get("農曆月") != "腊月" and lunar_date_d(year, month, day).get("農曆月") == "冬月":
         return "{}{}".format(qdict.get('當前排局'), qdict.get('三元'))
+    if d == 0 or d == 9 and lunar_date_d(year, month, day).get("農曆月") == "腊月" and lunar_date_d(year, month, day).get("農曆月") != "冬月":
+        return "{}{}".format(qdict.get('其他排局1'), qdict.get('三元'))
+    #若距節氣差日數介於10至15天
+    if d >= 10 and d <= 15 and lunar_date_d(year, month, day).get("農曆月") != "腊月" and lunar_date_d(year, month, day).get("農曆月") != "冬月" and lunar_date_d(year, month, day).get("月") > 6:
+        return "{}{}".format(qdict.get('當前排局'), qdict.get('三元'))
+    if d >= 10 and d <= 15 and lunar_date_d(year, month, day).get("農曆月") != "腊月" and lunar_date_d(year, month, day).get("農曆月") != "冬月" and lunar_date_d(year, month, day).get("月") <= 6:
+        return "{}{}".format(qdict.get('超神接氣正授排局'), qdict.get('三元'))
+    
     if d >= 10 and d <= 15 and lunar_date_d(year, month, day).get("農曆月") == "腊月"  and lunar_date_d(year, month, day).get("農曆月") != "冬月":
         return "{}{}".format(qdict.get('超神接氣正授排局'), qdict.get('三元'))
     if d >= 10 and d <= 15 and lunar_date_d(year, month, day).get("農曆月") != "腊月"  and lunar_date_d(year, month, day).get("農曆月") == "冬月":
         return "{}{}".format(qdict.get('其他排局1'), qdict.get('三元'))
+    #若距節氣差日數少或等於6天
+    if d <= 6 and lunar_date_d(year, month, day).get("農曆月") != "腊月" and lunar_date_d(year, month, day).get("農曆月") != "冬月" and lunar_date_d(year, month, day).get("月") > 6:
+        return "{}{}".format(qdict.get('其他排局1'), qdict.get('三元'))
     
-    if d <= 6 and lunar_date_d(year, month, day).get("農曆月") != "腊月" and lunar_date_d(year, month, day).get("農曆月") != "冬月" and  lunar_date_d(year, month, day).get("月")>=9:
-        return "{}{}".format(qdict.get('超神接氣正授排局'), qdict.get('三元'))
-    if d <= 6 and lunar_date_d(year, month, day).get("農曆月") != "腊月" and lunar_date_d(year, month, day).get("農曆月") != "冬月" and  lunar_date_d(year, month, day).get("月") < 9:
-        return "{}{}".format(qdict.get('當前排局'), qdict.get('三元'))
     
-    if d <= 6 and lunar_date_d(year, month, day).get("農曆月") != "腊月" and lunar_date_d(year, month, day).get("農曆月") == "冬月":
+    if d <= 6 and d != 0 and lunar_date_d(year, month, day).get("農曆月") != "腊月" and lunar_date_d(year, month, day).get("農曆月") != "冬月" and lunar_date_d(year, month, day).get("月") > 6:
+        return "{}{}".format(qdict.get('其他排局'), qdict.get('三元'))
+    if d <= 6 and d != 0and lunar_date_d(year, month, day).get("農曆月") != "腊月" and lunar_date_d(year, month, day).get("農曆月") != "冬月" and lunar_date_d(year, month, day).get("月") <= 6:
+        return "{}{}".format(qdict.get('其他排局1'), qdict.get('三元'))
+    if d <= 6 and d != 0and lunar_date_d(year, month, day).get("農曆月") != "腊月" and lunar_date_d(year, month, day).get("農曆月") != "冬月" and lunar_date_d(year, month, day).get("農曆月") == "正月":
+        return "{}{}".format(qdict.get('其他排局1'), qdict.get('三元'))
+    if d <= 6 and d != 0and lunar_date_d(year, month, day).get("農曆月") != "腊月" and lunar_date_d(year, month, day).get("農曆月") == "冬月" and jQ == "冬至" and d <3:
+        return "{}{}".format(qdict.get('其他排局')[2:4], qdict.get('三元'))
+    if d <= 6 and d != 0and lunar_date_d(year, month, day).get("農曆月") != "腊月" and lunar_date_d(year, month, day).get("農曆月") == "冬月" and jQ == "冬至":
         return "{}{}".format(qdict.get('當前排局'), qdict.get('三元'))
-    if d <= 6 and lunar_date_d(year, month, day).get("農曆月") == "腊月" and lunar_date_d(year, month, day).get("農曆月") != "冬月":
+    if d <= 6 and d != 0and lunar_date_d(year, month, day).get("農曆月") == "腊月" and lunar_date_d(year, month, day).get("農曆月") != "冬月" :
         return "{}{}".format(qdict.get('其他排局1'), qdict.get('三元'))
 
 #奇門排局刻家
@@ -788,9 +804,9 @@ def jq_distance(year, month, day, hour, minute):
 
 
 if __name__ == '__main__':
-    year = 1994
-    month = 5
-    day = 21
+    year = 1898
+    month = 12
+    day = 31
     hour = 0
     minute = 30
     print(qimen_ju_name_zhirun_raw(year, month, day, hour, minute))
