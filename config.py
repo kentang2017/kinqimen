@@ -338,10 +338,14 @@ def qimen_ju_name_chaibu(year, month, day, hour, minute):
 def qimen_ju_name_zhirun_raw(year, month, day, hour, minute):
     Jieqi = jq(year, month, day, hour, minute)
     jlist = split_list(jiazi(), 5)
+    new_jq = new_list(jieqi_name, Jieqi)[1]
+    new_jq1 = new_list(jieqi_name, Jieqi)[0]
+    new_jq2 = new_list(jieqi_name, Jieqi)[-1]
     jlist = [tuple(i) for i in jlist]
     fuhead = dict(zip(jlist, jiazi()[0::5]))
     yy = {tuple(new_list(jieqi_name, "冬至")[0:12]):"陽遁",
           tuple(new_list(jieqi_name, "夏至")[0:12]):"陰遁" }
+    yin_yang = multi_key_dict_get(yy,new_jq1)
     jieqi_code = jieqicode(year, month, day, hour, minute)
     hgz = gangzhi(year, month, day, hour, minute)[3][0]
     dgz = gangzhi(year, month, day, hour, minute)[2]
@@ -356,13 +360,9 @@ def qimen_ju_name_zhirun_raw(year, month, day, hour, minute):
     current_ts = datetime.datetime.strptime(current, "%Y/%m/%d %H:%M:%S")
     jq_distance_ts = datetime.datetime.strptime(Jieqi_disance,"%Y/%m/%d %H:%M:%S")
     difference = (current_ts-jq_distance_ts).days
-    
     kooks =  {"上元":jieqi_code[0],
               "中元":jieqi_code[1],
               "下元":jieqi_code[2]}.get(three_yuen)
-    new_jq = new_list(jieqi_name, Jieqi)[1]
-    new_jq1 = new_list(jieqi_name, Jieqi)[0]
-    new_jq2 = new_list(jieqi_name, Jieqi)[-1]
     jieqi_code1 = jieqicode_jq(new_jq)
     jieqi_code2 = jieqicode_jq(new_jq1)
     jieqi_code0 =  jieqicode_jq(new_jq2)
@@ -384,9 +384,10 @@ def qimen_ju_name_zhirun_raw(year, month, day, hour, minute):
             "當前節氣日期":Jieqi_disance,
             "值符天干":zftg,
             "節氣排局":jieqi_code2,
-            "當前排局":"{}{}局".format(multi_key_dict_get(yy,new_jq), kooks2),
+            "陰陽局": yin_yang,
+            "當前排局":"{}{}局".format(yin_yang, kooks2),
             "超神接氣正授排局":"{}{}局".format(multi_key_dict_get(yy,new_jq), kooks1),
-            "其他排局":"{}{}局".format(multi_key_dict_get(yy,new_jq), kooks3),
+            "其他排局":"{}{}局".format(yin_yang, kooks3),
             "其他排局1":"{}{}局".format(multi_key_dict_get(yy,new_jq), kooks),
             }
 
@@ -418,12 +419,11 @@ def qimen_ju_name_zhirun(year, month, day, hour, minute):
     #若距節氣差日數等於0或9天
     if d == 0 and lunar_date_d(year, month, day).get("農曆月") != "腊月" and lunar_date_d(year, month, day).get("農曆月") != "冬月" and lunar_date_d(year, month, day).get("月") > 9:
         return "{}{}".format(qdict.get('超神接氣正授排局'), qdict.get('三元'))
-    
     if d == 9 and lunar_date_d(year, month, day).get("農曆月") != "腊月" and lunar_date_d(year, month, day).get("農曆月") != "冬月":
         return "{}{}".format(qdict.get('當前排局'), qdict.get('三元'))
-    
     if d == 9 and lunar_date_d(year, month, day).get("農曆月") != "腊月" and lunar_date_d(year, month, day).get("農曆月") == "冬月":
-        return "{}{}".format(qdict.get('超神接氣正授排局'), qdict.get('三元'))
+        return "{}{}".format(qdict.get('當前排局'), qdict.get('三元'))
+    
     if d == 0 or d == 9 and lunar_date_d(year, month, day).get("農曆月") == "腊月" and lunar_date_d(year, month, day).get("農曆月") != "冬月":
         return "{}{}".format(qdict.get('其他排局1'), qdict.get('三元'))
     #若距節氣差日數介於10至15天
@@ -439,10 +439,8 @@ def qimen_ju_name_zhirun(year, month, day, hour, minute):
         return "{}{}".format(qdict.get('超神接氣正授排局'), qdict.get('三元'))
     if d >= 10 and d <= 15 and lunar_date_d(year, month, day).get("農曆月") == "腊月"  and lunar_date_d(year, month, day).get("農曆月") != "冬月" and jQ != "冬至":
         return "{}{}".format(qdict.get('當前排局'), qdict.get('三元'))
-    if d >= 10 and d <= 15 and lunar_date_d(year, month, day).get("農曆月") != "腊月"  and lunar_date_d(year, month, day).get("農曆月") == "冬月" and jQ == "冬至":
+    if d >= 10 and d <= 15 and lunar_date_d(year, month, day).get("農曆月") != "腊月"  and lunar_date_d(year, month, day).get("農曆月") == "冬月":
         return "{}{}".format(qdict.get('超神接氣正授排局'), qdict.get('三元'))
-    if d >= 10 and d <= 15 and lunar_date_d(year, month, day).get("農曆月") != "腊月"  and lunar_date_d(year, month, day).get("農曆月") == "冬月" and jQ != "冬至":
-        return "{}{}".format(qdict.get('當前排局'), qdict.get('三元'))
     
     #若距節氣差日數少或等於6天
     if d <= 6 and d != 0 and lunar_date_d(year, month, day).get("農曆月") != "腊月" and lunar_date_d(year, month, day).get("農曆月") != "冬月" and lunar_date_d(year, month, day).get("月") > 9 and lunar_date_d(year, month, day).get("日") < 15 :
@@ -821,11 +819,11 @@ def jq_distance(year, month, day, hour, minute):
 
 
 if __name__ == '__main__':
-    year = 1742
-    month = 11
-    day = 1
+    year = 2022
+    month = 12
+    day = 28
     hour = 0
-    minute = 30
+    minute = 0
     print(qimen_ju_name_zhirun_raw(year, month, day, hour, minute))
     print(qimen_ju_name_zhirun(year, month, day, hour, minute))
 
