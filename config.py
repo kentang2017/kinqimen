@@ -656,8 +656,8 @@ def pan_star_minute(year, month, day, hour, minute, option):
     starting_star = zhifu_n_zhishi.get("值符星宮")[0].replace("芮", "禽")
     starting_gong = zhifu_n_zhishi.get("值符星宮")[1]
     qmke = qimen_ju_name_ke(year, month, day, hour, minute)
-    rotate = {"陽":clockwise_eightgua,
-              "陰":list(reversed(clockwise_eightgua))}.get(qimen_ke[0])
+    rotate = {"陽":list(reversed(clockwise_eightgua)),
+              "陰":clockwise_eightgua}.get(qimen_ke[0])
     star_reorder = {"陽":new_list(star_r, starting_star),
                     "陰":new_list(list(reversed(star_r)),starting_star)}.get(qmke[0])
     if starting_gong == "中":
@@ -728,22 +728,22 @@ def zhifu_n_zhishi_ke(year, month, day, hour, minute, option):
     gz = gangzhi(year, month, day, hour, minute)
     hgan = dict(zip(tian_gan,range(0,11))).get(gz[4][0])
     chour = multi_key_dict_get(liujiashun_dict(),gz[4])
-    ed = list("休死傷杜中開驚生景")
-    eg = list("蓬芮沖輔禽心柱任英")
+    ed = list("休生傷杜中景死驚開")
+    eg = list("蓬任沖輔英禽芮柱心")
     zspai_list = list(zhishi_pai_ke(year, month, day, hour, minute, option).values())
     zspai_keys = list(zhishi_pai_ke(year, month, day, hour, minute, option).keys())
     doorlist = list(map(lambda i: dict(zip(cnumber, ed)).get(i[0]), zspai_list))
-    door = dict(zip(zspai_keys, doorlist)).get(chour)
+    door = doorlist[0]
     if door == "中":
         door = "死"
     zf_ke_keys = list(zhifu_pai_ke(year, month, day, hour, minute, option).keys())
     zf_ke_values = list(zhifu_pai_ke(year, month, day, hour, minute, option).values())
     blist = list(map(lambda i:gongs_code.get(i[hgan]), zf_ke_values))
     godlist = list(map(lambda i:dict(zip(cnumber, eg)).get(i[0]),zf_ke_values))
-    zhifu_star = [dict(zip(zf_ke_keys, godlist)).get(chour),dict(zip(zf_ke_keys, blist)).get(chour)]
+    zhifu_star = [godlist[0],gongs_code.get(zf_ke_values[hgan][-1])]
     sdoor = list(map(lambda i:gongs_code.get(i[hgan]), zf_ke_values))
     zhifu_door = [door,dict(zip(zf_ke_keys,sdoor)).get(chour)]
-    return {"值符星宮":zhifu_star, "值使門宮":zhifu_door}
+    return {"值符星宮":zhifu_star, "值使門宮":zhifu_door} 
 
 def gong_wangzhuai():
     wangzhuai = list("旺相胎沒死囚休廢")
@@ -852,13 +852,15 @@ def jq_distance(year, month, day, hour, minute):
 
 if __name__ == '__main__':
     year = 2024
-    month = 10
-    day = 29
-    hour = 18
-    minute = 2
+    month = 7
+    day = 25
+    hour = 10
+    minute = 26
     print(qimen_ju_name_zhirun_raw(year, month, day, hour, minute))
     print(qimen_ju_name_zhirun(year, month, day, hour, minute))
     print(qimen_ju_name_ke(year, month, day, hour, minute))
+    print(gangzhi(year, month, day, hour, minute))
+    print(zhifu_n_zhishi_ke(year, month, day, hour, minute, 2))
     #print(qimen_ju_name_chaibu(year, month, day, hour, minute))
     #print(zhifu_n_zhishi(year, month, day, hour, minute, 1))
     #print(zhifu_n_zhishi(year, month, day, hour, minute, 2))
