@@ -732,18 +732,19 @@ def zhifu_n_zhishi_ke(year, month, day, hour, minute, option):
     eg = list("蓬任沖輔英禽芮柱心")
     zspai_list = list(zhishi_pai_ke(year, month, day, hour, minute, option).values())
     zspai_keys = list(zhishi_pai_ke(year, month, day, hour, minute, option).keys())
+    
     doorlist = list(map(lambda i: dict(zip(cnumber, ed)).get(i[0]), zspai_list))
-    door = doorlist[0]
+    door = dict(zip(zspai_keys, doorlist)).get(chour)
     if door == "中":
         door = "死"
     zf_ke_keys = list(zhifu_pai_ke(year, month, day, hour, minute, option).keys())
     zf_ke_values = list(zhifu_pai_ke(year, month, day, hour, minute, option).values())
     blist = list(map(lambda i:gongs_code.get(i[hgan]), zf_ke_values))
     godlist = list(map(lambda i:dict(zip(cnumber, eg)).get(i[0]),zf_ke_values))
-    zhifu_star = [godlist[0],gongs_code.get(zf_ke_values[hgan][-1])]
+    zhifu_star = [dict(zip(zf_ke_keys, godlist)).get(chour),dict(zip(zf_ke_keys, blist)).get(chour)]
     sdoor = list(map(lambda i:gongs_code.get(i[hgan]), zf_ke_values))
     zhifu_door = [door,dict(zip(zf_ke_keys,sdoor)).get(chour)]
-    return {"值符星宮":zhifu_star, "值使門宮":zhifu_door} 
+    return {"值符星宮":zhifu_star, "值使門宮":zhifu_door}, doorlist, 
 
 def gong_wangzhuai():
     wangzhuai = list("旺相胎沒死囚休廢")
