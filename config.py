@@ -725,26 +725,28 @@ def zhifu_tiangan(year, month, day, hour, minute):
 
 def zhifu_n_zhishi_ke(year, month, day, hour, minute, option):
     gongs_code = dict(zip(cnumber, eight_gua))
+    lj = dict(zip(["甲子"",甲戌","甲申","甲午","甲辰","甲寅"], range(1,7)))
+    
     gz = gangzhi(year, month, day, hour, minute)
-    hgan = dict(zip(tian_gan,range(0,11))).get(gz[4][0])
-    chour = multi_key_dict_get(liujiashun_dict(),gz[4])
+    num2cnum = dict(zip(list(range(1,10)), cnum))
+    hgan = dict(zip(tian_gan,range(0,11))).get(gz[3][0])
+    chour = multi_key_dict_get(liujiashun_dict(),gz[3])
+    chour2 = multi_key_dict_get(liujiashun_dict(),gz[4])
+    #chour2 = multi_key_dict_get(liujiashun_dict(),gz[3])
     ed = list("休生傷杜中景死驚開")
     eg = list("蓬任沖輔英禽芮柱心")
+    zs = zhishi_pai_ke(year, month, day, hour, minute, option)
     zspai_list = list(zhishi_pai_ke(year, month, day, hour, minute, option).values())
     zspai_keys = list(zhishi_pai_ke(year, month, day, hour, minute, option).keys())
-    
     doorlist = list(map(lambda i: dict(zip(cnumber, ed)).get(i[0]), zspai_list))
     door = dict(zip(zspai_keys, doorlist)).get(chour)
     if door == "中":
         door = "死"
-    zf_ke_keys = list(zhifu_pai_ke(year, month, day, hour, minute, option).keys())
     zf_ke_values = list(zhifu_pai_ke(year, month, day, hour, minute, option).values())
-    blist = list(map(lambda i:gongs_code.get(i[hgan]), zf_ke_values))
     godlist = list(map(lambda i:dict(zip(cnumber, eg)).get(i[0]),zf_ke_values))
-    zhifu_star = [dict(zip(zf_ke_keys, godlist)).get(chour),dict(zip(zf_ke_keys, blist)).get(chour)]
-    sdoor = list(map(lambda i:gongs_code.get(i[hgan]), zf_ke_values))
-    zhifu_door = [door,dict(zip(zf_ke_keys,sdoor)).get(chour)]
-    return {"值符星宮":zhifu_star, "值使門宮":zhifu_door}, doorlist, 
+    zhifu_star = [godlist[lj.get(chour)], gongs_code.get(num2cnum.get(lj.get(chour2)))]
+    zhifu_door = [door,gongs_code.get(zs.get(chour2)[hgan])]
+    return {"值符星宮":zhifu_star, "值使門宮":zhifu_door}
 
 def gong_wangzhuai():
     wangzhuai = list("旺相胎沒死囚休廢")
@@ -854,11 +856,11 @@ def jq_distance(year, month, day, hour, minute):
 if __name__ == '__main__':
     year = 2024
     month = 7
-    day = 25
-    hour = 10
-    minute = 26
-    print(qimen_ju_name_zhirun_raw(year, month, day, hour, minute))
-    print(qimen_ju_name_zhirun(year, month, day, hour, minute))
+    day = 27
+    hour = 22
+    minute = 35
+    #print(qimen_ju_name_zhirun_raw(year, month, day, hour, minute))
+    #print(qimen_ju_name_zhirun(year, month, day, hour, minute))
     print(qimen_ju_name_ke(year, month, day, hour, minute))
     print(gangzhi(year, month, day, hour, minute))
     print(zhifu_n_zhishi_ke(year, month, day, hour, minute, 2))
