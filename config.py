@@ -856,9 +856,9 @@ def jq_distance(year, month, day, hour, minute):
 if __name__ == '__main__':
     year = 2024
     month = 7
-    day = 27
-    hour = 22
-    minute = 35
+    day = 28
+    hour = 10
+    minute = 58
     #print(qimen_ju_name_zhirun_raw(year, month, day, hour, minute))
     #print(qimen_ju_name_zhirun(year, month, day, hour, minute))
     print(qimen_ju_name_ke(year, month, day, hour, minute))
