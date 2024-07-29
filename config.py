@@ -762,7 +762,10 @@ def zhifu_n_zhishi_ke(year, month, day, hour, minute, option):
     shi_door_head = {kook[i]: {liujia[j]:doors[i][j] for j in range(len(liujia))} for i in range(len(kook))}.get("{}{}".format(qmke[0], qmke[2])).get(chour)[1]
     fiftheen_ke_gz = new_list(jiazi(), chour)[0:16]
     door_order ={"陽":new_list(eight_gua, shi_door_head), "陰": new_list(list(reversed(eight_gua)), shi_door_head)}.get(qmke[0])
-    zhifu_star = [stars_zhifu, ep.get(gz[4][0])]
+    fu = ep.get(gz[4][0])
+    if fu == None:
+        fu = ep.get(zftg)
+    zhifu_star = [stars_zhifu, fu]
     zhifu_door = [shi_door,dict(zip(fiftheen_ke_gz, cycle(door_order))).get(gz[4])]
     return {"值符天干":zftg, "值符星宮":zhifu_star, "值使門宮":zhifu_door}
 
@@ -874,9 +877,9 @@ def jq_distance(year, month, day, hour, minute):
 if __name__ == '__main__':
     year = 2024
     month = 7
-    day = 28
-    hour = 10
-    minute = 58
+    day = 30
+    hour = 0
+    minute = 0
     #print(qimen_ju_name_zhirun_raw(year, month, day, hour, minute))
     #print(qimen_ju_name_zhirun(year, month, day, hour, minute))
     print(qimen_ju_name_ke(year, month, day, hour, minute))
