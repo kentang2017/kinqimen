@@ -536,8 +536,9 @@ def pan_sky_minute(year, month, day, hour, minute ):
     gz = gangzhi(year, month, day, hour, minute)
     eg = list("坎巽兌離乾震坤中艮")
     tg = list("乙丙丁戊己庚辛壬癸")
+    zf = zhifu_n_zhishi_ke(year, month, day, hour, minute).get('值符星宮')[1]
     zftg =  {"甲子":"戊","甲戌":"己","甲申":"庚","甲午":"辛","甲辰":"壬","甲寅":"癸"}.get(multi_key_dict_get(liujiashun_dict(), gz[4]))
-    return  {"陽":dict(zip(eg, new_list(tg, zftg))), "陰":dict(zip(eg, list(reversed(new_list(tg, zftg)))))}.get(ke[0])
+    return  {"陽":dict(zip(new_list(eg, zf), new_list(tg, zftg))), "陰":dict(zip(new_list(eg, zf), list(reversed(new_list(tg, zftg)))))}.get(ke[0])
     
 def pan_earth_min_r(year, month, day, hour, minute):
     """刻家奇門地盤(逆)設置"""
@@ -892,13 +893,14 @@ if __name__ == '__main__':
     month = 7
     day = 30
     hour = 0
-    minute = 30
+    minute = 0
     #print(qimen_ju_name_zhirun_raw(year, month, day, hour, minute))
     #print(qimen_ju_name_zhirun(year, month, day, hour, minute))
     print(qimen_ju_name_ke(year, month, day, hour, minute))
     print(gangzhi(year, month, day, hour, minute))
     #print(pan_door_minute(year, month, day, hour, minute, 2))
     print(pan_sky_minute(year, month, day, hour, minute))
+    print(zhifu_n_zhishi_ke(year, month, day, hour, minute))
     #print(pan_sky_minute(year, month, day, hour, minute))
     #print(zhifu_n_zhishi(year, month, day, hour, minute, 1))
     #print(zhifu_n_zhishi(year, month, day, hour, minute, 2))
