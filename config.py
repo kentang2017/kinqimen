@@ -526,6 +526,19 @@ def pan_earth_minute(year, month, day, hour, minute):
                     {"陽遁":list("戊己庚辛壬癸丁丙乙"),
                      "陰遁":list("戊乙丙丁癸壬辛庚己")}.get(ke[0:2])))
 
+def pan_sky_minute(year, month, day, hour, minute ):
+    """刻家奇門天盤設置"""
+    ke = qimen_ju_name_ke(year,
+                                 month,
+                                 day,
+                                 hour,
+                                 minute)
+    gz = gangzhi(year, month, day, hour, minute)
+    eg = list("坎巽兌離乾震坤中艮")
+    tg = list("乙丙丁戊己庚辛壬癸")
+    zftg =  {"甲子":"戊","甲戌":"己","甲申":"庚","甲午":"辛","甲辰":"壬","甲寅":"癸"}.get(multi_key_dict_get(liujiashun_dict(), gz[4]))
+    return  {"陽":dict(zip(eg, new_list(tg, zftg))), "陰":dict(zip(eg, list(reversed(new_list(tg, zftg)))))}.get(ke[0])
+    
 def pan_earth_min_r(year, month, day, hour, minute):
     """刻家奇門地盤(逆)設置"""
     pan_earth_v = list(pan_earth_minute(year, month, day, hour, minute).values())
@@ -637,7 +650,7 @@ def pan_door(year, month, day, hour, minute, option):
 
 def pan_door_minute(year, month, day, hour, minute, option):
     qimen_ke = qimen_ju_name_ke(year, month, day, hour, minute)
-    zhifu_n_zhishike = zhifu_n_zhishi_ke(year, month, day, hour, minute, option)
+    zhifu_n_zhishike = zhifu_n_zhishi_ke(year, month, day, hour, minute)
     starting_door = zhifu_n_zhishike.get("值使門宮")[0]
     starting_gong = zhifu_n_zhishike.get("值使門宮")[1]
     rotate = {"陽":clockwise_eightgua,
@@ -669,7 +682,7 @@ def pan_star(year, month, day, hour, minute, option):
 
 def pan_star_minute(year, month, day, hour, minute, option):
     star_r = list("蓬任沖輔英禽柱心")
-    zhifu_n_zhishi = zhifu_n_zhishi_ke(year, month, day, hour, minute, option)
+    zhifu_n_zhishi = zhifu_n_zhishi_ke(year, month, day, hour, minute)
     qimen_ke = qimen_ju_name_ke(year, month, day, hour, minute)
     starting_star = zhifu_n_zhishi.get("值符星宮")[0].replace("芮", "禽")
     starting_gong = zhifu_n_zhishi.get("值符星宮")[1]
@@ -699,7 +712,7 @@ def pan_god(year, month, day, hour, minute, option):
                                   "陰":list("符蛇陰合虎玄地天")}.get(qmju[0])))
 
 def pan_god_minute(year, month, day, hour, minute, option):
-    zfzs = zhifu_n_zhishi_ke(year, month, day, hour, minute, option)
+    zfzs = zhifu_n_zhishi_ke(year, month, day, hour, minute)
     starting_gong = zfzs.get("值符星宮")[1]
     qmke = qimen_ju_name_ke(year, month, day, hour, minute)
     rotate = {"陽":clockwise_eightgua,
@@ -741,7 +754,7 @@ def zhifu_tiangan(year, month, day, hour, minute):
     chour = multi_key_dict_get(liujiashun_dict(), gz[3])
     return jj.get(chour)
 
-def zhifu_n_zhishi_ke(year, month, day, hour, minute, option):
+def zhifu_n_zhishi_ke(year, month, day, hour, minute):
     gz = gangzhi(year, month, day, hour, minute)
     qmke = qimen_ju_name_ke(year, month, day, hour, minute)
     chour = multi_key_dict_get(liujiashun_dict(),gz[4])
@@ -879,13 +892,13 @@ if __name__ == '__main__':
     month = 7
     day = 30
     hour = 0
-    minute = 0
+    minute = 30
     #print(qimen_ju_name_zhirun_raw(year, month, day, hour, minute))
     #print(qimen_ju_name_zhirun(year, month, day, hour, minute))
     print(qimen_ju_name_ke(year, month, day, hour, minute))
     print(gangzhi(year, month, day, hour, minute))
-    print(pan_door_minute(year, month, day, hour, minute, 2))
-    print(zhifu_n_zhishi_ke(year, month, day, hour, minute, 2))
+    #print(pan_door_minute(year, month, day, hour, minute, 2))
+    print(pan_sky_minute(year, month, day, hour, minute))
     #print(pan_sky_minute(year, month, day, hour, minute))
     #print(zhifu_n_zhishi(year, month, day, hour, minute, 1))
     #print(zhifu_n_zhishi(year, month, day, hour, minute, 2))
