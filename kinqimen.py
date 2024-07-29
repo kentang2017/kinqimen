@@ -249,8 +249,10 @@ class Qimen:
                                          self.hour,
                                          self.minute,
                                          option)["值符星宮"][0]
+        rotate_list = list(map(lambda x:self.pan_earth_minute().get(x), list(rotate)))
+        gong_reorder = config.new_list(rotate, "坤")
+        new_gong_order = config.new_list(gong_reorder, self.pan_earth_min_r().get(gz[4][0]))
         if fu_head_location == "中":
-            gong_reorder = config.new_list(rotate, "坤")
             try:
                 g = list(map(lambda x: self.pan_earth(option).get(x), list(rotate)))
                 gan_reorder = config.new_list(g, fu_head)
@@ -261,7 +263,6 @@ class Qimen:
                 aaa_bbb = config.new_list(aaa, self.pan_earth(option).get("坤"))
                 return dict(zip(list(reversed(gong_reorder)), aaa_bbb))
         if fu_head_location != "中" and zhifu != "禽" and fu_head_location2 != "中":
-            rotate_list = list(map(lambda x:self.pan_earth_minute().get(x), list(rotate)))
             gan_reorder = config.new_list(rotate_list, fu_head)
             gong_reorder = config.new_list(rotate, fu_head_location)
             if fu_head not in gan_reorder:
@@ -280,7 +281,7 @@ class Qimen:
                 if fu_location == None:
                     return  self.pan_earth_minute()
                 elif fu_location != None:
-                    return {**dict(zip(gong_reorder,gan_reorder)),
+                    return {**dict(zip(gong_reorder,rotate_list)),
                             **{"中":self.pan_earth_minute().get("中")}}
         if fu_head_location !="中" and zhifu =="禽" and fu_head_location2 =="中":
             earth_rotate = list(map(lambda x: self.pan_earth_minute().get(x), list(rotate)))
@@ -297,6 +298,7 @@ class Qimen:
             gan_reorder = config.new_list(g, fu_head)
             gong_reorder = config.new_list(rotate, fu_head_location)
             return dict(zip(gong_reorder,gan_reorder))
+        
     #九宮長生十二神
     def gong_chengsun(self, option):
         sky = self.pan_sky(option)
@@ -478,7 +480,11 @@ class Qimen:
             "值符值使": zfzs,
             "天乙": self.tianyi(option),
             "天盤": self.pan_sky_minute(option),
-            "地盤": self.pan_earth_minute(),
+            "地盤": config.pan_earth_minute(self.year,
+                                          self.month,
+                                          self.day,
+                                          self.hour,
+                                          self.minute),
             "門": door,
             "星": star,
             "神": god,
@@ -798,8 +804,8 @@ if __name__ == '__main__':
     #end_datetime = datetime(2024, 5, 30, 23, 0)  # Adjust as needed
     #print(test_qimen(start_datetime, end_datetime))
 
-    #qtext1 = Qimen(2024,7,12,19,0).fly_bird(2)
-    qtext1 = Qimen(2024,7,11,18,0).jade_girl(2)
+    qtext1 = Qimen(2024,7,28,10,58).pan_minute(1)
+    #qtext1 = Qimen(2024,7,11,18,0).jade_girl(2)
     #q = list("巽離坤震兌艮坎乾")
     #a = [qtext.get("天盤").get(i) for i in q]
     print(qtext1)

@@ -513,6 +513,25 @@ def getgtw():
     newmap = list(map(lambda i: new_list(gtw, i),gg))
     newgtw_list = list(map(lambda y: dict(zip(di_zhi,y)),newmap))
     return dict(zip(tian_gan, newgtw_list))
+
+def pan_earth_minute(year, month, day, hour, minute):
+    """刻家奇門地盤設置"""
+    ke = qimen_ju_name_ke(year,
+                                 month,
+                                 day,
+                                 hour,
+                                 minute)
+    return dict(zip(list(map(lambda x: dict(zip(cnumber, eight_gua)).get(x),
+                    new_list(cnumber, ke[2]))),
+                    {"陽遁":list("戊己庚辛壬癸丁丙乙"),
+                     "陰遁":list("戊乙丙丁癸壬辛庚己")}.get(ke[0:2])))
+
+def pan_earth_min_r(year, month, day, hour, minute):
+    """刻家奇門地盤(逆)設置"""
+    pan_earth_v = list(pan_earth_minute(year, month, day, hour, minute).values())
+    pan_earth_k = list(pan_earth_minute(year, month, day, hour, minute).keys())
+    return dict(zip(pan_earth_v, pan_earth_k))
+ 
 #排值符
 def zhifu_pai(year, month, day, hour, minute, option):
     qmju = {1:qimen_ju_name_chaibu(year, month, day, hour, minute),
@@ -648,7 +667,6 @@ def pan_star(year, month, day, hour, minute, option):
         gong_reorder = new_list(rotate, starting_gong)
     return dict(zip(gong_reorder,star_reorder)), dict(zip(star_reorder, gong_reorder))
 
-
 def pan_star_minute(year, month, day, hour, minute, option):
     star_r = list("蓬任沖輔英禽柱心")
     zhifu_n_zhishi = zhifu_n_zhishi_ke(year, month, day, hour, minute, option)
@@ -656,8 +674,8 @@ def pan_star_minute(year, month, day, hour, minute, option):
     starting_star = zhifu_n_zhishi.get("值符星宮")[0].replace("芮", "禽")
     starting_gong = zhifu_n_zhishi.get("值符星宮")[1]
     qmke = qimen_ju_name_ke(year, month, day, hour, minute)
-    rotate = {"陽":list(reversed(clockwise_eightgua)),
-              "陰":clockwise_eightgua}.get(qimen_ke[0])
+    rotate = {"陽":clockwise_eightgua,
+              "陰":list(reversed(clockwise_eightgua))}.get(qimen_ke[0])
     star_reorder = {"陽":new_list(star_r, starting_star),
                     "陰":new_list(list(reversed(star_r)),starting_star)}.get(qmke[0])
     if starting_gong == "中":
@@ -724,33 +742,29 @@ def zhifu_tiangan(year, month, day, hour, minute):
     return jj.get(chour)
 
 def zhifu_n_zhishi_ke(year, month, day, hour, minute, option):
-    gongs_code = dict(zip(cnumber, eight_gua))
-    lj = dict(zip(["甲子"",甲戌","甲申","甲午","甲辰","甲寅"], range(1,7)))
-    qmke = qimen_ju_name_ke(year, month, day, hour, minute)
     gz = gangzhi(year, month, day, hour, minute)
-    num2cnum = dict(zip(list(range(1,10)), cnum))
-    hgan = dict(zip(tian_gan,range(0,11))).get(gz[3][0])
-    chour = multi_key_dict_get(liujiashun_dict(),gz[3])
-    chour2 = multi_key_dict_get(liujiashun_dict(),gz[4])
+    qmke = qimen_ju_name_ke(year, month, day, hour, minute)
+    chour = multi_key_dict_get(liujiashun_dict(),gz[4])
     #chour2 = multi_key_dict_get(liujiashun_dict(),gz[3])
-    ed = list("休生傷杜中景死驚開")
-    eg = list("蓬任沖輔英禽芮柱心")
-    zs = zhishi_pai_ke(year, month, day, hour, minute, option)
-    zspai_list = list(zhishi_pai_ke(year, month, day, hour, minute, option).values())
-    zspai_keys = list(zhishi_pai_ke(year, month, day, hour, minute, option).keys())
-    doorlist = list(map(lambda i: dict(zip(cnumber, ed)).get(i[0]), zspai_list))
+    ep = pan_earth_min_r(year, month, day, hour, minute)
+    zftg =  {"甲子":"戊","甲戌":"己","甲申":"庚","甲午":"辛","甲辰":"壬","甲寅":"癸"}.get(multi_key_dict_get(liujiashun_dict(), gz[4]))
     kook = re.findall("..", "陽一陽四陽七陰九陰六陰三")
     liujia = re.findall("..", "甲子甲戌甲申甲午甲辰甲寅")
     stars = [list("蓬芮沖輔禽心"), list("輔禽心柱任英"), list("柱任英蓬芮沖"), list("英任柱心禽輔"), list("心禽輔沖芮蓬"), list("沖芮蓬英任柱")]
-    stars_zhifu = {kook[i]: {liujia[j]: stars[i][j] for j in range(len(liujia))} for i in range(len(kook))}.get("{}{}".format(qmke[0], qmke[2])).get(chour2)
-    door = dict(zip(zspai_keys, doorlist)).get(chour)
-    if door == "中":
-        door = "死"
-    zf_ke_values = list(zhifu_pai_ke(year, month, day, hour, minute, option).values())
-    godlist = list(map(lambda i:dict(zip(cnumber, eg)).get(i[0]),zf_ke_values))
-    zhifu_star = [stars_zhifu, gongs_code.get(num2cnum.get(lj.get(chour2)))]
-    zhifu_door = [door,gongs_code.get(zs.get(chour2)[hgan])]
-    return {"值符星宮":zhifu_star, "值使門宮":zhifu_door}
+    doors = [re.findall("..", "休坎死坤傷震杜巽死中開乾"),
+            re.findall("..", "杜巽死中開乾驚兌生艮景離"),
+            re.findall("..", "驚兌生艮景離休坎死坤傷震"),
+            re.findall("..", "景離生艮驚兌開乾死中杜巽"),
+            re.findall("..", "開乾死中杜巽傷震死坤休坎"),
+            re.findall("..", "傷震死坤休坎景離生艮驚兌")]
+    stars_zhifu = {kook[i]: {liujia[j]: stars[i][j] for j in range(len(liujia))} for i in range(len(kook))}.get("{}{}".format(qmke[0], qmke[2])).get(chour)
+    shi_door = {kook[i]: {liujia[j]:doors[i][j] for j in range(len(liujia))} for i in range(len(kook))}.get("{}{}".format(qmke[0], qmke[2])).get(chour)[0]
+    shi_door_head = {kook[i]: {liujia[j]:doors[i][j] for j in range(len(liujia))} for i in range(len(kook))}.get("{}{}".format(qmke[0], qmke[2])).get(chour)[1]
+    fiftheen_ke_gz = new_list(jiazi(), chour)[0:16]
+    door_order ={"陽":new_list(eight_gua, shi_door_head), "陰": new_list(list(reversed(eight_gua)), shi_door_head)}.get(qmke[0])
+    zhifu_star = [stars_zhifu, ep.get(gz[4][0])]
+    zhifu_door = [shi_door,dict(zip(fiftheen_ke_gz, cycle(door_order))).get(gz[4])]
+    return {"值符天干":zftg, "值符星宮":zhifu_star, "值使門宮":zhifu_door}
 
 def gong_wangzhuai():
     wangzhuai = list("旺相胎沒死囚休廢")
@@ -867,8 +881,9 @@ if __name__ == '__main__':
     #print(qimen_ju_name_zhirun(year, month, day, hour, minute))
     print(qimen_ju_name_ke(year, month, day, hour, minute))
     print(gangzhi(year, month, day, hour, minute))
+    print(pan_door_minute(year, month, day, hour, minute, 2))
     print(zhifu_n_zhishi_ke(year, month, day, hour, minute, 2))
-    #print(qimen_ju_name_chaibu(year, month, day, hour, minute))
+    #print(pan_sky_minute(year, month, day, hour, minute))
     #print(zhifu_n_zhishi(year, month, day, hour, minute, 1))
     #print(zhifu_n_zhishi(year, month, day, hour, minute, 2))
     #print(zhifu_pai(year, month, day, hour, minute, 1))
