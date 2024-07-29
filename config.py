@@ -726,7 +726,7 @@ def zhifu_tiangan(year, month, day, hour, minute):
 def zhifu_n_zhishi_ke(year, month, day, hour, minute, option):
     gongs_code = dict(zip(cnumber, eight_gua))
     lj = dict(zip(["甲子"",甲戌","甲申","甲午","甲辰","甲寅"], range(1,7)))
-    
+    qmke = qimen_ju_name_ke(year, month, day, hour, minute)
     gz = gangzhi(year, month, day, hour, minute)
     num2cnum = dict(zip(list(range(1,10)), cnum))
     hgan = dict(zip(tian_gan,range(0,11))).get(gz[3][0])
@@ -739,12 +739,16 @@ def zhifu_n_zhishi_ke(year, month, day, hour, minute, option):
     zspai_list = list(zhishi_pai_ke(year, month, day, hour, minute, option).values())
     zspai_keys = list(zhishi_pai_ke(year, month, day, hour, minute, option).keys())
     doorlist = list(map(lambda i: dict(zip(cnumber, ed)).get(i[0]), zspai_list))
+    kook = re.findall("..", "陽一陽四陽七陰九陰六陰三")
+    liujia = re.findall("..", "甲子甲戌甲申甲午甲辰甲寅")
+    stars = [list("蓬芮沖輔禽心"), list("輔禽心柱任英"), list("柱任英蓬芮沖"), list("英任柱心禽輔"), list("心禽輔沖芮蓬"), list("沖芮蓬英任柱")]
+    stars_zhifu = {kook[i]: {liujia[j]: stars[i][j] for j in range(len(liujia))} for i in range(len(kook))}.get("{}{}".format(qmke[0], qmke[2])).get(chour2)
     door = dict(zip(zspai_keys, doorlist)).get(chour)
     if door == "中":
         door = "死"
     zf_ke_values = list(zhifu_pai_ke(year, month, day, hour, minute, option).values())
     godlist = list(map(lambda i:dict(zip(cnumber, eg)).get(i[0]),zf_ke_values))
-    zhifu_star = [godlist[lj.get(chour)], gongs_code.get(num2cnum.get(lj.get(chour2)))]
+    zhifu_star = [stars_zhifu, gongs_code.get(num2cnum.get(lj.get(chour2)))]
     zhifu_door = [door,gongs_code.get(zs.get(chour2)[hgan])]
     return {"值符星宮":zhifu_star, "值使門宮":zhifu_door}
 
