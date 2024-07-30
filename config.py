@@ -27,6 +27,7 @@ wuxing_relation_2 = dict(zip(list(map(
     "尅我,我尅,比和,生我,我生".split(",")))
 cmonth = list("一二三四五六七八九十") + ["十一","十二"]
 jieqi_name = re.findall('..', '春分清明穀雨立夏小滿芒種夏至小暑大暑立秋處暑白露秋分寒露霜降立冬小雪大雪冬至小寒大寒立春雨水驚蟄')
+jj = {"甲子":"戊","甲戌":"己","甲申":"庚","甲午":"辛","甲辰":"壬","甲寅":"癸"}
 
 #%% 基本功能函數
 def split_list(lst, chunk_size):
@@ -539,7 +540,7 @@ def pan_sky_minute(year, month, day, hour, minute ):
     tg = list("乙丙丁戊己庚辛壬癸")
     zf = zhifu_n_zhishi_ke(year, month, day, hour, minute).get('值符星宮')[1]
     zs = zhifu_n_zhishi_ke(year, month, day, hour, minute).get('值使門宮')[1]
-    zftg =  {"甲子":"戊","甲戌":"己","甲申":"庚","甲午":"辛","甲辰":"壬","甲寅":"癸"}.get(multi_key_dict_get(liujiashun_dict(), gz[4]))
+    zftg = jj.get(multi_key_dict_get(liujiashun_dict(), gz[4]))
     if zs != "中" and zf != "中":
         return  {"陽":dict(zip(new_list(eg, zf), new_list(tg, zftg))), "陰":dict(zip(new_list(eg, zf), list(reversed(new_list(tg, zftg)))))}.get(ke[0])
     if zs == "中" and zf != "中":
@@ -746,7 +747,6 @@ def zhifu_n_zhishi(year, month, day, hour, minute, option):
     zspai_values = list(zhishi_pai(year, month, day, hour, minute, option).values())
     zf_keys = list(zhifu_pai(year, month, day, hour, minute, option).keys())
     zf_values = list(zhifu_pai(year, month, day, hour, minute, option).values())
-    jj = {"甲子":"戊","甲戌":"己","甲申":"庚","甲午":"辛","甲辰":"壬","甲寅":"癸"}
     a = list(map(lambda i: dict(zip(cnumber, eg)).get(i[0]), zspai_values))
     b = list(map(lambda i:dict(zip(cnumber, eight_gods)).get(i[0]) , zf_values))
     c = list(map(lambda i:gongs_code.get(i[hgan]), zf_values))
