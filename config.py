@@ -401,7 +401,7 @@ def qimen_ju_name_zhirun(year, month, day, hour, minute):
     if d > 6  and d <9 and d != 9 and lunar_date_d(year, month, day).get("農曆月") != "腊月" and lunar_date_d(year, month, day).get("農曆月") != "冬月" and lunar_date_d(year, month, day).get("月")<= 6 and lunar_date_d(year, month, day).get("農曆月") != "正月" and  tgft not in list("戊己庚辛壬癸"):
         return "{}{}".format(qdict.get('當前排局'), qdict.get('三元'))
     if d > 6 and d <9 and lunar_date_d(year, month, day).get("農曆月") != "腊月" and lunar_date_d(year, month, day).get("農曆月") != "冬月" and lunar_date_d(year, month, day).get("日") > 20 and lunar_date_d(year, month, day).get("月") < 7 and lunar_date_d(year, month, day).get("農曆月") != "正月" and  tgft in list("戊己庚辛壬癸"):
-        return "{}{}".format(qdict.get('超神接氣正授排局'), qdict.get('三元'))
+        return "{}{}".format(qdict.get('當前排局'), qdict.get('三元'))
     if d > 6 and d <9 and lunar_date_d(year, month, day).get("農曆月") != "腊月" and lunar_date_d(year, month, day).get("農曆月") != "冬月" and lunar_date_d(year, month, day).get("日") > 10 and lunar_date_d(year, month, day).get("月") < 7 and lunar_date_d(year, month, day).get("農曆月") != "正月" and  tgft in list("戊己庚辛壬癸"):
         return "{}{}".format(qdict.get('其他排局1'), qdict.get('三元'))
     if d > 6  and d <9 and d != 9 and lunar_date_d(year, month, day).get("農曆月") != "腊月" and lunar_date_d(year, month, day).get("農曆月") != "冬月" and lunar_date_d(year, month, day).get("月") >= 7 and lunar_date_d(year, month, day).get("農曆月") != "正月" and tgft in list("戊己庚辛壬癸"):
@@ -899,11 +899,11 @@ def jq_distance(year, month, day, hour, minute):
 
 if __name__ == '__main__':
     year = 1786
-    month = 3
-    day = 29
+    month = 12
+    day = 31
     hour = 8
     minute = 0
-    #print(qimen_ju_name_zhirun_raw(year, month, day, hour, minute))
+    print(qimen_ju_name_zhirun_raw(year, month, day, hour, minute))
     #print(qimen_ju_name_zhirun(year, month, day, hour, minute))
     print(qimen_ju_name_zhirun(year, month, day, hour, minute))
     print(gangzhi(year, month, day, hour, minute))
