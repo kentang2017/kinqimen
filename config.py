@@ -499,9 +499,9 @@ def qimen_ju_name_ke(year, month, day, hour, minute):
                                        hgz[1])
 
     qu = {"陽遁":multi_key_dict_get({tuple(new_list(jieqi_name,"冬至")[0:12]):"一七四",
-                             tuple(new_list(jieqi_name,"夏至")[0:12]):"九三六"},
+                             tuple(new_list(jieqi_name,"夏至")[0:12]):"一七四"},
                             jq(year,month, day,hour, minute)),
-          "陰遁":multi_key_dict_get({tuple(new_list(jieqi_name,"冬至")[0:12]):"一七四",
+          "陰遁":multi_key_dict_get({tuple(new_list(jieqi_name,"冬至")[0:12]):"九三六",
                                    tuple(new_list(jieqi_name,"夏至")[0:12]):"九三六"},
                                   jq(year,month, day,hour, minute))}.get(find_yingyang)
     find_yuen = findyuen_minute(year, month, day, hour, minute)
@@ -898,18 +898,18 @@ def jq_distance(year, month, day, hour, minute):
 
 
 if __name__ == '__main__':
-    year = 2017
-    month = 10
-    day = 2
+    year = 2011
+    month = 12
+    day = 28
     hour = 20
-    minute = 50
+    minute = 13
     print(qimen_ju_name_zhirun_raw(year, month, day, hour, minute))
     #print(qimen_ju_name_zhirun(year, month, day, hour, minute))
-    print(qimen_ju_name_zhirun(year, month, day, hour, minute))
-    print(gangzhi(year, month, day, hour, minute))
+    #print(qimen_ju_name_zhirun(year, month, day, hour, minute))
+    #print(gangzhi(year, month, day, hour, minute))
     #print(pan_door_minute(year, month, day, hour, minute, 2))
     print(qimen_ju_name_ke(year, month, day, hour, minute))
-    print(zhifu_n_zhishi_ke(year, month, day, hour, minute))
+    #print(zhifu_n_zhishi_ke(year, month, day, hour, minute))
     #print(pan_sky_minute(year, month, day, hour, minute))
     #print(zhifu_n_zhishi(year, month, day, hour, minute, 1))
     #print(zhifu_n_zhishi(year, month, day, hour, minute, 2))
