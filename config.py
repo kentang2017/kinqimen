@@ -533,13 +533,14 @@ def pan_sky_minute(year, month, day, hour, minute ):
                                  minute)
     gz = gangzhi(year, month, day, hour, minute)
     eg = list("坎巽兌離乾震坤中艮")
-    another_eg = list("艮震中兌巽坎坤乾離")
+    another_eg = list("巽震坤坎離艮兌乾中")
     tg = list("乙丙丁戊己庚辛壬癸")
+    another_tg = list("乙丙丁癸壬辛庚己戊")
     zf = zhifu_n_zhishi_ke(year, month, day, hour, minute).get('值符星宮')[1]
     zs = zhifu_n_zhishi_ke(year, month, day, hour, minute).get('值使門宮')[1]
     zftg = jj.get(multi_key_dict_get(liujiashun_dict(), gz[4]))
     if zs != "中" and zf != "中":
-        return  {"陽":dict(zip(new_list(eg, zf), new_list(tg, zftg))), "陰":dict(zip(new_list(eg, zf), list(reversed(new_list(tg, zftg)))))}.get(ke[0])
+        return  {"陽":dict(zip(new_list(eg, zf), new_list(tg, zftg))), "陰":dict(zip(list((new_list(another_eg, zf))), new_list(another_tg, zftg)))}.get(ke[0])
     if zs == "中" and zf != "中":
         return {"陽":dict(zip(new_list(another_eg, zf), new_list(tg, zftg))), "陰":dict(zip(new_list(another_eg, zf), list(reversed(new_list(tg, zftg)))))}.get(ke[0])
     if zs == "中" and zf == "中":
