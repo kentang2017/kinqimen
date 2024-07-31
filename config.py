@@ -533,9 +533,9 @@ def pan_sky_minute(year, month, day, hour, minute ):
     zs = zhifu_n_zhishi_ke(year, month, day, hour, minute).get('值使門宮')[1]
     zftg = jj.get(multi_key_dict_get(liujiashun_dict(), gz[4]))
     if zs != "中" and zf != "中":
-        return  {"陽":dict(zip(new_list(eg, zf), new_list(tg, zftg))), "陰":dict(zip(list((new_list(another_eg, zf))), new_list(another_tg, zftg)))}.get(ke[0])
+        return  {"陽":dict(zip(new_list(eg, zf), new_list(tg, zftg))), "陰":dict(zip(list((new_list(list(reversed(eg)), zf))), new_list(another_tg, zftg)))}.get(ke[0])
     if zs == "中" and zf != "中":
-        return {"陽":dict(zip(new_list(another_eg, zf), new_list(tg, zftg))), "陰":dict(zip(new_list(another_eg, zf), list(reversed(new_list(tg, zftg)))))}.get(ke[0])
+        return {"陽":dict(zip(new_list(another_eg, zf), new_list(tg, zftg))), "陰":dict(zip(list((new_list(list(reversed(eg)), zf))), new_list(tg, zftg)))}.get(ke[0])
     if zs == "中" and zf == "中":
         return {"陽":dict(zip(new_list(eg, zf), new_list(tg, zftg))), "陰":dict(zip(new_list(eg, zf), list(reversed(new_list(tg, zftg)))))}.get(ke[0])
     if zs != "中" and zf == "中":
@@ -890,16 +890,16 @@ def jq_distance(year, month, day, hour, minute):
 
 if __name__ == '__main__':
     year = 2024
-    month = 8
-    day = 25
-    hour = 17
-    minute = 50
+    month = 7
+    day = 31
+    hour = 21
+    minute = 59
     print(qimen_ju_name_zhirun_raw(year, month, day, hour, minute))
     print(qimen_ju_name_zhirun(year, month, day, hour, minute))
     #print(qimen_ju_name_zhirun(year, month, day, hour, minute))
     #print(gangzhi(year, month, day, hour, minute))
     #print(pan_door_minute(year, month, day, hour, minute, 2))
-    #print(qimen_ju_name_ke(year, month, day, hour, minute))
+    print(qimen_ju_name_ke(year, month, day, hour, minute))
     #print(zhifu_n_zhishi_ke(year, month, day, hour, minute))
     #print(pan_sky_minute(year, month, day, hour, minute))
     #print(zhifu_n_zhishi(year, month, day, hour, minute, 1))
