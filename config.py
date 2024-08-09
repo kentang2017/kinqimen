@@ -554,13 +554,13 @@ def pan_sky_minute(year, month, day, hour, minute ):
     ]]
     sky_pan_orders = dict(zip(kook_setting, skypan_orders))
     liujia = list("戊己庚辛壬癸")
-    orders = [[[0,1,2,3,0,4,5,6,7],[3,0,1,5,0,2,6,7,4],[5,3,0,6,3,1,7,4,2],[1,2,4,0,2,7,3,5,6],[4,7,6,2,7,5,1,0,3],[6,5,3,7,5,0,4,2,1]],[[0,1,2,3,1,4,5,6,7],[1,2,4,0,2,7,3,5,6],[2,4,7,1,4,6,0,3,5],[5,3,0,6,3,1,7,4,2],[6,5,3,7,5,0,4,2,1],[7,6,5,4,6,3,2,1,0]],[[0,1,2,3,1,4,5,6,7],[5,3,0,6,3,1,7,4,2],[7,6,5,4,6,3,2,1,0],[1,2,4,0,2,7,3,5,6],[2,4,7,1,4,6,0,3,5],[4,7,6,2,7,5,1,0,3]]]
+    orders = [[[0,1,2,3,1,4,5,6,7],[3,0,1,5,0,2,6,7,4],[5,3,0,6,3,1,7,4,2],[1,2,4,0,2,7,3,5,6],[4,7,6,2,7,5,1,0,3],[6,5,3,7,5,0,4,2,1]],[[0,1,2,3,1,4,5,6,7],[1,2,4,0,2,7,3,5,6],[2,4,7,1,4,6,0,3,5],[5,3,0,6,3,1,7,4,2],[6,5,3,7,5,0,4,2,1],[7,6,5,4,6,3,2,1,0]],[[0,1,2,3,1,4,5,6,7],[5,3,0,6,3,1,7,4,2],[7,6,5,4,6,3,2,1,0],[1,2,4,0,2,7,3,5,6],[2,4,7,1,4,6,0,3,5],[4,7,6,2,7,5,1,0,3]]]
     get_zf_orders = dict(zip(kook_setting, orders))
     ke = qimen_ju_name_ke(year, month, day, hour, minute)
     kook = "{}{}".format(ke[0],ke[2])
     getzf_orders = multi_key_dict_get(get_zf_orders, kook)
     get_humhead = dict(zip(liujia, getzf_orders)).get(zftg)
-    return dict(zip(eg,multi_key_dict_get(sky_pan_orders, kook)[dict(zip(eight_gua, get_humhead)).get(zfgong)]))
+    return dict(zip(eight_gua,multi_key_dict_get(sky_pan_orders, kook)[dict(zip(eight_gua, get_humhead)).get(zfgong)]))
 
 def pan_earth_min_r(year, month, day, hour, minute):
     """刻家奇門地盤(逆)設置"""
@@ -911,15 +911,17 @@ def jq_distance(year, month, day, hour, minute):
 
 if __name__ == '__main__':
     year = 2024
-    month = 7
-    day = 31
-    hour = 21
-    minute = 59
+    month = 8
+    day = 9
+    hour = 15
+    minute = 29
     print(qimen_ju_name_zhirun_raw(year, month, day, hour, minute))
-    print(qimen_ju_name_zhirun(year, month, day, hour, minute))
+    #print(qimen_ju_name_zhirun(year, month, day, hour, minute))
     #print(qimen_ju_name_zhirun(year, month, day, hour, minute))
     #print(gangzhi(year, month, day, hour, minute))
+    print(qimen_ju_name_ke(year, month, day, hour, minute))
     print(pan_sky_minute(year, month, day, hour, minute))
+    print(zhifu_n_zhishi_ke(year, month, day, hour, minute))
     #print(qimen_ju_name_ke(year, month, day, hour, minute))
     #print(zhifu_n_zhishi_ke(year, month, day, hour, minute))
     #print(pan_sky_minute(year, month, day, hour, minute))
