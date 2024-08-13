@@ -731,7 +731,7 @@ if __name__ == '__main__':
     #end_datetime = datetime(2024, 5, 30, 23, 0)  # Adjust as needed
     #print(test_qimen(start_datetime, end_datetime))
 
-    qtext1 = Qimen(2024,1,14,23,20).pan_minute(1)
+    qtext1 = Qimen(2024,1,14,23,20).pan_minute(2)
     #qtext1 = Qimen(2024,7,11,18,0).jade_girl(2)
     #q = list("巽離坤震兌艮坎乾")
     #a = [qtext.get("天盤").get(i) for i in q]
