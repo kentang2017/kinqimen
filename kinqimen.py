@@ -296,12 +296,7 @@ class Qimen:
                         self.day,
                         self.hour,
                         self.minute)
-        zfzs = config.zhifu_n_zhishi(self.year,
-                                     self.month,
-                                     self.day,
-                                     self.hour,
-                                     self.minute,
-                                     option)
+        zfzs = config.zhifu_n_zhishi(self.year,self.month,self.day,self.hour,self.minute,option)
         pan_star_result = config.pan_star(self.year,
                                           self.month,
                                           self.day,
