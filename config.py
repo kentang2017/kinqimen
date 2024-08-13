@@ -18,7 +18,6 @@ tian_gan = '甲乙丙丁戊己庚辛壬癸'
 di_zhi = '子丑寅卯辰巳午未申酉戌亥'
 cnumber = list("一二三四五六七八九")
 door_r = list("休生傷杜景死驚開")
-star_r = list("蓬任沖輔英禽柱心")
 eight_gua = list("坎坤震巽中乾兌艮離")
 clockwise_eightgua = list("坎艮震巽離坤兌乾")
 golen_d = re.findall("..","太乙攝提軒轅招搖天符青龍咸池太陰天乙")
@@ -29,8 +28,6 @@ wuxing_relation_2 = dict(zip(list(map(
 cmonth = list("一二三四五六七八九十") + ["十一","十二"]
 jieqi_name = re.findall('..', '春分清明穀雨立夏小滿芒種夏至小暑大暑立秋處暑白露秋分寒露霜降立冬小雪大雪冬至小寒大寒立春雨水驚蟄')
 jj = {"甲子":"戊","甲戌":"己","甲申":"庚","甲午":"辛","甲辰":"壬","甲寅":"癸"}
-door_wuxing = dict(zip(door_r,"水土木木火土金金"))
-star_wuxing = dict(zip(star_r,"水土木木火土金金"))
 
 #%% 基本功能函數
 def split_list(lst, chunk_size):
@@ -520,7 +517,39 @@ def pan_earth_minute(year, month, day, hour, minute):
                     {"陽遁":list("戊己庚辛壬癸丁丙乙"),
                      "陰遁":list("戊乙丙丁癸壬辛庚己")}.get(ke[0:2])))
 
-
+def pan_sky_minute(year, month, day, hour, minute ):
+    """刻家奇門天盤設置"""
+    ke = qimen_ju_name_ke(year,
+                                 month,
+                                 day,
+                                 hour,
+                                 minute)
+    gz = gangzhi(year, month, day, hour, minute)
+    eg = list("坎巽兌離乾震坤中艮")
+    another_eg = list("巽震坤坎離艮兌乾中")
+    tg = list("乙丙丁戊己庚辛壬癸")
+    another_tg = list("乙丙丁癸壬辛庚己戊")
+    ten = list("癸辛戊癸壬己丙乙庚")
+    eight = list("辛戊丙乙庚丁己癸壬")
+    nine = list("乙庚己己丁辛壬戊丙癸")
+    seven = list("庚辛壬癸乙丙丁戊己")
+    six =  list("辛戊己庚乙丙丁癸壬")
+    five = list("壬辛庚己戊丁庚乙癸")
+    zf = zhifu_n_zhishi_ke(year, month, day, hour, minute).get('值符星宮')[1]
+    zs = zhifu_n_zhishi_ke(year, month, day, hour, minute).get('值使門宮')[1]
+    zftg = jj.get(multi_key_dict_get(liujiashun_dict(), gz[4]))
+    tiangan_order = list((new_list(list(reversed(eg)), zf)))
+    if zftg == "己":
+        tiangan_order = list("中坤震乾離兌巽坎艮")
+    if zs != "中" and zf != "中":
+        return  {"陽":dict(zip(new_list(eg, zf), new_list(tg, zftg))), "陰":dict(zip(tiangan_order, new_list(dict(zip(list("戊己庚辛壬癸"),[six,five,seven,eight,nine,ten])).get(zftg), zftg)))}.get(ke[0])
+    if zs == "中" and zf != "中":
+        return {"陽":dict(zip(new_list(another_eg, zf), new_list(tg, zftg))), "陰":dict(zip(list((new_list(list(reversed(eg)), zf))), new_list(tg, zftg)))}.get(ke[0])
+    if zs == "中" and zf == "中":
+        return {"陽":dict(zip(new_list(eg, zf), new_list(tg, zftg))), "陰":dict(zip(new_list(eg, zf), list(reversed(new_list(tg, zftg)))))}.get(ke[0]), zftg
+    if zs != "中" and zf == "中":
+        return pan_earth_minute(year, month, day, hour, minute)
+    
 def pan_earth_min_r(year, month, day, hour, minute):
     """刻家奇門地盤(逆)設置"""
     pan_earth_v = list(pan_earth_minute(year, month, day, hour, minute).values())
@@ -867,70 +896,21 @@ def jq_distance(year, month, day, hour, minute):
         result.update(time_info)
     return result, current
 
-def pan_sky_minute(year, month, day, hour, minute ):
-    """刻家奇門天盤設置"""
-    zfzs = zhifu_n_zhishi_ke(year, month, day, hour, minute)
-    zftg = zfzs.get("值符天干")
-    zfgong = zfzs.get("值符星宮")[1]
-    eg = list("坎坤震巽乾兌艮離")
-    kook_setting = [tuple(["陰三","陽七"]),tuple(["陽四","陰六"]), tuple(["陰九","陽一"])]
-    skypan_orders = [[
-    list("戊丁辛己丙壬庚乙癸"),
-    list("己戊丁庚丙辛乙癸壬"),
-    list("庚己戊乙丙丁癸壬辛"),
-    list("丁辛壬戊丙癸己庚乙"),
-    list("乙庚己癸丙戊壬辛丁"),
-    list("辛壬癸丁丙乙戊己庚"),
-    list("壬癸乙辛丙庚丁戊己"),
-    list("癸乙庚壬丙己辛丁戊")
-    ],[
-    list("戊丁丙辛己乙壬癸庚"),
-    list("辛戊丁壬己丙癸庚乙"),
-    list("壬辛戊癸己丁庚乙丙"),
-    list("丁丙乙戊己庚辛壬癸"),
-    list("癸壬辛庚己戊乙丙丁"),
-    list("丙乙庚丁己癸戊辛壬"),
-    list("乙庚癸丙己壬丁戊辛"),
-    list("庚癸壬乙己辛丙丁戊")
-    ],[
-    list("戊己庚辛壬癸丁丙乙"),
-    list("辛戊己丁壬庚丙乙癸"),
-    list("丁辛戊丙壬己乙癸庚"),
-    list("己庚癸戊壬乙辛丁丙"),
-    list("丙丁辛乙壬戊癸庚己"),
-    list("庚癸乙己壬丙戊辛丁"),
-    list("癸乙丙庚壬丁己戊辛"),
-    list("乙丙丁癸壬辛庚己戊"),
-    ]]
-    sky_pan_orders = dict(zip(kook_setting, skypan_orders))
-    liujia = list("戊己庚辛壬癸")
-    orders = [[[0,1,2,3,1,4,5,6,7],[1,2,4,0,2,7,3,5,6],[2,4,7,1,4,6,0,3,5],[5,3,0,6,3,1,7,4,2],[6,5,3,7,5,0,4,2,1],[7,6,5,4,6,3,2,1,0]],
-              [[0,1,2,3,1,4,5,6,7],[2,4,7,1,4,6,0,3,5],[7,6,5,4,6,3,2,1,0],[1,2,4,0,2,7,3,5,6],[2,4,7,1,4,6,0,3,5],[4,7,6,2,7,5,1,0,3]],
-              [[0,1,2,3,1,4,5,6,7],[3,0,1,5,0,2,6,7,4],[5,3,0,6,3,1,7,4,2],[1,2,4,0,2,7,3,5,6],[4,7,6,2,7,5,1,0,3],[6,5,3,7,5,0,4,2,1]]]
-    get_zf_orders = dict(zip(kook_setting, orders))
-    ke = qimen_ju_name_ke(year, month, day, hour, minute)
-    kook = "{}{}".format(ke[0],ke[2])
-    getzf_orders = multi_key_dict_get(get_zf_orders, kook)
-    get_humhead = dict(zip(liujia, getzf_orders)).get(zftg)
-    return dict(zip(eight_gua,multi_key_dict_get(sky_pan_orders, kook)[dict(zip(eight_gua, get_humhead)).get(zfgong)])), getzf_orders, get_humhead
-
 
 if __name__ == '__main__':
     year = 2024
-    month = 9
-    day = 23
-    hour = 13
-    minute = 20
-    print(qimen_ju_name_zhirun_raw(year, month, day, hour, minute))
+    month = 8
+    day = 12
+    hour = 16
+    minute = 58
+    #print(qimen_ju_name_zhirun_raw(year, month, day, hour, minute))
     #print(qimen_ju_name_zhirun(year, month, day, hour, minute))
     #print(qimen_ju_name_zhirun(year, month, day, hour, minute))
     #print(gangzhi(year, month, day, hour, minute))
+    #print(pan_door_minute(year, month, day, hour, minute, 2))
     print(qimen_ju_name_ke(year, month, day, hour, minute))
-    print(pan_sky_minute(year, month, day, hour, minute))
-    print(zhifu_n_zhishi_ke(year, month, day, hour, minute))
-    #print(qimen_ju_name_ke(year, month, day, hour, minute))
     #print(zhifu_n_zhishi_ke(year, month, day, hour, minute))
-    #print(pan_sky_minute(year, month, day, hour, minute))
+    print(pan_sky_minute(year, month, day, hour, minute))
     #print(zhifu_n_zhishi(year, month, day, hour, minute, 1))
     #print(zhifu_n_zhishi(year, month, day, hour, minute, 2))
     #print(zhifu_pai(year, month, day, hour, minute, 1))
