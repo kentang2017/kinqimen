@@ -6,7 +6,7 @@ Created on Thu Jan 16 09:49:35 2020
 import re
 import time
 import itertools
-import config
+import kconfig
 from bidict import bidict
 from datetime import datetime, timedelta
 
@@ -58,69 +58,69 @@ class Qimen:
                        tuple(list("丙辛")):"丙辛日",
                        tuple(list("丁壬")):"丁壬日",
                        tuple(list("戊癸")):"戊癸日"}
-        gz = config.gangzhi(self.year,
+        gz = kconfig.gangzhi(self.year,
                             self.month,
                             self.day,
                             self.hour,
                             self.minute)
         try:
-            find_d = config.multi_key_dict_get(ju_day_dict, gz[2][0])
+            find_d = kconfig.multi_key_dict_get(ju_day_dict, gz[2][0])
         except TypeError:
-            find_d = config.multi_key_dict_get(ju_day_dict, gz[2][1])
+            find_d = kconfig.multi_key_dict_get(ju_day_dict, gz[2][1])
         return find_d
     #值符
     def hourganghzi_zhifu(self):
         """時干支值符"""
-        gz = config.gangzhi(self.year,
+        gz = kconfig.gangzhi(self.year,
                             self.month,
                             self.day,
                             self.hour,
                             self.minute)
-        jz = config.jiazi()
-        a = list(map(lambda x:config.new_list(jz, x)[0:10],jz[0::10]))
-        b = list(map(lambda x:jz[0::10][x]+config.tian_gan[4:10][x],list(range(0,6))))
+        jz = kconfig.jiazi()
+        a = list(map(lambda x:kconfig.new_list(jz, x)[0:10],jz[0::10]))
+        b = list(map(lambda x:jz[0::10][x]+kconfig.tian_gan[4:10][x],list(range(0,6))))
         d = dict(zip(list(map(lambda x: tuple(x),a)),b))
-        return config.multi_key_dict_get(d, gz[3])
+        return kconfig.multi_key_dict_get(d, gz[3])
     #分值符
     def hourganghzi_zhifu_minute(self):
         """刻家奇門值符"""
-        gz = config.gangzhi(self.year,
+        gz = kconfig.gangzhi(self.year,
                             self.month,
                             self.day,
                             self.hour,
                             self.minute)
-        jz = config.jiazi()
-        a = list(map(lambda x: tuple(x),list(map(lambda x:config.new_list(jz, x)[0:10],jz[0::10]))))
-        b = list(map(lambda x: jz[0::10][x] + config.tian_gan[4:10][x],list(range(0,6))))
-        return config.multi_key_dict_get(dict(zip(a,b)), gz[4])
+        jz = kconfig.jiazi()
+        a = list(map(lambda x: tuple(x),list(map(lambda x:kconfig.new_list(jz, x)[0:10],jz[0::10]))))
+        b = list(map(lambda x: jz[0::10][x] + kconfig.tian_gan[4:10][x],list(range(0,6))))
+        return kconfig.multi_key_dict_get(dict(zip(a,b)), gz[4])
     #地盤
     def pan_earth(self, option):
         """時家奇門地盤設置, option 1:拆補 2:置閏"""
-        chaibu = config.qimen_ju_name_chaibu(self.year,
+        chaibu = kconfig.qimen_ju_name_chaibu(self.year,
                                              self.month,
                                              self.day,
                                              self.hour,
                                              self.minute)
-        zhirun = config.qimen_ju_name_zhirun(self.year,
+        zhirun = kconfig.qimen_ju_name_zhirun(self.year,
                                              self.month,
                                              self.day,
                                              self.hour,
                                              self.minute)
         qmju = {1:chaibu,2:zhirun}.get(option)
-        return dict(zip(list(map(lambda x: dict(zip(config.cnumber, config.eight_gua)).get(x),
-                         config.new_list(config.cnumber, qmju[2]))),
+        return dict(zip(list(map(lambda x: dict(zip(kconfig.cnumber, kconfig.eight_gua)).get(x),
+                         kconfig.new_list(kconfig.cnumber, qmju[2]))),
                         {"陽遁":list("戊己庚辛壬癸丁丙乙"),
                          "陰遁":list("戊乙丙丁癸壬辛庚己")}.get(qmju[0:2])))
     #地盤
     def pan_earth_minute(self):
         """刻家奇門地盤設置"""
-        ke = config.qimen_ju_name_ke(self.year,
+        ke = kconfig.qimen_ju_name_ke(self.year,
                                      self.month,
                                      self.day,
                                      self.hour,
                                      self.minute)
-        return dict(zip(list(map(lambda x: dict(zip(config.cnumber, config.eight_gua)).get(x),
-                        config.new_list(config.cnumber, ke[2]))),
+        return dict(zip(list(map(lambda x: dict(zip(kconfig.cnumber, kconfig.eight_gua)).get(x),
+                        kconfig.new_list(kconfig.cnumber, ke[2]))),
                         {"陽遁":list("戊己庚辛壬癸丁丙乙"),
                          "陰遁":list("戊乙丙丁癸壬辛庚己")}.get(ke[0:2])))
     #逆地盤
@@ -138,18 +138,18 @@ class Qimen:
     #天盤
     def pan_sky(self, option):
         qmju = {
-            1: config.qimen_ju_name_chaibu,
-            2: config.qimen_ju_name_zhirun
+            1: kconfig.qimen_ju_name_chaibu,
+            2: kconfig.qimen_ju_name_zhirun
         }.get(option)(self.year,
                       self.month,
                       self.day,
                       self.hour,
                       self.minute)
         rotate = {
-            "陽": config.clockwise_eightgua,
-            "陰": list(reversed(config.clockwise_eightgua))
+            "陽": kconfig.clockwise_eightgua,
+            "陰": list(reversed(kconfig.clockwise_eightgua))
         }.get(qmju[0])
-        zhifu_n_zhishi = config.zhifu_n_zhishi(
+        zhifu_n_zhishi = kconfig.zhifu_n_zhishi(
             self.year,
             self.month,
             self.day,
@@ -157,7 +157,7 @@ class Qimen:
             self.minute,
             option)
         fu_head = self.hourganghzi_zhifu()[2]
-        gz = config.gangzhi(self.year,
+        gz = kconfig.gangzhi(self.year,
                             self.month,
                             self.day,
                             self.hour,
@@ -168,39 +168,39 @@ class Qimen:
         gan_head = zhifu_n_zhishi.get("值符天干")[1]
         zhifu = zhifu_n_zhishi["值符星宮"][0]
         earth = self.pan_earth(option)
-        gong_reorder = config.new_list(rotate, "坤")
+        gong_reorder = kconfig.new_list(rotate, "坤")
         if fu_head_location == "中":
             try:
                 a = list(map(earth.get, rotate))
-                gan_reorder = config.new_list(a, fu_head)
-                gong_reorder = config.new_list(rotate, fu_head_location)
+                gan_reorder = kconfig.new_list(a, fu_head)
+                gong_reorder = kconfig.new_list(rotate, fu_head_location)
                 return dict(zip(gong_reorder, gan_reorder))
             except ValueError:
-                if config.pan_god(self.year,
+                if kconfig.pan_god(self.year,
                                   self.month,
                                   self.day,
                                   self.hour,
                                   self.minute,
                                   option).get("坤") != "符":
                     a = list(map(earth.get, rotate))
-                    return dict(zip(gong_reorder, config.new_list(a, self.pan_earth(option).get("坤"))))
+                    return dict(zip(gong_reorder, kconfig.new_list(a, self.pan_earth(option).get("坤"))))
                 if earth.get("坤") == gan_head:
                     a = list(map(earth.get, rotate))
-                    return dict(zip(gong_reorder, config.new_list(a, list(reversed(a))[0])))
+                    return dict(zip(gong_reorder, kconfig.new_list(a, list(reversed(a))[0])))
                 else:
                     try:
-                        return dict(zip(gong_reorder, config.new_list(a, gan_head)))
+                        return dict(zip(gong_reorder, kconfig.new_list(a, gan_head)))
                     except ValueError:
-                        return dict(zip(gong_reorder, config.new_list(a, self.pan_earth(option).get("坤"))))
+                        return dict(zip(gong_reorder, kconfig.new_list(a, self.pan_earth(option).get("坤"))))
 
         if fu_head_location != "中" and zhifu != "禽" and fu_head_location2 != "中":
             newlist = list(map(earth.get, rotate))
-            gan_reorder = config.new_list(newlist, fu_head)
-            gong_reorder = config.new_list(rotate, fu_head_location)
+            gan_reorder = kconfig.new_list(newlist, fu_head)
+            gong_reorder = kconfig.new_list(rotate, fu_head_location)
             if fu_head not in gan_reorder:
-                start = dict(zip(config.cnumber, gan_reorder)).get(qmju[2])
-                rgan_reorder = config.new_list(gan_reorder, start)
-                rgong_reorder = config.new_list(gong_reorder, fu_location)
+                start = dict(zip(kconfig.cnumber, gan_reorder)).get(qmju[2])
+                rgan_reorder = kconfig.new_list(gan_reorder, start)
+                rgong_reorder = kconfig.new_list(gong_reorder, fu_location)
                 aa = dict(zip(rgong_reorder, rgan_reorder))
                 bb = dict(zip(rgan_reorder, rgong_reorder))
                 return aa, bb
@@ -211,10 +211,10 @@ class Qimen:
                         **{"中": self.pan_earth(option).get("中")}}
         if fu_head_location != "中" and zhifu == "禽" and fu_head_location2 == "中":
             gg = list(map(earth.get, rotate))
-            gan_reorder = config.new_list(gg, self.pan_earth(option).get("坤"))
-            gong_reorder = config.new_list(rotate, fu_head_location)
+            gan_reorder = kconfig.new_list(gg, self.pan_earth(option).get("坤"))
+            gong_reorder = kconfig.new_list(rotate, fu_head_location)
             if fu_head not in gan_reorder:
-                rgong_reorder = config.new_list(gong_reorder, fu_location)
+                rgong_reorder = kconfig.new_list(gong_reorder, fu_location)
                 return dict(zip(rgong_reorder, gan_reorder))
             return {**dict(zip(gong_reorder, gan_reorder)),
                     **{"中": self.pan_earth(option)[0].get("中")}}
@@ -222,13 +222,13 @@ class Qimen:
     #九宮長生十二神
     def gong_chengsun(self, option):
         sky = self.pan_sky(option)
-        gz = config.gangzhi(self.year,
+        gz = kconfig.gangzhi(self.year,
                             self.month,
                             self.day,
                             self.hour,
                             self.minute)
-        find_twelve_luck = config.find_shier_luck(gz[2][0])
-        di_zhi_mapping = dict(zip(config.di_zhi, list("癸己甲乙戊丙丁己庚辛戊壬")))
+        find_twelve_luck = kconfig.find_shier_luck(gz[2][0])
+        di_zhi_mapping = dict(zip(kconfig.di_zhi, list("癸己甲乙戊丙丁己庚辛戊壬")))
         find_twelve_luck_new = {di_zhi_mapping.get(k): v for k, v in find_twelve_luck.items()}
         try:
             sky_pan = sky[0]
@@ -242,18 +242,18 @@ class Qimen:
         return {"天盤": sky_pan_new, "地盤": earth_pan_new}
 
     def gong_chengsun_minute(self, option):
-        sky = config.pan_sky_minute(self.year,
+        sky = kconfig.pan_sky_minute(self.year,
                             self.month,
                             self.day,
                             self.hour,
                             self.minute)
-        gz = config.gangzhi(self.year,
+        gz = kconfig.gangzhi(self.year,
                             self.month,
                             self.day,
                             self.hour,
                             self.minute)
-        find_twelve_luck = config.find_shier_luck(gz[3][0])
-        di_zhi_mapping = dict(zip(config.di_zhi, list("癸己甲乙戊丙丁己庚辛戊壬")))
+        find_twelve_luck = kconfig.find_shier_luck(gz[3][0])
+        di_zhi_mapping = dict(zip(kconfig.di_zhi, list("癸己甲乙戊丙丁己庚辛戊壬")))
         find_twelve_luck_new = {di_zhi_mapping.get(k): v for k, v in find_twelve_luck.items()}
         try:
             sky_pan = sky[0]
@@ -268,54 +268,54 @@ class Qimen:
 
     def pan(self, option):#1拆補 #2置閏
         """時家奇門起盤綜合, option 1:拆補 2:置閏"""
-        gz = config.gangzhi(self.year,
+        gz = kconfig.gangzhi(self.year,
                             self.month,
                             self.day,
                             self.hour,
                             self.minute)
         gzd = "{}年{}月{}日{}時".format(gz[0], gz[1], gz[2], gz[3])
-        qmju = {1:config.qimen_ju_name_chaibu(self.year,
+        qmju = {1:kconfig.qimen_ju_name_chaibu(self.year,
                                               self.month,
                                               self.day,
                                               self.hour,
                                               self.minute),
-                2:config.qimen_ju_name_zhirun(self.year,
+                2:kconfig.qimen_ju_name_zhirun(self.year,
                                               self.month,
                                               self.day,
                                               self.hour,
                                               self.minute)}.get(option)
-        shunhead = config.shun(gz[2])
-        shunkong = config.daykong_shikong(self.year,
+        shunhead = kconfig.shun(gz[2])
+        shunkong = kconfig.daykong_shikong(self.year,
                                           self.month,
                                           self.day,
                                           self.hour,
                                           self.minute)
         paiju = qmju
-        j_q = config.jq(self.year,
+        j_q = kconfig.jq(self.year,
                         self.month,
                         self.day,
                         self.hour,
                         self.minute)
-        zfzs = config.zhifu_n_zhishi(self.year,
+        zfzs = kconfig.zhifu_n_zhishi(self.year,
                                      self.month,
                                      self.day,
                                      self.hour,
                                      self.minute,
                                      option)
-        pan_star_result = config.pan_star(self.year,
+        pan_star_result = kconfig.pan_star(self.year,
                                           self.month,
                                           self.day,
                                           self.hour,
                                           self.minute,
                                           option)
         star = pan_star_result[0]
-        door = config.pan_door(self.year,
+        door = kconfig.pan_door(self.year,
                                self.month,
                                self.day,
                                self.hour,
                                self.minute,
                                option)
-        god = config.pan_god(self.year,
+        god = kconfig.pan_god(self.year,
                              self.month,
                              self.day,
                              self.hour,
@@ -345,48 +345,48 @@ class Qimen:
 
     def pan_minute(self, option):
         """刻家奇門起盤綜合, option 1:拆補 2:置閏"""
-        gz = config.gangzhi(self.year,
+        gz = kconfig.gangzhi(self.year,
                             self.month,
                             self.day,
                             self.hour,
                             self.minute)
         gzd = "{}年{}月{}日{}時{}分".format(gz[0], gz[1], gz[2], gz[3], gz[4])
-        qmju = config.qimen_ju_name_ke(self.year,
+        qmju = kconfig.qimen_ju_name_ke(self.year,
                                               self.month,
                                               self.day,
                                               self.hour,
                                               self.minute)
-        shunhead = config.shun(gz[3])
-        shunkong = config.hourkong_minutekong(self.year,
+        shunhead = kconfig.shun(gz[3])
+        shunkong = kconfig.hourkong_minutekong(self.year,
                                               self.month,
                                               self.day,
                                               self.hour,
                                               self.minute)
         paiju = qmju
-        j_q = config.jq(self.year,
+        j_q = kconfig.jq(self.year,
                         self.month,
                         self.day,
                         self.hour,
                         self.minute)
-        zfzs = config.zhifu_n_zhishi_ke(self.year,
+        zfzs = kconfig.zhifu_n_zhishi_ke(self.year,
                                         self.month,
                                         self.day,
                                         self.hour,
                                         self.minute)
-        pan_star_result = config.pan_star_minute(self.year,
+        pan_star_result = kconfig.pan_star_minute(self.year,
                                                  self.month,
                                                  self.day,
                                                  self.hour,
                                                  self.minute,
                                                  option)
         star = pan_star_result[0]
-        door = config.pan_door_minute(self.year,
+        door = kconfig.pan_door_minute(self.year,
                                       self.month,
                                       self.day,
                                       self.hour,
                                       self.minute,
                                       option)
-        god = config.pan_god_minute(self.year,
+        god = kconfig.pan_god_minute(self.year,
                                     self.month,
                                     self.day,
                                     self.hour,
@@ -402,12 +402,12 @@ class Qimen:
             "節氣": j_q,
             "值符值使": zfzs,
             "天乙": self.tianyi(option),
-            "天盤": config.pan_sky_minute(self.year,
+            "天盤": kconfig.pan_sky_minute(self.year,
                                           self.month,
                                           self.day,
                                           self.hour,
                                           self.minute),
-            "地盤": config.pan_earth_minute(self.year,
+            "地盤": kconfig.pan_earth_minute(self.year,
                                           self.month,
                                           self.day,
                                           self.hour,
@@ -424,19 +424,19 @@ class Qimen:
 
     def pan_html(self, option):
         """時家奇門html, option 1:拆補 2:置閏"""
-        god = config.pan_god(self.year,
+        god = kconfig.pan_god(self.year,
                              self.month,
                              self.day,
                              self.hour,
                              self.minute,
                              option)
-        door = config.pan_door(self.year,
+        door = kconfig.pan_door(self.year,
                                self.month,
                                self.day,
                                self.hour,
                                self.minute,
                                option)
-        star = config.pan_star(self.year,
+        star = kconfig.pan_star(self.year,
                                self.month,
                                self.day,
                                self.hour,
@@ -480,63 +480,63 @@ class Qimen:
         return kok
 
     def gpan(self):
-        j_q = config.jq(self.year,
+        j_q = kconfig.jq(self.year,
                         self.month,
                         self.day,
                         self.hour,
                         self.minute)
-        start_jia = config.jiazi()[0::10]
-        dgz = config.gangzhi(self.year,
+        start_jia = kconfig.jiazi()[0::10]
+        dgz = kconfig.gangzhi(self.year,
                              self.month,
                              self.day,
                              self.hour,
                              self.minute)[2]
-        dd = [tuple(config.new_list(config.jiazi(), i)[0:10]) for i in start_jia]
-        shun = config.multi_key_dict_get(dict(zip(dd, start_jia)), dgz)
-        yy = {"冬至":"陽遁", "夏至":"陰遁"}.get(config.multi_key_dict_get(
-            {tuple(config.jieqi_name[0:12]):"冬至",
-             tuple(config.jieqi_name[12:24]):"夏至"},j_q))
+        dd = [tuple(kconfig.new_list(kconfig.jiazi(), i)[0:10]) for i in start_jia]
+        shun = kconfig.multi_key_dict_get(dict(zip(dd, start_jia)), dgz)
+        yy = {"冬至":"陽遁", "夏至":"陰遁"}.get(kconfig.multi_key_dict_get(
+            {tuple(kconfig.jieqi_name[0:12]):"冬至",
+             tuple(kconfig.jieqi_name[12:24]):"夏至"},j_q))
         dh_doors = {"冬至": "艮離坎坤震巽", "夏至":"坤離巽坤離兌"}
-        gong = dict(zip(start_jia, dh_doors.get(config.multi_key_dict_get(
-            {tuple(config.jieqi_name[0:12]):"冬至",
-             tuple(config.jieqi_name[12:24]):"夏至"}, j_q
+        gong = dict(zip(start_jia, dh_doors.get(kconfig.multi_key_dict_get(
+            {tuple(kconfig.jieqi_name[0:12]):"冬至",
+             tuple(kconfig.jieqi_name[12:24]):"夏至"}, j_q
             )))).get(shun)
         triple_list = list(map(lambda x: x + x + x, list(range(0,21))))
         b = []
         for i in range(0, len(triple_list)):
             try:
-                a = tuple(config.jiazi()[triple_list[i]: triple_list[i+1]])
+                a = tuple(kconfig.jiazi()[triple_list[i]: triple_list[i+1]])
                 b.append(a)
             except IndexError:
                 pass
         g =[]
-        close_ten_day = config.new_list(config.jiazi(), shun)[0:10]
-        a_gong = config.new_list(list(reversed(config.eight_gua)), gong)
-        r_gua = list(reversed(config.eight_gua))
-        new_dict = {**dict(zip(close_ten_day,config.new_list(r_gua, gong))),
+        close_ten_day = kconfig.new_list(kconfig.jiazi(), shun)[0:10]
+        a_gong = kconfig.new_list(list(reversed(kconfig.eight_gua)), gong)
+        r_gua = list(reversed(kconfig.eight_gua))
+        new_dict = {**dict(zip(close_ten_day,kconfig.new_list(r_gua, gong))),
                     **{close_ten_day[-1]:a_gong[0]}}
-        new_dict_r = {**dict(zip(close_ten_day, config.new_list(config.eight_gua, gong))),
+        new_dict_r = {**dict(zip(close_ten_day, kconfig.new_list(kconfig.eight_gua, gong))),
                     **{close_ten_day[-1]:a_gong[0]}}
-        ying = dict(zip(config.new_list(config.eight_gua,new_dict.get(dgz)), config.golen_d))
-        yang = dict(zip(config.new_list(config.eight_gua,new_dict_r.get(dgz)), config.golen_d))
+        ying = dict(zip(kconfig.new_list(kconfig.eight_gua,new_dict.get(dgz)), kconfig.golen_d))
+        yang = dict(zip(kconfig.new_list(kconfig.eight_gua,new_dict_r.get(dgz)), kconfig.golen_d))
         for i in list("坎坤震巽乾兌艮離"):
-            yy_gua = {"陰遁":list(reversed(config.clockwise_eightgua)),
-                      "陽遁":config.clockwise_eightgua}
-            c = dict(zip(config.new_list(yy_gua.get(yy), i), config.door_r))
+            yy_gua = {"陰遁":list(reversed(kconfig.clockwise_eightgua)),
+                      "陽遁":kconfig.clockwise_eightgua}
+            c = dict(zip(kconfig.new_list(yy_gua.get(yy), i), kconfig.door_r))
             g.append(c)
-        ddd = config.multi_key_dict_get(dict(zip(b, itertools.cycle(g))), dgz)
+        ddd = kconfig.multi_key_dict_get(dict(zip(b, itertools.cycle(g))), dgz)
         return {"局": yy+dgz+"日",
                 "鶴神": self.crane_god().get(dgz),
                 "星": {"陰遁":ying ,"陽遁":yang}.get(yy),
                 "門": {**ddd, 
                       **{"中":""}},
-                "神": config.getgtw().get(dgz[0])}
+                "神": kconfig.getgtw().get(dgz[0])}
     #鶴神
     def crane_god(self):
         d = list("巽離坤兌乾坎天艮震")
         dd = [6,5,6,5,6,5,16,6,5]
         newc_list = list(map(lambda i:[d[i][:5]]*dd[i],list(range(0,8))))
-        return dict(zip(config.new_list(config.jiazi(), "庚申"), newc_list))
+        return dict(zip(kconfig.new_list(kconfig.jiazi(), "庚申"), newc_list))
 
     def gpan_html(self):
         gpan_data = self.gpan()
@@ -558,13 +558,13 @@ class Qimen:
         return html_output
     #天乙
     def tianyi(self, option):
-        zhifu_n_zhishi= config.zhifu_n_zhishi(self.year,
+        zhifu_n_zhishi= kconfig.zhifu_n_zhishi(self.year,
                                               self.month,
                                               self.day,
                                               self.hour,
                                               self.minute,
                                               option)
-        zhifu_dict = dict(zip(config.eight_gua, list("蓬芮沖輔禽心柱任英")))
+        zhifu_dict = dict(zip(kconfig.eight_gua, list("蓬芮沖輔禽心柱任英")))
         try:
             star_location = zhifu_dict.get(zhifu_n_zhishi.get("值符星宮")[1])
         except IndexError:
@@ -572,18 +572,18 @@ class Qimen:
         return star_location
     #丁馬
     def dinhorse(self):
-        gz = config.gangzhi(self.year,
+        gz = kconfig.gangzhi(self.year,
                                  self.month,
                                  self.day,
                                  self.hour,
                                  self.minute)
         tg = re.findall("..","甲子甲戌甲申甲午甲辰甲寅")
         new_dict = dict(zip(tg, list("卯丑亥酉未巳")))
-        new = config.multi_key_dict_get(config.liujiashun_dict(), gz[2])
-        return config.multi_key_dict_get(new_dict, new)
+        new = kconfig.multi_key_dict_get(kconfig.liujiashun_dict(), gz[2])
+        return kconfig.multi_key_dict_get(new_dict, new)
     #天馬
     def moonhorse(self):
-        Gangzhi = config.gangzhi(self.year,
+        Gangzhi = kconfig.gangzhi(self.year,
                                  self.month,
                                  self.day,
                                  self.hour,
@@ -591,10 +591,10 @@ class Qimen:
         tg = re.findall("..","寅申卯酉辰戌巳亥午子丑未")
         new = list(map(lambda i:tuple(i), tg))
         new_dict = dict(zip(new, list("午申戌子寅辰")))
-        return config.multi_key_dict_get(new_dict, Gangzhi[2][1])
+        return kconfig.multi_key_dict_get(new_dict, Gangzhi[2][1])
     #驛馬星
     def hourhorse(self):
-        Gangzhi = config.gangzhi(self.year,
+        Gangzhi = kconfig.gangzhi(self.year,
                                  self.month,
                                  self.day,
                                  self.hour,
@@ -602,25 +602,25 @@ class Qimen:
         tg = re.findall("...","申子辰寅午戌亥卯未巳酉丑")
         new = list(map(lambda i:tuple(i), tg))
         new_dict = dict(zip(new, list("寅申巳亥")))
-        return config.multi_key_dict_get(new_dict, Gangzhi[3][1])
+        return kconfig.multi_key_dict_get(new_dict, Gangzhi[3][1])
     
     def green_dragon(self, option):
         """青龍返首"""
-        hg = config.gangzhi(self.year,
+        hg = kconfig.gangzhi(self.year,
             self.month,
             self.day,
             self.hour,
             self.minute)[3][0]
         sky = self.pan_sky(option)
         earth = self.pan_earth(option)
-        zhishi = config.zhifu_n_zhishi(
+        zhishi = kconfig.zhifu_n_zhishi(
             self.year,
             self.month,
             self.day,
             self.hour,
             self.minute,
             option).get("值符天干")[1]
-        zf_gong = config.zhifu_n_zhishi(
+        zf_gong = kconfig.zhifu_n_zhishi(
             self.year,
             self.month,
             self.day,
@@ -652,14 +652,14 @@ class Qimen:
         """飛鳥跌穴"""
         sky = self.pan_sky(option)
         earth = self.pan_earth(option)
-        zhishi = config.zhifu_n_zhishi(
+        zhishi = kconfig.zhifu_n_zhishi(
             self.year,
             self.month,
             self.day,
             self.hour,
             self.minute,
             option).get("值符天干")[1]
-        zf_gong = config.zhifu_n_zhishi(
+        zf_gong = kconfig.zhifu_n_zhishi(
             self.year,
             self.month,
             self.day,
@@ -678,7 +678,7 @@ class Qimen:
                 return {"飛鳥跌穴": "沒有"}
         except KeyError:
             if zhishi_gong == "中":
-                return {"飛鳥跌穴": config.zhifu_n_zhishi(
+                return {"飛鳥跌穴": kconfig.zhifu_n_zhishi(
                     self.year,
                     self.month,
                     self.day,
@@ -691,7 +691,7 @@ class Qimen:
         earth = self.pan_earth(option)
         try:
             earth_gong = bidict(earth).inverse["丁"]
-            zhishi = config.zhifu_n_zhishi(
+            zhishi = kconfig.zhifu_n_zhishi(
                 self.year,
                 self.month,
                 self.day,
@@ -707,7 +707,7 @@ class Qimen:
 
     def tianhen(self, option):
         """天顯時格"""
-        gz = config.gangzhi(self.year,
+        gz = kconfig.gangzhi(self.year,
                          self.month,
                          self.day,
                          self.hour,
@@ -731,7 +731,7 @@ if __name__ == '__main__':
     #end_datetime = datetime(2024, 5, 30, 23, 0)  # Adjust as needed
     #print(test_qimen(start_datetime, end_datetime))
 
-    qtext1 = Qimen(2024,8,2,18,48).pan_minute(1)
+    qtext1 = Qimen(2024,1,14,23,20).pan_minute(1)
     #qtext1 = Qimen(2024,7,11,18,0).jade_girl(2)
     #q = list("巽離坤震兌艮坎乾")
     #a = [qtext.get("天盤").get(i) for i in q]
