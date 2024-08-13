@@ -6,7 +6,7 @@ Created on Thu Jan 16 09:49:35 2020
 import re
 import time
 import itertools
-import kconfig
+import config
 from bidict import bidict
 from datetime import datetime, timedelta
 
