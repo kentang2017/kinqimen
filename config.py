@@ -904,30 +904,30 @@ def pan_sky_minute(year, month, day, hour, minute ):
     ]]
     sky_pan_orders = dict(zip(kook_setting, skypan_orders))
     liujia = list("戊己庚辛壬癸")
-    orders = [[[0,1,2,3,1,4,5,6,7],[1,2,4,0,2,7,3,5,6],[2,4,7,1,4,6,0,3,5],[5,3,0,6,3,1,7,4,2],[6,5,3,7,5,0,4,2,1],[7,6,5,4,6,3,2,1,0]],
-              [[0,1,2,3,1,4,5,6,7],[2,4,7,1,4,6,0,3,5],[7,6,5,4,6,3,2,1,0],[1,2,4,0,2,7,3,5,6],[2,4,7,1,4,6,0,3,5],[4,7,6,2,7,5,1,0,3]],
+    orders = [[[0,1,2,3,1,4,5,6,7],[3,0,1,5,0,2,6,7,4],[2,4,7,1,4,6,0,3,5],[1,2,4,0,2,7,3,5,6],[6,5,3,7,5,0,4,2,1],[7,6,5,4,6,3,2,1,0]],
+              [[0,1,2,3,1,4,5,6,7],[5,3,0,6,3,1,7,4,2],[7,6,5,4,6,3,2,1,0],[1,2,4,0,2,7,3,5,6],[2,4,7,1,4,6,0,3,5],[4,7,6,2,7,5,1,0,3]],
               [[0,1,2,3,1,4,5,6,7],[3,0,1,5,0,2,6,7,4],[5,3,0,6,3,1,7,4,2],[1,2,4,0,2,7,3,5,6],[4,7,6,2,7,5,1,0,3],[6,5,3,7,5,0,4,2,1]]]
     get_zf_orders = dict(zip(kook_setting, orders))
     ke = qimen_ju_name_ke(year, month, day, hour, minute)
     kook = "{}{}".format(ke[0],ke[2])
     getzf_orders = multi_key_dict_get(get_zf_orders, kook)
     get_humhead = dict(zip(liujia, getzf_orders)).get(zftg)
-    return dict(zip(eight_gua,multi_key_dict_get(sky_pan_orders, kook)[dict(zip(eight_gua, get_humhead)).get(zfgong)]))#, getzf_orders, get_humhead
+    return dict(zip(eight_gua,multi_key_dict_get(sky_pan_orders, kook)[dict(zip(eight_gua, get_humhead)).get(zfgong)]))# getzf_orders, get_humhead
 
 
 if __name__ == '__main__':
     year = 2024
     month = 8
-    day = 12
-    hour = 8
-    minute = 0
-    #print(qimen_ju_name_zhirun_raw(year, month, day, hour, minute))
+    day = 10
+    hour = 16
+    minute = 59
+    print(qimen_ju_name_zhirun_raw(year, month, day, hour, minute))
     #print(qimen_ju_name_zhirun(year, month, day, hour, minute))
     #print(qimen_ju_name_zhirun(year, month, day, hour, minute))
     #print(gangzhi(year, month, day, hour, minute))
     print(qimen_ju_name_ke(year, month, day, hour, minute))
     print(pan_sky_minute(year, month, day, hour, minute))
-    print(zhifu_n_zhishi_ke(year, month, day, hour, minute))
+    print(zhifu_n_zhishi(year, month, day, hour, minute, 2))
     #print(qimen_ju_name_ke(year, month, day, hour, minute))
     #print(zhifu_n_zhishi_ke(year, month, day, hour, minute))
     #print(pan_sky_minute(year, month, day, hour, minute))
