@@ -758,7 +758,7 @@ def zhifu_n_zhishi_ke(year, month, day, hour, minute):
     shi_door_head = {kook[i]: {liujia[j]:doors[i][j] for j in range(len(liujia))} for i in range(len(kook))}.get("{}{}".format(qmke[0], qmke[2])).get(chour)[1]
     fiftheen_ke_gz = new_list(jiazi(), chour)[0:16]
     door_order ={"陽":new_list(eight_gua, shi_door_head), "陰": new_list(list(reversed(eight_gua)), shi_door_head)}.get(qmke[0])
-    fu = ep.get(zftg)
+    fu = ep.get(gz[4][0])
     if fu == None:
         fu = ep.get(zftg)
     zhifu_star = [stars_zhifu, fu]
