@@ -914,7 +914,7 @@ def pan_sky_minute(year, month, day, hour, minute ):
     kook = "{}{}".format(ke[0],ke[2])
     getzf_orders = multi_key_dict_get(get_zf_orders, kook)
     get_humhead = dict(zip(liujia, getzf_orders)).get(zftg)
-    return dict(zip(eight_gua,multi_key_dict_get(sky_pan_orders, kook)[dict(zip(eight_gua, get_humhead)).get(zfgong)])), getzf_orders, get_humhead
+    return dict(zip(eight_gua,multi_key_dict_get(sky_pan_orders, kook)[dict(zip(eight_gua, get_humhead)).get(zfgong)]))#, getzf_orders, get_humhead
 
 
 if __name__ == '__main__':
