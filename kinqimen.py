@@ -492,7 +492,7 @@ class Qimen:
         yy = {"冬至":"陽遁", "夏至":"陰遁"}.get(kconfig.multi_key_dict_get(
             {tuple(kconfig.new_list(kconfig.jieqi_name, "冬至")[0:12]):"冬至",
              tuple(kconfig.new_list(kconfig.jieqi_name, "夏至")[0:12]):"夏至"},j_q))
-        dh_doors = {"冬至": "艮離坎坤震巽", "夏至":"坤離巽坤離兌"}
+        dh_doors = {"冬至": "艮離坎坤震巽", "夏至":"坤離巽艮兌乾"}
         gong = dict(zip(start_jia, dh_doors.get(config.multi_key_dict_get(
             {tuple(config.jieqi_name[0:12]):"冬至",
              tuple(config.jieqi_name[12:24]):"夏至"}, j_q
