@@ -6,9 +6,10 @@ Created on Thu Jan 16 09:49:35 2020
 import re
 import time
 import itertools
-import config
+from itertools import starmap
 from bidict import bidict
 from datetime import datetime, timedelta
+import config
 
 def test_qimen(start_datetime, end_datetime):
     # Ensure end_datetime is greater than start_datetime
@@ -497,13 +498,8 @@ class Qimen:
              tuple(config.jieqi_name[12:24]):"夏至"}, j_q
             )))).get(shun)
         triple_list = list(map(lambda x: x + x + x, list(range(0,21))))
-        b = []
-        for i in range(0, len(triple_list)):
-            try:
-                a = tuple(config.jiazi()[triple_list[i]: triple_list[i+1]])
-                b.append(a)
-            except IndexError:
-                pass
+        b = list(starmap(lambda start, end: tuple(kconfig.jiazi()[start:end]), 
+                         zip(triple_list[:-1], triple_list[1:])))
         g =[]
         close_ten_day = config.new_list(config.jiazi(), shun)[0:10]
         a_gong = config.new_list(list(reversed(config.eight_gua)), gong)
