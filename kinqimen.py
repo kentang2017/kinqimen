@@ -481,45 +481,36 @@ class Qimen:
                         self.day,
                         self.hour,
                         self.minute)
-        start_jia = config.jiazi()[0::10]
         dgz = config.gangzhi(self.year,
                              self.month,
                              self.day,
                              self.hour,
                              self.minute)[2]
-        dd = [tuple(config.new_list(config.jiazi(), i)[0:10]) for i in start_jia]
-        shun = config.multi_key_dict_get(dict(zip(dd, start_jia)), dgz)
-        yy = {"冬至":"陽遁", "夏至":"陰遁"}.get(kconfig.multi_key_dict_get(
-            {tuple(kconfig.new_list(kconfig.jieqi_name, "冬至")[0:12]):"冬至",
-             tuple(kconfig.new_list(kconfig.jieqi_name, "夏至")[0:12]):"夏至"},j_q))
-        dh_doors = {"冬至": "艮離坎坤震巽", "夏至":"坤離巽艮兌乾"}
-        gong = dict(zip(start_jia, dh_doors.get(config.multi_key_dict_get(
-            {tuple(config.jieqi_name[0:12]):"冬至",
-             tuple(config.jieqi_name[12:24]):"夏至"}, j_q
-            )))).get(shun)
+        dh = config.multi_key_dict_get({tuple(config.new_list(jieqi.jieqi_name, "冬至")[0:12]):"冬至",
+                             tuple(config.new_list(jieqi.jieqi_name, "夏至")[0:12]):"夏至"},j_q)
+        eg = "坎坤震巽乾兌艮離"
+        yy = {"冬至":"陽遁", "夏至":"陰遁"}.get(dh)
+        ty_doors = {"冬至": dict(zip(jiazi(),itertools.cycle(list("艮離坎坤震巽中乾兌")))), 
+                "夏至": dict(zip(jiazi(),itertools.cycle(list("坤坎離艮兌乾中巽震"))))}
+        gong = ty_doors.get(dh).get(dgz)
+        eight_gua = list("坎坤震巽中乾兌艮離")
+        rotate_order = {"陽遁":eight_gua, "陰遁":list(reversed(eight_gua))}.get(yy)
+        a_gong = new_list(rotate_order, gong)
+        gold_g = re.findall("..","太乙攝提軒轅招搖天符青龍咸池太陰天乙")
+        star_pai = dict(zip(a_gong, gold_g))
         triple_list = list(map(lambda x: x + x + x, list(range(0,21))))
-        b = list(starmap(lambda start, end: tuple(kconfig.jiazi()[start:end]), 
-                         zip(triple_list[:-1], triple_list[1:])))
-        g =[]
-        close_ten_day = config.new_list(config.jiazi(), shun)[0:10]
-        a_gong = config.new_list(list(reversed(config.eight_gua)), gong)
-        r_gua = list(reversed(config.eight_gua))
-        new_dict = {**dict(zip(close_ten_day,config.new_list(r_gua, gong))),
-                    **{close_ten_day[-1]:a_gong[0]}}
-        new_dict_r = {**dict(zip(close_ten_day, config.new_list(config.eight_gua, gong))),
-                    **{close_ten_day[-1]:a_gong[0]}}
-        ying = dict(zip(config.new_list(config.eight_gua,new_dict.get(dgz)), config.golen_d))
-        yang = dict(zip(config.new_list(config.eight_gua,new_dict_r.get(dgz)), config.golen_d))
-        for i in list("坎坤震巽乾兌艮離"):
-            yy_gua = {"陰遁":list(reversed(config.clockwise_eightgua)),
-                      "陽遁":config.clockwise_eightgua}
-            c = dict(zip(config.new_list(yy_gua.get(yy), i), config.door_r))
-            g.append(c)
-        ddd = config.multi_key_dict_get(dict(zip(b, itertools.cycle(g))), dgz)
+        b = list(starmap(lambda start, end: tuple(jiazi()[start:end]),  zip(triple_list[:-1], triple_list[1:])))
+        rest_door_settings = {"陽遁":dict(zip(b, itertools.cycle(eg))),
+                              "陰遁":dict(zip(b, itertools.cycle(list(reversed(eg)))))}.get(yy)
+        clockwise_eightgua = list("坎艮震巽離坤兌乾")
+        door_r = list("休生傷杜景死驚開")
+        rest = multi_key_dict_get(rest_door_settings, dgz)
+        the_doors = {"陽遁": dict(zip(new_list(clockwise_eightgua, rest), door_r)), 
+                     "陰遁": dict(zip(new_list(list(reversed(clockwise_eightgua)), rest), door_r))}.get(yy)
         return {"局": yy+dgz+"日",
                 "鶴神": self.crane_god().get(dgz),
-                "星": {"陰遁":ying ,"陽遁":yang}.get(yy),
-                "門": {**ddd, 
+                "星": star_pai,
+                "門": {**the_doors, 
                       **{"中":""}},
                 "神": config.getgtw().get(dgz[0])}
     #鶴神
