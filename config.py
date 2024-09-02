@@ -869,6 +869,48 @@ def jq_distance(year, month, day, hour, minute):
         result.update(time_info)
     return result, current
 
+#刻家奇門 五行旺衰
+def wuxing_strong_week_minute(jq):
+    j = config.new_list(jieqi_name, "小寒")
+    sw = list("旺相休囚死")
+    fs_order = ["土金火木水",
+                "土金火木水",
+                "木火水金土",
+                "木火水金土",
+                "木火水金土",
+                "木火水金土",
+                "土金火木水",
+                "土金火木水",
+                "火土木水金",
+                "火土木水金",
+                "火土木水金",
+                "火土木水金",
+                "土金火木水",
+                "土金火木水",
+                "金水土火木",
+                "金水土火木",
+                "金水土火木",
+                "金水土火木",
+                "土金火木水",
+                "土金火木水",
+                "水木金土火",
+                "水木金土火",
+                "水木金土火"]
+    fs_list = [dict(zip(i,sw)) for i in fs_order]
+    return dict(zip(j, fs_list)).get(jq)
+#五行旺衰
+def wuxing_strong_week(jq):
+    season = find_season(jq)
+    sw = list("旺相休囚死")
+    fs = list("春夏秋冬")
+    fs_order = ["木火水金土",
+                "火土木水金",
+                "金水土火木",
+                "水木金土火"]
+    fs_list = [dict(zip(i,sw)) for i in fs_order]
+    return dict(zip(fs, fs_list)).get(season)
+
+
 def pan_sky_minute(year, month, day, hour, minute ):
     """刻家奇門天盤設置"""
     zfzs = zhifu_n_zhishi_ke(year, month, day, hour, minute)
