@@ -145,19 +145,19 @@ with pan:
                 expander = st.expander("原始碼")
                 expander.write(str(qtext))
             if num == 2:
-                qtext = kinqimen.Qimen(y,m,d,h,mintue).pan_minute(pai)
-                lr = kinliuren.Liuren( qtext.get("節氣"),lunar_month, gz[3], gz[4]).result(0)
-                qd = [qtext.get("地盤").get(i) for i in eg]
+                qtext1 = kinqimen.Qimen(y,m,d,h,mintue).pan_minute(pai)
+                lr = kinliuren.Liuren( qtext1.get("節氣"),lunar_month, gz[3], gz[4]).result(0)
+                qd = [qtext1.get("地盤").get(i) for i in eg]
                 e_to_s = lr.get("地轉天盤")
                 e_to_g = lr.get("地轉天將")
-                qt = [qtext.get("天盤").get(i) for i in eg]
-                god = [qtext.get("神").get(i) for i in eg]
-                door = [qtext.get("門").get(i) for i in eg]
-                star = [qtext.get("星").get(i) for i in eg]
-                md = qtext.get("地盤").get("中")
-                print("刻家奇門 | {}".format(qtext.get("排盤方式")))
+                qt = [qtext1.get("天盤").get(i) for i in eg]
+                god = [qtext1.get("神").get(i) for i in eg]
+                door = [qtext1.get("門").get(i) for i in eg]
+                star = [qtext1.get("星").get(i) for i in eg]
+                md = qtext1.get("地盤").get("中")
+                print("刻家奇門 | {}".format(qtext1.get("排盤方式")))
                 print("{}年{}月{}日{}時\n".format(y,m,d,h))
-                print("{} |\n{} | 節氣︰{} |\n值符星宮︰天{}宮 | 值使門宮︰{}\n".format(qtext.get("干支"), qtext.get("排局"),  j_q,  qtext.get("值符值使").get("值符星宮")[0]+"-"+qtext.get("值符值使").get("值符星宮")[1], qtext.get("值符值使").get("值使門宮")[0]+"門"+qtext.get("值符值使").get("值使門宮")[1]+"宮" ))
+                print("{} |\n{} | 節氣︰{} |\n值符星宮︰天{}宮 | 值使門宮︰{}\n".format(qtext1.get("干支"), qtext1.get("排局"),  j_q,  qtext1.get("值符值使").get("值符星宮")[0]+"-"+qtext1.get("值符值使").get("值符星宮")[1], qtext1.get("值符值使").get("值使門宮")[0]+"門"+qtext1.get("值符值使").get("值使門宮")[1]+"宮" ))
                 print("農曆月：{} | 節氣日數差距：{}天\n".format(config.lunar_date_d(y, m, d).get("農曆月"),config.qimen_ju_name_zhirun_raw(y,m,d,h,mintue).get("距節氣差日數")))
                 print("＼  {}{}  　 │  {}{}　 │  {}{}　 │  　 {}{}　 ／".format(e_to_s.get("巳"),e_to_g.get("巳"),e_to_s.get("午"),e_to_g.get("午"),e_to_s.get("未"),e_to_g.get("未"),e_to_s.get("申"),e_to_g.get("申")))
                 print("  ＼────────┴──┬─────┴─────┬──┴────────／")
@@ -175,4 +175,4 @@ with pan:
                 print("  ／────────┬──┴─────┬─────┴──┬────────＼")
                 print("／  {}{}  　 │  {}{}　 │  {}{}　 │  　 {}{}　 ＼".format(e_to_s.get("寅"),e_to_g.get("寅"),e_to_s.get("丑"),e_to_g.get("丑"),e_to_s.get("子"),e_to_g.get("子"),e_to_s.get("亥"),e_to_g.get("亥")))
                 expander = st.expander("原始碼")
-                expander.write(str(qtext))
+                expander.write(str(qtext1))
