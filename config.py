@@ -871,7 +871,7 @@ def jq_distance(year, month, day, hour, minute):
 
 #刻家奇門 五行旺衰
 def wuxing_strong_week_minute(jq):
-    j = config.new_list(jieqi_name, "小寒")
+    j = new_list(jieqi_name, "小寒")
     sw = list("旺相休囚死")
     fs_order = ["土金火木水",
                 "土金火木水",
@@ -893,6 +893,7 @@ def wuxing_strong_week_minute(jq):
                 "金水土火木",
                 "土金火木水",
                 "土金火木水",
+                "水木金土火",
                 "水木金土火",
                 "水木金土火",
                 "水木金土火"]
