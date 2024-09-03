@@ -244,7 +244,7 @@ class Qimen:
 
     def gong_chengsun_minute(self, option):
         def my_function(value):
-            return kconfig.find_shier_luck(value)
+            return config.find_shier_luck(value)
     
         def apply_function_to_dict_values(a):
             result = {}
@@ -255,9 +255,9 @@ class Qimen:
                     result[key] = my_function(value)
             return result
     
-        sky = kconfig.pan_sky_minute(self.year, self.month, self.day, self.hour, self.minute)
+        sky = config.pan_sky_minute(self.year, self.month, self.day, self.hour, self.minute)
         del sky["中"]
-        gong_maping = dict(zip(kconfig.clockwise_eightgua, ["子", tuple(list("丑寅")), "卯", tuple(list("辰巳")), "午", tuple(list("未申")), "酉", tuple(list("戌亥"))]))
+        gong_maping = dict(zip(config.clockwise_eightgua, ["子", tuple(list("丑寅")), "卯", tuple(list("辰巳")), "午", tuple(list("未申")), "酉", tuple(list("戌亥"))]))
         # Instead of creating a nested dict, make the value a tuple
         a = {k: (v, gong_maping.get(k)) for k, v in sky.items()}
         b = {k: v[0] for k, v in apply_function_to_dict_values(a).items() if v[1] is None}
