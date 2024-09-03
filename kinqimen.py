@@ -243,29 +243,31 @@ class Qimen:
         return {"天盤": sky_pan_new, "地盤": earth_pan_new}
 
     def gong_chengsun_minute(self, option):
-        sky = config.pan_sky_minute(self.year,
-                            self.month,
-                            self.day,
-                            self.hour,
-                            self.minute)
-        gz = config.gangzhi(self.year,
-                            self.month,
-                            self.day,
-                            self.hour,
-                            self.minute)
-        find_twelve_luck = config.find_shier_luck(gz[3][0])
-        di_zhi_mapping = dict(zip(config.di_zhi, list("癸己甲乙戊丙丁己庚辛戊壬")))
-        find_twelve_luck_new = {di_zhi_mapping.get(k): v for k, v in find_twelve_luck.items()}
-        try:
-            sky_pan = sky[0]
-            sky_pan_new = {k: {v: find_twelve_luck_new.get(k)} for k, v in sky_pan.items()}
-        except KeyError:
-            sky_pan = sky
-            b = list(map(lambda i:{i:find_twelve_luck_new.get(i)}, list(sky_pan.values())))
-            sky_pan_new = dict(zip(list(sky_pan.keys()), b))
-        earth_pan = self.pan_earth(option)
-        earth_pan_new = {k: {v: find_twelve_luck_new.get(v)} for k, v in earth_pan.items()}
-        return {"天盤": sky_pan_new, "地盤": earth_pan_new}
+        def my_function(value):
+            return kconfig.find_shier_luck(value)
+    
+        def apply_function_to_dict_values(a):
+            result = {}
+            for key, value in a.items():
+                if isinstance(value, tuple):
+                    result[key] = tuple(my_function(v) for v in value)
+                else:
+                    result[key] = my_function(value)
+            return result
+    
+        sky = kconfig.pan_sky_minute(self.year, self.month, self.day, self.hour, self.minute)
+        del sky["中"]
+        gong_maping = dict(zip(kconfig.clockwise_eightgua, ["子", tuple(list("丑寅")), "卯", tuple(list("辰巳")), "午", tuple(list("未申")), "酉", tuple(list("戌亥"))]))
+        # Instead of creating a nested dict, make the value a tuple
+        a = {k: (v, gong_maping.get(k)) for k, v in sky.items()}
+        b = {k: v[0] for k, v in apply_function_to_dict_values(a).items() if v[1] is None}
+        d = {}
+        for key, value in gong_maping.items():
+            if isinstance(value, tuple):
+                d[key] = {v: b[key][v] for v in value}
+            else:
+                d[key] = {value: b[key][value]}
+        return d
 
     def pan(self, option):#1拆補 #2置閏
         """時家奇門起盤綜合, option 1:拆補 2:置閏"""
