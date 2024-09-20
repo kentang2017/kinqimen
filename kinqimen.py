@@ -660,7 +660,7 @@ class Qimen:
                 return {"飛鳥跌穴": sky_gong}
             else:
                 return {"飛鳥跌穴": "沒有"}
-        except KeyError:
+        except (KeyError, AttributeError):
             if zhishi_gong == "中":
                 return {"飛鳥跌穴": config.zhifu_n_zhishi(
                     self.year,
@@ -669,7 +669,8 @@ class Qimen:
                     self.hour,
                     self.minute,
                     option).get("值符星宮")[1]}
-        
+            else:
+                return {"飛鳥跌穴": "沒有"}
     def jade_girl(self, option):
         """玉女守門"""
         earth = self.pan_earth(option)
