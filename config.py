@@ -1044,6 +1044,7 @@ if __name__ == '__main__':
     day = 15
     hour = 1
     minute = 23
+    print(liujiashun_dict())
     #print(qimen_ju_name_zhirun_raw(year, month, day, hour, minute))
     #print(qimen_ju_name_zhirun(year, month, day, hour, minute))
     #print(qimen_ju_name_zhirun(year, month, day, hour, minute))

@@ -349,6 +349,7 @@ class Qimen:
                             self.hour,
                             self.minute)
         gzd = "{}年{}月{}日{}時{}分".format(gz[0], gz[1], gz[2], gz[3], gz[4])
+        s = config.multi_key_dict_get(config.liujiashun_dict(), gz[4])
         qmju = config.qimen_ju_name_ke(self.year,
                                               self.month,
                                               self.day,
@@ -418,7 +419,8 @@ class Qimen:
                 "丁馬": self.dinhorse(),
                 "驛馬": self.hourhorse()
             },
-            "長生運": self.gong_chengsun_minute(option)}
+            "長生運": self.gong_chengsun_minute(option),
+            "暗干":config.angan.get(paiju[0]+paiju[2]).get(s)}, 
 
     def pan_html(self, option):
         """時家奇門html, option 1:拆補 2:置閏"""
