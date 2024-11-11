@@ -1,4 +1,4 @@
-import urllib
+import urllib.request
 import streamlit as st
 import pendulum as pdlm
 from io import StringIO
