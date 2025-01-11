@@ -938,7 +938,7 @@ def pan_sky_minute(year, month, day, hour, minute ):
     list("乙庚癸丙己壬丁戊辛"),
     list("庚癸壬乙己辛丙丁戊")
     ],[
-    list("戊己庚辛壬癸丁丙乙"),
+    list("乙丙丁癸壬辛庚己戊"),
     list("辛戊己丁壬庚丙乙癸"),
     list("丁辛戊丙壬己乙癸庚"),
     list("己庚癸戊壬乙辛丁丙"),
