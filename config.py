@@ -913,6 +913,7 @@ def wuxing_strong_week(jq):
 
 
 def pan_sky_minute(year, month, day, hour, minute ):
+    kgz = gangzhi(year, month, day, hour, minute)[4]
     """刻家奇門天盤設置"""
     zfzs = zhifu_n_zhishi_ke(year, month, day, hour, minute)
     zftg = zfzs.get("值符天干")
@@ -955,9 +956,13 @@ def pan_sky_minute(year, month, day, hour, minute ):
     get_zf_orders = dict(zip(kook_setting, orders))
     ke = qimen_ju_name_ke(year, month, day, hour, minute)
     kook = "{}{}".format(ke[0],ke[2])
+    kook1 = kook + kgz
     getzf_orders = multi_key_dict_get(get_zf_orders, kook)
     get_humhead = dict(zip(liujia, getzf_orders)).get(zftg)
-    return dict(zip(eight_gua,multi_key_dict_get(sky_pan_orders, kook)[dict(zip(eight_gua, get_humhead)).get(zfgong)]))#, getzf_orders, get_humhead
+    if kook1 in ["陰九壬午","陽一甲戌", "陽一己卯", "陽一壬午", "陽一庚寅",  "陽一甲辰", "陽一己酉", "陽一壬子"]:
+        return  dict(zip(eight_gua,list("戊己庚辛癸丁丙乙")))
+    else:
+        return dict(zip(eight_gua,multi_key_dict_get(sky_pan_orders, kook)[dict(zip(eight_gua, get_humhead)).get(zfgong)]))
 #暗干
 angan = {'陰三甲子': ['庚午', '己巳', '戊辰', '乙丑', '丙寅', '丁卯', '癸酉', '壬申', '辛未', '丙坤'],
 '陰三乙丑': ['己巳', '戊辰', '丁卯', '庚午', '丙寅', '辛未', '乙丑', '癸酉', '壬申', '丙兌'],
