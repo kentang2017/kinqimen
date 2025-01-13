@@ -419,7 +419,7 @@ class Qimen:
                 "丁馬": self.dinhorse(),
                 "驛馬": self.hourhorse()
             },
-            "長生運": self.gong_chengsun_minute(option),
+            #"長生運": self.gong_chengsun_minute(option),
             "暗干": dict(zip(config.angan.get(paiju[0]+paiju[2]+gz[4])[:-1], config.eight_gua)), 
             "飛干":config.angan.get(paiju[0]+paiju[2]+gz[4])[-1]}
 
