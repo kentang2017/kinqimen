@@ -960,9 +960,9 @@ def pan_sky_minute(year, month, day, hour, minute ):
     getzf_orders = multi_key_dict_get(get_zf_orders, kook)
     get_humhead = dict(zip(liujia, getzf_orders)).get(zftg)
     if kook1 in "陰九壬午,陽一甲戌,陽一己卯,陽一壬午,陽一庚寅,陽一甲辰,陽一己酉,陽一壬子".split(","):
-        return dict(zip(eight_gua,list("戊己庚辛癸丁丙乙")))
+        return dict(zip(eight_gua,list("戊己庚辛壬癸丁丙乙")))
     if kook1 in "陰六甲戌,陰六己卯,陰六壬午".split(","):
-        return dict(zip(eight_gua,list("癸壬辛庚戊乙丙丁")))
+        return dict(zip(eight_gua,list("癸壬辛庚己戊乙丙丁")))
     else:
         return dict(zip(eight_gua,multi_key_dict_get(sky_pan_orders, kook)[dict(zip(eight_gua, get_humhead)).get(zfgong)]))
 #暗干
