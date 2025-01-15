@@ -961,6 +961,8 @@ def pan_sky_minute(year, month, day, hour, minute ):
     get_humhead = dict(zip(liujia, getzf_orders)).get(zftg)
     if kook1 in "陰九壬午,陽一甲戌,陽一己卯,陽一壬午,陽一庚寅,陽一甲辰,陽一己酉,陽一壬子".split(","):
         return dict(zip(eight_gua,list("戊己庚辛壬癸丁丙乙")))
+    if kook1 in "陰九癸丑,".split(","):
+        return dict(zip(eight_gua,list("丁辛戊丙壬己乙癸庚")))
     if kook1 in "陰六甲戌,陰六己卯,陰六壬午".split(","):
         return dict(zip(eight_gua,list("癸壬辛庚己戊乙丙丁")))
     else:
