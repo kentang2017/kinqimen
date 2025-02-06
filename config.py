@@ -959,12 +959,100 @@ def pan_sky_minute(year, month, day, hour, minute ):
     kook1 = kook + kgz
     getzf_orders = multi_key_dict_get(get_zf_orders, kook)
     get_humhead = dict(zip(liujia, getzf_orders)).get(zftg)
-    if kook1 in "陰九壬午,陽一甲戌,陽一己卯,陽一壬午,陽一庚寅,陽一甲辰,陽一己酉,陽一壬子,陰九辛酉,陽一甲午".split(","):
-        return dict(zip(eight_gua,list("戊己庚辛壬癸丁丙乙")))
-    if kook1 in "陰九癸丑,".split(","):
+    #坎坤震巽中乾兌艮離
+    if kook1 in "陰三辛未,陰三丁丑,陰三戊子,陰三癸卯,陰三乙巳,陰三庚申".split(","):
+        return dict(zip(eight_gua,list("癸乙庚壬丙己辛丁戊")))
+    if kook1 in "陰三庚午,陰三乙亥,陰三癸巳,陰三戊戌,陰三丁未,陰三辛酉".split(","):
+        return dict(zip(eight_gua,list("戊丁辛己丙壬庚乙癸")))
+    if kook1 in "陰三丁卯,陰三戊寅,陰三丙戌,陰三己丑,陰三壬寅,陰三癸丑,陰三乙卯".split(","):
+        return dict(zip(eight_gua,list("乙庚己癸丙戊壬辛丁")))
+    if kook1 in "陰三壬申,陰三辛巳,陰三丁亥,陰三乙未,陰三庚戌,陰三丙辰,陰三己未".split(","):
+        return dict(zip(eight_gua,list("壬癸乙辛丙庚丁戊己")))
+    if kook1 in "陰三乙丑,陰三癸未,陰三壬辰,陰三丙申,陰三己亥,陰三戊申,陰三丁巳".split(","):
+        return dict(zip(eight_gua,list("丁辛壬戊丙癸己庚乙")))
+    if kook1 in "陰三丙寅,陰三己巳,陰三庚辰,陰三乙酉,陰三丁酉,陰三辛亥,陰三壬戌".split(","):
+        return dict(zip(eight_gua,list("己戊丁庚丙辛乙癸壬")))
+    if kook1 in "陰三癸酉,陰三壬午,陰三辛卯,陰三庚子,陰三丙午,陰三己酉,陰三戊午".split(","):
+        return dict(zip(eight_gua,list("辛壬癸丁丙乙戊己庚")))
+    if kook1 in "陰三甲子,陰三戊辰,陰三甲戌,陰三丙子,陰三己卯,陰三甲申,陰三庚寅,陰三甲午,陰三辛丑,陰三甲辰,陰三壬子,陰三甲寅,陰三癸亥".split(","):
+        return dict(zip(eight_gua,list("庚己戊乙丙丁癸壬辛")))
+    if kook1 in "陰六甲子,陰六戊辰,陰六甲戌,陰六己卯,陰六壬午,陰六甲申,陰六庚寅,陰六甲午,陰六辛丑,陰六甲辰,陰六己酉,陰六壬子,陰六甲寅,陰六癸亥".split(","):
+        return dict(zip(eight_gua,list("癸壬辛庚己戊乙再丁")))
+    if kook1 in "陰六辛未,陰六癸未,陰六乙酉,陰六己亥,陰六壬寅,陰六癸丑,陰六庚申".split(","):
+        return dict(zip(eight_gua,list("壬辛戊癸己丁庚乙丙")))
+    if kook1 in "陰六丙寅,陰六戊寅,陰六己丑,陰六壬辰,陰六丁酉,陰六戊申,陰六辛酉".split(","):
+        return dict(zip(eight_gua,list("乙庚癸丙己壬丁戊辛")))
+    if kook1 in "陰六乙丑,陰六丁丑,陰六辛卯,陰六丙申,陰六丁未,陰六戊午".split(","):
+        return dict(zip(eight_gua,list("丙乙庚丁己癸戊辛壬")))
+    if kook1 in "陰六庚午,陰六丙子,陰六戊子,陰六乙未,陰六丙午,陰六丁巳".split(","):
+        return dict(zip(eight_gua,list("丁丙乙戊己庚辛壬癸")))
+    if kook1 in "陰六丁卯,陰六辛巳,陰六癸巳,陰六戊戌,陰六辛亥,陰六己未,陰六壬戌".split(","):
+        return dict(zip(eight_gua,list("庚癸壬乙己辛丙丁戊")))
+    if kook1 in "陰六戊午,陰六己巳,陰六壬申,陰六庚辰,陰六丙戌,陰六癸卯,陰六庚戌,陰六乙卯".split(","):
+        return dict(zip(eight_gua,list("辛戊丁壬己丙癸庚乙")))
+    if kook1 in "陰六癸酉,陰六乙亥,陰六丁亥,陰六庚子,陰六乙巳,陰六丙辰".split(","):
+        return dict(zip(eight_gua,list("戊丁丙辛己乙壬癸庚")))
+    if kook1 in "陰九丁卯,陰九辛巳,陰九戊子,陰九丙申,陰九壬寅,陰九癸丑,陰九己未,陽一庚午,陽一癸未,陽一乙酉,陽一己亥,陽一壬寅,陽一癸丑,陽一丙辰".split(","):
         return dict(zip(eight_gua,list("丁辛戊丙壬己乙癸庚")))
-    if kook1 in "陰六甲戌,陰六己卯,陰六壬午".split(","):
+    if kook1 in "陰九辛未,陰九戊寅,陰九己丑,陰九丁酉,陰九乙巳,陰九庚申,陽一癸酉,陽一乙亥,陽一丙戌,陽一庚子,陽一乙巳,陽一丁巳".split(","):
+        return dict(zip(eight_gua,list("丙丁辛乙壬戊癸庚己")))
+    if kook1 in "陰九甲子,陰九戊辰,陰九甲戌,陰九己卯,陰九甲申,陰九庚寅,陰九甲午,陰九辛丑,陰九甲辰,陰九丙午,陰九壬子,陰九甲寅,陰九癸亥".split(","):
+        return dict(zip(eight_gua,list("乙庚丁癸壬辛庚己戊")))
+    if kook1 in "陰九癸酉,陰九乙亥,陰九丙戌,陰九壬辰,陰九庚子,陰九戊申,陰九丁巳".split(","):
+        return dict(zip(eight_gua,list("己庚癸戊壬乙辛丁丙")))
+    if kook1 in "陰九丙寅,陰九壬申,陰九丁丑,陰九辛卯,陰九乙未,陰九庚戌,陰九戊午".split(","):
+        return dict(zip(eight_gua,list("辛戊己丁壬庚丙乙癸")))
+    if kook1 in "陰九庚午,陰九癸未,陰九乙酉,陰九己亥,陰九辛亥,陰九丙辰,陰九壬戌".split(","):
+        return dict(zip(eight_gua,list("庚癸乙己壬丙戊辛丁")))
+    if kook1 in "陰九乙丑,陰九丙子,陰九壬午,陰九丁亥,陰九癸卯,陰九己酉,陰九辛酉".split(","):
+        return dict(zip(eight_gua,list("戊己庚辛壬癸丁丙乙")))
+    if kook1 in "陰九己巳,陰九庚辰,陰九癸巳,陰九戊戌,陰九丁未,陰九乙卯".split(","):
+        return dict(zip(eight_gua,list("癸乙丙庚壬丁己戊辛")))   
+    if kook1 in "陽一乙丑,陽一丙子,陽一丁亥,陽一癸卯,陽一丙午,陽一辛酉".split(","):
+        return dict(zip(eight_gua,list("乙丙丁癸壬辛庚己戊")))
+    if kook1 in "陽一丙寅,陽一丁丑,陽一辛卯,陽一乙未,陽一丁未,陽一戊午".split(","):
+        return dict(zip(eight_gua,list("癸乙丙庚壬丁己戊辛")))
+    if kook1 in "陽一己巳,陽一壬申,陽一庚辰,陽一癸巳,陽一戊戌,陽一庚戌,陽一乙卯".split(","):
+        return dict(zip(eight_gua,list("辛戊己丁壬庚丙乙癸")))
+    if kook1 in "陽一辛未,陽一戊寅,陽一己丑,陽一壬辰,陽一丁酉,陽一戊申,陽一庚申".split(","):
+        return dict(zip(eight_gua,list("己庚癸戊壬乙辛丁丙")))
+    if kook1 in "陽一丁卯,陽一辛巳,陽一戊子,陽一丙申,陽一辛亥,陽一己未,陽一壬戌".split(","):
+        return dict(zip(eight_gua,list("庚癸乙己壬丙戊辛丁")))
+    if kook1 in "陽一甲子,陽一戊辰,陽一甲戌,陽一己卯,陽一壬午,陽一壬午,陽一甲申,陽一庚寅,陽一甲午,陽一辛丑,陽一甲辰,陽一己酉,陽一壬子,陽一甲寅,陽一癸亥".split(","):
+        return dict(zip(eight_gua,list("戊己庚辛壬癸丁丙乙")))
+    if kook1 in "陽七甲子,陽七戊辰,陽七甲戌,陽七己卯,陽七甲申,陽七庚寅,陽七甲午,陽七辛丑,陽七甲辰,陽七丙午,陽七壬子,陽七甲寅,陽七癸亥".split(","):
+        return dict(zip(eight_gua,list("辛壬癸丁丙乙戊己庚")))
+    if kook1 in "陽七乙丑,陽七癸未,陽七丙戌,陽七壬辰,陽七己亥,陽七戊申,陽七丁巳".split(","):
+        return dict(zip(eight_gua,list("乙庚己癸丙戊壬辛丁")))
+    if kook1 in "陽七丁卯,陽七戊寅,陽七己丑,陽七丙申,陽七壬寅,陽七癸丑,陽七乙卯".split(","):
+        return dict(zip(eight_gua,list("丁辛壬戊丙癸己庚乙")))
+    if kook1 in "陽七己巳,陽七庚辰,陽七乙酉,陽七丁酉,陽七辛亥,陽七丙辰,陽七壬戌".split(","):
+        return dict(zip(eight_gua,list("壬癸乙辛丙庚丁戊己")))
+    if kook1 in "陽七丙寅,陽七壬申,陽七辛巳,陽七丁亥,陽七乙未,陽七庚戌,陽七己未".split(","):
+        return dict(zip(eight_gua,list("己戊丁庚丙辛乙癸壬")))
+    if kook1 in "陽七癸酉,陽七丙子,陽七壬午,陽七辛卯,陽七庚子,陽七己酉,陽七戊午".split(","):
+        return dict(zip(eight_gua,list("庚己戊乙丙丁癸壬辛")))
+    if kook1 in "陽七辛未,陽七丁丑,陽七戊子,陽七癸卯,陽七乙巳,陽七庚申".split(","):
+        return dict(zip(eight_gua,list("戊丁辛己丙壬庚乙癸")))
+    if kook1 in "陽七庚午,陽七乙亥,陽七癸巳,陽七戊戌,陽七丁未,陽七辛酉".split(","):
+        return dict(zip(eight_gua,list("癸乙庚壬丙己辛丁戊")))
+    if kook1 in "陽四庚午,陽四壬午,陽四戊子,陽四乙未,陽四丙午,陽四己酉,陽四丁巳".split(","):
         return dict(zip(eight_gua,list("癸壬辛庚己戊乙丙丁")))
+    if kook1 in "陽四壬申,陽四戊寅,陽四丙戌,陽四己丑,陽四癸卯,陽四庚戌,陽四乙卯".split(","):
+        return dict(zip(eight_gua,list("乙庚癸丙己壬丁戊辛")))
+    if kook1 in "陽四丙寅,陽四己巳,陽四庚辰,陽四壬辰,陽四丁酉,陽四戊申,陽四辛酉".split(","):
+        return dict(zip(eight_gua,list("辛戊丁壬己丙癸庚乙")))
+    if kook1 in "陽四甲子,陽四戊辰,陽四甲戌,陽四丙子,陽四己卯,陽四甲申,陽四庚寅,陽四甲午,陽四辛丑,陽四甲辰,陽四壬子,陽四甲寅,陽四癸亥".split(","):
+        return dict(zip(eight_gua,list("丁丙乙戊己庚辛壬癸")))
+    if kook1 in "陽四辛未,陽四丁丑,陽四乙酉,陽四壬寅,陽四癸丑,陽四庚申".split(","):
+        return dict(zip(eight_gua,list("丙乙庚丁己癸戊辛壬")))
+    if kook1 in "陽四乙丑,陽四癸未,陽四辛卯,陽四丙申,陽四己亥,陽四丁未,陽四戊午".split(","):
+        return dict(zip(eight_gua,list("壬辛戊癸己丁庚乙丙")))
+    if kook1 in "陽四癸酉,陽四辛巳,陽四丁亥,陽四庚子,陽四乙巳,陽四丙辰,陽四己未".split(","):
+        return dict(zip(eight_gua,list("庚癸壬乙己辛丙丁戊")))
+    if kook1 in "陽四丁卯,陽四乙亥,陽四癸巳,陽四戊戌,陽四辛亥,陽四壬戌".split(","):
+        return dict(zip(eight_gua,list("戊丁丙辛己乙壬癸庚")))
+        
     else:
         return dict(zip(eight_gua,multi_key_dict_get(sky_pan_orders, kook)[dict(zip(eight_gua, get_humhead)).get(zfgong)]))
 #暗干
