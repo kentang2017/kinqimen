@@ -32,7 +32,11 @@ def get_file_content_as_string1(path):
     response = urllib.request.urlopen(url)
     return response.read().decode("utf-8")
 
-st.set_page_config(layout="wide",page_title="堅奇門 - 奇門遁甲排盘")
+st.set_page_config(
+    layout="wide",
+    page_title="堅奇門 - 奇門排盘",
+    page_icon="icon.jpg"
+)
 pan,example,guji,log,links = st.tabs([' 🧮排盤 ', ' 📜案例 ', ' 📚古籍 ',' 🆕更新 ',' 🔗連結 ' ])
 with st.sidebar:
     pp_date=st.date_input("日期",pdlm.now(tz='Asia/Shanghai').date())
