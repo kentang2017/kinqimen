@@ -314,7 +314,7 @@ def qimen_ju_name_chaibu(year, month, day, hour, minute):
     jieqi = jq(year, month, day, hour, minute)
     find_yingyang = multi_key_dict_get(yydun, jieqi)
     find_yuen = findyuen(year, month, day, hour, minute)
-    jieqi_code = jieqicode(year, month, day, hour, minute)
+    jieqi_code = jieqicode_jq(year, month, day, hour, minute)
     return "{}{}局{}".format(find_yingyang,{
         "上元":jieqi_code[0],
         "中元":jieqi_code[1],
@@ -332,7 +332,7 @@ def qimen_ju_name_zhirun_raw(year, month, day, hour, minute):
     yy = {tuple(new_list(jieqi_name, "冬至")[0:12]):"陽遁",
           tuple(new_list(jieqi_name, "夏至")[0:12]):"陰遁" }
     yin_yang = multi_key_dict_get(yy,new_jq1)
-    jieqi_code = jieqicode(year, month, day, hour, minute)
+    jieqi_code = jieqicode_jq(year, month, day, hour, minute)
     hgz = gangzhi(year, month, day, hour, minute)[3][0]
     dgz = gangzhi(year, month, day, hour, minute)[2]
     fd = multi_key_dict_get(fuhead, dgz)
