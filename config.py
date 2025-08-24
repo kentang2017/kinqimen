@@ -73,25 +73,7 @@ def Ganzhiwuxing(gangorzhi):
                                      )), list("木火水金土")))
     return multi_key_dict_get(ganzhiwuxing, gangorzhi)
 
-def jieqicode(year,month, day, hour, minute):
-    """以年月日時分節氣找奇門上中下元局"""
-    return multi_key_dict_get({("冬至", "驚蟄"): "一七四",
-                               "小寒": "二八五",
-                               ("大寒", "春分"): "三九六",
-                               "立春":"八五二",
-                               "雨水":"九六三",
-                               ("清明", "立夏"): "四一七",
-                               ("穀雨", "小滿"): "五二八",
-                               "芒種": "六三九",
-                               ("夏至", "白露"): "九三六",
-                               "小暑":"八二五",
-                               ("大暑", "秋分"): "七一四",
-                               "立秋":"二五八",
-                               "處暑":"一四七",
-                               ("霜降", "小雪"): "五八二",
-                               ("寒露", "立冬"): "六九三",
-                               "大雪":"四七一"}, 
-                              jq(year,month, day,hour, minute))
+
 
 def jieqicode_jq(jq):
     """以節氣名稱找奇門上中下元局"""
@@ -395,6 +377,9 @@ def qimen_ju_name_zhirun_raw(year, month, day, hour, minute):
             "其他排局1":"{}{}局".format(multi_key_dict_get(yy,new_jq), kooks),
             }
 
+
+
+
 def get_jieqi_start_date(year, month, day):
     current_date = datetime.date(year, month, day)
     d = 0
@@ -419,29 +404,15 @@ def get_next_jieqi_start_date(year, month, day):
         if d > 30:
             raise ValueError(f"No next JieQi found within 30 days for {year}-{month}-{day}")
 
-def jieqicode_jq(jq):
-    jieqi_dict = {
-        ("冬至", "驚蟄"): "一七四",
-        ("小寒",): "二八五",
-        ("大寒", "春分"): "三九六",
-        ("立春",): "八五二",
-        ("雨水",): "九六三",
-        ("清明", "立夏"): "四一七",
-        ("穀雨", "小滿"): "五二八",
-        ("芒種",): "六三九",
-        ("夏至", "白露"): "九三六",
-        ("小暑",): "八二五",
-        ("大暑", "秋分"): "七一四",
-        ("立秋",): "二五八",
-        ("處暑",): "一四七",
-        ("霜降", "小雪"): "五八二",
-        ("寒露", "立冬"): "六九三",
-        ("大雪",): "四七一"
-    }
-    result = multi_key_dict_get(jieqi_dict, jq)
-    if result is None:
-        raise ValueError(f"No ju code found for JieQi: {jq}")
-    return result
+jqmc = ['小寒', '大寒', '立春', '雨水', '驚蟄', '春分', '清明', '穀雨', '立夏', '小滿', '芒種', '夏至', '小暑', '大暑', '立秋', '處暑', '白露', '秋分', '寒露', '霜降', '立冬', '小雪', '大雪', '冬至']
+
+def jq(year, month, day, hour, minute):
+    jq_start = get_jieqi_start_date(year, month, day)
+    start_day = fromSolar(jq_start.year, jq_start.month, jq_start.day)
+    jq_index = start_day.getJieQi()
+    if 0 <= jq_index < len(jqmc):
+        return jqmc[jq_index]
+    raise ValueError(f"Invalid JieQi index {jq_index} for date {year}-{month}-{day}")
 
 #奇門排局置閏，正授，有超神，有閏奇，有接氣
 def qimen_ju_name_zhirun(year, month, day, hour, minute):
@@ -890,38 +861,6 @@ def change(year, month, day, hour, minute):
                                                str(minute).zfill(2)))
     return ephem.Date(changets - 24 * ephem.hour *30)
 
-def jq(year, month, day, hour, minute):
-    current = ephem.Date("{}/{}/{} {}:{}:00".format(str(year).zfill(4),
-                                              str(month).zfill(2),
-                                              str(day).zfill(2),
-                                              str(hour).zfill(2),
-                                              str(minute).zfill(2)))
-    jd = change(year, month, day, hour, minute)
-    result = []
-    e=ecliptic_lon(jd)
-    n=int(e*180.0/math.pi/15)+1
-    for i in range(3):
-        if n>=24:
-            n-=24
-        jd=iteration(jd,sta)
-        d=ephem.Date(jd+1/3).tuple()
-        dt = ephem.Date("{}/{}/{} {}:{}:00.00".format(d[0],
-                                                d[1],
-                                                d[2],
-                                                d[3],
-                                                d[4]).split(".")[0])
-        time_info = {dt:jieqi_name[n]}
-        n+=1
-        result.append(time_info)
-    j = [list(i.keys())[0] for i in result]
-    if current > j[0] and current > j[1] and current > j[2]:
-        return list(result[2].values())[0]
-    if current > j[0] and current > j[1] and current <= j[2]:
-        return list(result[1].values())[0]
-    if current >= j[1] and current < j[2]:
-        return list(result[1].values())[0]
-    if current < j[1] and current < j[2]:
-        return list(result[0].values())[0]
 
 def jq_distance(year, month, day, hour, minute):
     current = "{}/{}/{} {}:{}:00".format(str(year).zfill(4),
@@ -1495,11 +1434,11 @@ angan = {'陰三甲子': ['庚午', '己巳', '戊辰', '乙丑', '丙寅', '丁
 
 
 if __name__ == '__main__':
-    year = 2024
-    month = 1
-    day = 14
-    hour = 23
-    minute = 20
+    year = 2025
+    month = 4
+    day = 24
+    hour = 10
+    minute = 41
     #print(liujiashun_dict())
     #print(qimen_ju_name_zhirun_raw(year, month, day, hour, minute))
     print(qimen_ju_name_zhirun(year, month, day, hour, minute))
