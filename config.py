@@ -9,7 +9,9 @@ import re
 import math
 import datetime
 from itertools import cycle, repeat
+import  sxtwl
 from sxtwl import fromSolar
+import swisseph as swe
 import ephem
 
 cnum = list("一二三四五六七八九十")
@@ -31,6 +33,7 @@ jieqi_name = re.findall('..', '春分清明穀雨立夏小滿芒種夏至小暑�
 jj = {"甲子":"戊","甲戌":"己","甲申":"庚","甲午":"辛","甲辰":"壬","甲寅":"癸"}
 door_wuxing = dict(zip(door_r,"水土木木火土金金"))
 star_wuxing = dict(zip(star_r,"水土木木火土金金"))
+jqmc = ['小寒', '大寒', '立春', '雨水', '驚蟄', '春分', '清明', '穀雨', '立夏', '小滿', '芒種', '夏至', '小暑', '大暑', '立秋', '處暑', '白露', '秋分', '寒露', '霜降', '立冬', '小雪', '大雪', '冬至']
 
 #%% 基本功能函數
 def split_list(lst, chunk_size):
@@ -63,17 +66,13 @@ def repeat_list(n, thelist):
 
 #%% 甲子平支
 def jiazi():
-    return list(map(lambda x: "{}{}".format(tian_gan[x % len(tian_gan)],
-                                            di_zhi[x % len(di_zhi)]),
-                                            list(range(60))))
+    return list(map(lambda x: "{}{}".format(tian_gan[x % len(tian_gan)],di_zhi[x % len(di_zhi)]),list(range(60))))
 
 def Ganzhiwuxing(gangorzhi):
     gz_list = "甲寅乙卯震巽,丙巳丁午離,壬亥癸子坎,庚申辛酉乾兌,未丑戊己未辰戌艮坤".split(",")
     ganzhiwuxing = dict(zip(list(map(lambda x: tuple(x), gz_list
                                      )), list("木火水金土")))
     return multi_key_dict_get(ganzhiwuxing, gangorzhi)
-
-
 
 def jieqicode_jq(jq):
     """以節氣名稱找奇門上中下元局"""
@@ -246,7 +245,7 @@ def findyuen_dict():
     jz = jiazi()[0::5]
     jzlist = list(map(lambda i:new_list(jiazi(), i)[0:5],jz))
     nlist = list(map(lambda x:tuple(x), jzlist))
-    return dict(zip(nlist, ["上元","中元","下元"]*4))
+    return dict(zip(nlist, ["上","中","下"]*4))
 
 #分干支
 def minutes_jiazi_d():
@@ -321,6 +320,10 @@ def qimen_ju_name_chaibu(year, month, day, hour, minute):
         "中元":jieqi_code[1],
         "下元":jieqi_code[2]}.get(find_yuen),
         find_yuen)
+
+
+
+
 #奇門排局置閏除虫用
 def qimen_ju_name_zhirun_raw(year, month, day, hour, minute):
     Jieqi = jq(year, month, day, hour, minute)
@@ -334,7 +337,7 @@ def qimen_ju_name_zhirun_raw(year, month, day, hour, minute):
           tuple(new_list(jieqi_name, "夏至")[0:12]):"陰遁" }
     yin_yang = multi_key_dict_get(yy,new_jq1)
     jieqi_code = jieqicode_jq(Jieqi)
-    hgz = gangzhi(year, month, day, hour, minute)[3][0]
+    #hgz = gangzhi(year, month, day, hour, minute)[3][0]
     dgz = gangzhi(year, month, day, hour, minute)[2]
     fd = multi_key_dict_get(fuhead, dgz)
     zftg = zhifu_tiangan(year, month, day, hour, minute)
@@ -342,11 +345,11 @@ def qimen_ju_name_zhirun_raw(year, month, day, hour, minute):
                    tuple(["甲寅","甲申","己巳","己亥"]):"中元",
                    tuple(["甲辰","甲戌","己丑","己未"]):"下元"}
     three_yuen = multi_key_dict_get(ju_day_dict, fd)
-    Jieqi_disance = jq_distance(year, month, day, hour, minute)[0].get(Jieqi)
-    current = jq_distance(year, month, day, hour, minute)[1]
-    current_ts = datetime.datetime.strptime(current, "%Y/%m/%d %H:%M:%S")
-    jq_distance_ts = datetime.datetime.strptime(Jieqi_disance,"%Y/%m/%d %H:%M:%S")
-    difference = (current_ts-jq_distance_ts).days
+    Jieqi_disance = get_jieqi_start_date(year, month, day, hour, minute)["時間"]
+    current = datetime.datetime(year, month, day, hour, minute)
+    #current_ts = datetime.datetime.strptime(current, "%Y/%m/%d %H:%M:%S")
+    #jq_distance_ts = datetime.datetime.strptime(Jieqi_disance,"%Y/%m/%d %H:%M:%S")
+    difference = (current-Jieqi_disance).days
     kooks =  {"上元":jieqi_code[0],
               "中元":jieqi_code[1],
               "下元":jieqi_code[2]}.get(three_yuen)
@@ -379,161 +382,229 @@ def qimen_ju_name_zhirun_raw(year, month, day, hour, minute):
             }
 
 
-
-
-def get_jieqi_start_date(year, month, day):
-    current_date = datetime.date(year, month, day)
-    d = 0
+#%% 節氣計算
+def get_jieqi_start_date(year, month, day, hour, minute):
+    """
+    Get the start date and time of the current solar term (jieqi) for the given date and time.
+    Returns a dictionary with year, month, day, hour, minute, and the name of the solar term.
+    """
+    # Initialize the day object with the given date
+    day = sxtwl.fromSolar(year, month, day)
+    
+    # Check if the given date has a solar term
+    if day.hasJieQi():
+        jq_index = day.getJieQi()
+        jd = day.getJieQiJD()
+        t = sxtwl.JD2DD(jd)
+        return {
+            "年": t.Y,
+            "月": t.M,
+            "日": t.D,
+            "時": int(t.h),
+            "分": round(t.m),
+            "節氣": jqmc[jq_index-1],
+            "時間":datetime.datetime(t.Y, t.M, t.D, int(t.h), round(t.m))
+        }
+    else:
+        # If no solar term on this day, find the previous solar term
+        current_day = day
+        while True:
+            current_day = current_day.before(1)
+            if current_day.hasJieQi():
+                jq_index = current_day.getJieQi()
+                jd = current_day.getJieQiJD()
+                t = sxtwl.JD2DD(jd)
+                return {
+                    "年": t.Y,
+                    "月": t.M,
+                    "日": t.D,
+                    "時": int(t.h),
+                    "分": round(t.m),
+                    "節氣": jqmc[jq_index-1],
+                    "時間":datetime.datetime(t.Y, t.M, t.D, int(t.h), round(t.m))
+                }
+            
+def get_before_jieqi_start_date(year, month, day, hour, minute):
+    """
+    Get the start date and time of the next solar term (jieqi) after the given date and time.
+    Returns a dictionary with year, month, day, hour, minute, and the name of the solar term.
+    """
+    # Initialize the day object with the given date
+    day = sxtwl.fromSolar(year, month, day)
+    
+    # Start searching from the next day
+    current_day = day.before(15)
     while True:
-        check_date = current_date - datetime.timedelta(days=d)
-        check_day = fromSolar(check_date.year, check_date.month, check_date.day)
-        if check_day.hasJieQi():
-            return check_date
-        d += 1
-        if d > 30:
-            raise ValueError(f"No JieQi found within 30 days for {year}-{month}-{day}")
+        if current_day.hasJieQi():
+            jq_index = current_day.getJieQi()
+            jd = current_day.getJieQiJD()
+            t = sxtwl.JD2DD(jd)
+            return {
+                "年": t.Y,
+                "月": t.M,
+                "日": t.D,
+                "時": int(t.h),
+                "分": round(t.m),
+                "節氣": jqmc[jq_index-1],
+                "時間":datetime.datetime(t.Y, t.M, t.D, int(t.h), round(t.m))
+            }
+        current_day = current_day.before(1)
 
-def get_next_jieqi_start_date(year, month, day):
-    current_date = datetime.date(year, month, day)
-    d = 1
+def get_next_jieqi_start_date(year, month, day, hour, minute):
+    """
+    Get the start date and time of the next solar term (jieqi) after the given date and time.
+    Returns a dictionary with year, month, day, hour, minute, and the name of the solar term.
+    """
+    # Initialize the day object with the given date
+    day = sxtwl.fromSolar(year, month, day)
+    
+    # Start searching from the next day
+    current_day = day.after(1)
     while True:
-        check_date = current_date + datetime.timedelta(days=d)
-        check_day = fromSolar(check_date.year, check_date.month, check_date.day)
-        if check_day.hasJieQi():
-            return check_date
-        d += 1
-        if d > 30:
-            raise ValueError(f"No next JieQi found within 30 days for {year}-{month}-{day}")
+        if current_day.hasJieQi():
+            jq_index = current_day.getJieQi()
+            jd = current_day.getJieQiJD()
+            t = sxtwl.JD2DD(jd)
+            return {
+                "年": t.Y,
+                "月": t.M,
+                "日": t.D,
+                "時": int(t.h),
+                "分": round(t.m),
+                "節氣": jqmc[jq_index-1],
+                "時間":datetime.datetime(t.Y, t.M, t.D, int(t.h), round(t.m))
+            }
+        current_day = current_day.after(1)
 
-jqmc = ['小寒', '大寒', '立春', '雨水', '驚蟄', '春分', '清明', '穀雨', '立夏', '小滿', '芒種', '夏至', '小暑', '大暑', '立秋', '處暑', '白露', '秋分', '寒露', '霜降', '立冬', '小雪', '大雪', '冬至']
 
+#%% 節氣計算
 def jq(year, month, day, hour, minute):
-    jq_start = get_jieqi_start_date(year, month, day)
-    start_day = fromSolar(jq_start.year, jq_start.month, jq_start.day)
-    jq_index = start_day.getJieQi()
-    if 0 <= jq_index < len(jqmc):
-        return jqmc[jq_index]
-    raise ValueError(f"Invalid JieQi index {jq_index} for date {year}-{month}-{day}")
+    """
+    Get the current solar term (jieqi) for the given date and time.
+    Returns the name of the solar term as a string.
+    """
+    try:
+        current_datetime = datetime.datetime(year, month, day, hour, minute)
+        jq_start_dict = get_jieqi_start_date(year, month, day, hour, minute)
+        next_jq_start_dict = get_next_jieqi_start_date(year, month, day, hour, minute)
+        
+        if not (isinstance(jq_start_dict, dict) and isinstance(next_jq_start_dict, dict) and 
+                "時間" in jq_start_dict and "時間" in next_jq_start_dict and
+                "節氣" in jq_start_dict and "節氣" in next_jq_start_dict):
+            raise ValueError(f"Invalid jieqi dictionary format for {year}-{month}-{day} {hour}:{minute}")
+        
+        jq_start_datetime = jq_start_dict["時間"]
+        next_jq_start_datetime = next_jq_start_dict["時間"]
+        jq_name = jq_start_dict["節氣"]
+        
+        if not (isinstance(jq_start_datetime, datetime.datetime) and isinstance(next_jq_start_datetime, datetime.datetime)):
+            raise ValueError(f"Jieqi times are not datetime objects: {jq_start_datetime}, {next_jq_start_datetime}")
+        
+        # Check if current_datetime is within the current jieqi period
+        if jq_start_datetime <= current_datetime < next_jq_start_datetime:
+            return jq_name
+        # If before the current jieqi start, get the previous jieqi
+        elif current_datetime < jq_start_datetime:
+            prev_jq_start_dict = get_before_jieqi_start_date(year, month, day, hour, minute)
+            if not (isinstance(prev_jq_start_dict, dict) and "節氣" in prev_jq_start_dict):
+                raise ValueError(f"Invalid previous jieqi dictionary format for {year}-{month}-{day}")
+            return prev_jq_start_dict["節氣"]
+        else:
+            raise ValueError(f"Current datetime {current_datetime} not within any valid jieqi period")
+    except Exception as e:
+        raise ValueError(f"Error in jq for {year}-{month}-{day} {hour}:{minute}: {str(e)}")
 
 #奇門排局置閏，正授，有超神，有閏奇，有接氣
 def qimen_ju_name_zhirun(year, month, day, hour, minute):
-    try:
-        jq_name = jq(year, month, day, hour, minute)
-        gz = gangzhi(year, month, day, hour, minute)
-        current_date = datetime.date(year, month, day)
-        jq_start = get_jieqi_start_date(year, month, day)
-        next_jq_start = get_next_jieqi_start_date(year, month, day)
-        prev_date = jq_start - datetime.timedelta(days=1)
-        prev_jq_start = get_jieqi_start_date(prev_date.year, prev_date.month, prev_date.day)
-
-        # Calculate fu_tou_date
-        dgz = gz[2]
-        d_gan_num = tian_gan.index(dgz[0]) + 1
-        d_zhi_num = di_zhi.index(dgz[1]) + 1
-        shun_num = d_zhi_num - d_gan_num if d_zhi_num - d_gan_num >= 0 else d_zhi_num - d_gan_num + 12
-        shun_dgz_dict = {0: '甲子', 10: '甲戌', 8: '甲申', 6: '甲午', 4: '甲辰', 2: '甲寅'}
-        shun_dgz = shun_dgz_dict.get(shun_num)
-        if shun_dgz is None:
-            raise ValueError(f"Invalid shun_num {shun_num} for day {dgz}")
-        shun_index = jiazi().index(shun_dgz)
-        d_index = jiazi().index(dgz)
-        diff = (d_index - shun_index) % 60
-        fu_tou_date = current_date - datetime.timedelta(days=diff)
-
-        chao_shen = (jq_start - fu_tou_date).days
-        chao_shen_next = (next_jq_start - fu_tou_date).days
-        luo_hou_prev = (fu_tou_date - prev_jq_start).days
-
-        use_jieqi = False
-        if chao_shen_next >= 12 or (0 < luo_hou_prev <= 3):
-            use_jieqi = True
-
-        is_zhirun = False
-        if jq_name in ['芒種', '大雪']:
-            # Calculate chao_shen for jq_start day
-            jq_start_date = jq_start
-            jq_year = jq_start_date.year
-            jq_month = jq_start_date.month
-            jq_day = jq_start_date.day
-            jq_gz = gangzhi(jq_year, jq_month, jq_day, 0, 0)
-            jq_dgz = jq_gz[2]
-            jq_d_gan_num = tian_gan.index(jq_dgz[0]) + 1
-            jq_d_zhi_num = di_zhi.index(jq_dgz[1]) + 1
-            jq_shun_num = jq_d_zhi_num - jq_d_gan_num if jq_d_zhi_num - jq_d_gan_num >= 0 else jq_d_zhi_num - jq_d_gan_num + 12
-            jq_shun_dgz = shun_dgz_dict.get(jq_shun_num)
-            if jq_shun_dgz is None:
-                raise ValueError(f"Invalid jq_shun_num {jq_shun_num} for jieqi start {jq_dgz}")
-            jq_shun_index = jiazi().index(jq_shun_dgz)
-            jq_d_index = jiazi().index(jq_dgz)
-            jq_diff = (jq_d_index - jq_shun_index) % 60
-            jq_fu_tou_date = jq_start_date - datetime.timedelta(days=jq_diff)
-            jq_chao_shen = (jq_start - jq_fu_tou_date).days
-
-            # Previous jieqi
-            if jq_name == '芒種':
-                prev_year = year - 1
-                prev_month = 12
-                prev_day = 15
-            else:
-                prev_year = year
-                prev_month = 6
-                prev_day = 10
-            prev_jq_start = get_jieqi_start_date(prev_year, prev_month, prev_day)
-            prev_jq_date = prev_jq_start
-            prev_jq_year = prev_jq_date.year
-            prev_jq_month = prev_jq_date.month
-            prev_jq_day = prev_jq_date.day
-            prev_gz = gangzhi(prev_jq_year, prev_jq_month, prev_jq_day, 0, 0)
-            prev_dgz = prev_gz[2]
-            prev_d_gan_num = tian_gan.index(prev_dgz[0]) + 1
-            prev_d_zhi_num = di_zhi.index(prev_dgz[1]) + 1
-            prev_shun_num = prev_d_zhi_num - prev_d_gan_num if prev_d_zhi_num - prev_d_gan_num >= 0 else prev_d_zhi_num - prev_d_gan_num + 12
-            prev_shun_dgz = shun_dgz_dict.get(prev_shun_num)
-            if prev_shun_dgz is None:
-                raise ValueError(f"Invalid prev_shun_num {prev_shun_num} for prev jieqi {prev_dgz}")
-            prev_shun_index = jiazi().index(prev_shun_dgz)
-            prev_d_index = jiazi().index(prev_dgz)
-            prev_diff = (prev_d_index - prev_shun_index) % 60
-            prev_fu_tou_date = prev_jq_date - datetime.timedelta(days=prev_diff)
-            prev_chao_shen = (prev_jq_start - prev_fu_tou_date).days
-
-            if 9 < jq_chao_shen <= 11 and prev_chao_shen > 9:
-                is_zhirun = True
-
-        yuen = findyuen(year, month, day, hour, minute)
-        if yuen is None:
-            raise ValueError(f"Invalid yuen for day {dgz}")
-        diff_into = (current_date - jq_start).days
-        if is_zhirun and diff_into >= 15:
-            d_index = jiazi().index(dgz)
-            virtual_index = (d_index - 15) % 60
-            virtual_dgz = jiazi()[virtual_index]
-            yuen = multi_key_dict_get(findyuen_dict(), virtual_dgz)
-            if yuen is None:
-                raise ValueError(f"Invalid virtual yuen for virtual day {virtual_dgz}")
-
-        # Handle jieqi case (simplified: assume same ju_code, but note for future adjustment)
-        if use_jieqi:
-            pass  # Add specific jieqi logic if needed (e.g., adjust yuen or ju_code based on luo_hou_prev)
-
-        ju_index = {'上元': 0, '中元': 1, '下元': 2}.get(yuen)
-        if ju_index is None:
-            raise ValueError(f"Invalid yuen value: {yuen}")
-        ju_code_str = jieqicode_jq(jq_name)
-        ju_code = ju_code_str[ju_index]
-
-        dong_xia = multi_key_dict_get({
-            tuple(jieqi_name[18:] + jieqi_name[:6]): '陽',
-            tuple(jieqi_name[6:18]): '陰'
-        }, jq_name)
-        if dong_xia is None:
-            raise ValueError(f"Invalid dong_xia for jieqi: {jq_name}")
-
-        return dong_xia + '遁' + ju_code + '局'
-    except Exception as e:
-        raise ValueError(f"Error in qimen_ju_name_zhirun for {year}-{month}-{day} {hour}:{minute}: {str(e)}")
-
-
+    qdict = qimen_ju_name_zhirun_raw(year, month, day, hour, minute)
+    jQ = qdict.get("節氣")
+    d = qdict.get("距節氣差日數")
+    tgft = qimen_ju_name_zhirun_raw(year, month, day, hour, minute).get("值符天干")
+    if d > 6  and d <=9  and lunar_date_d(year, month, day).get("農曆月") != "腊月" and lunar_date_d(year, month, day).get("農曆月") != "冬月" and lunar_date_d(year, month, day).get("月")<= 6 and lunar_date_d(year, month, day).get("農曆月") != "正月" and  tgft not in list("戊己庚辛壬癸"):
+        return "{}{}".format(qdict.get('當前排局'), qdict.get('三元'))
+    if d > 6 and d <=9 and lunar_date_d(year, month, day).get("農曆月") != "腊月" and lunar_date_d(year, month, day).get("農曆月") != "冬月" and lunar_date_d(year, month, day).get("日") > 20 and lunar_date_d(year, month, day).get("月") < 7 and lunar_date_d(year, month, day).get("農曆月") != "正月" and  tgft in list("戊己庚辛壬癸"):
+        return "{}{}".format(qdict.get('超神接氣正授排局'), qdict.get('三元'))
+    if d > 6 and d <=9 and lunar_date_d(year, month, day).get("農曆月") != "腊月" and lunar_date_d(year, month, day).get("農曆月") != "冬月" and lunar_date_d(year, month, day).get("日") > 10 and lunar_date_d(year, month, day).get("月") < 7 and lunar_date_d(year, month, day).get("農曆月") != "正月" and  tgft in list("戊己庚辛壬癸"):
+        return "{}{}".format(qdict.get('其他排局1'), qdict.get('三元'))
+    if d > 6  and d <=9 and lunar_date_d(year, month, day).get("農曆月") != "腊月" and lunar_date_d(year, month, day).get("農曆月") != "冬月" and lunar_date_d(year, month, day).get("月") >= 7 and lunar_date_d(year, month, day).get("農曆月") != "正月" and tgft in list("戊己庚辛壬癸"):
+        return "{}{}".format(qdict.get('超神接氣正授排局'), qdict.get('三元'))
+    if d > 6  and d <=9 and lunar_date_d(year, month, day).get("農曆月") != "腊月" and lunar_date_d(year, month, day).get("農曆月") != "冬月" and lunar_date_d(year, month, day).get("月") >=6 and lunar_date_d(year, month, day).get("農曆月") == "正月" :
+        return "{}{}".format(qdict.get('其他排局1'), qdict.get('三元'))
+    if d > 6  and d <=9 and lunar_date_d(year, month, day).get("農曆月") == "腊月" and lunar_date_d(year, month, day).get("農曆月") != "冬月":
+        return "{}{}".format(qdict.get('當前排局'), qdict.get('三元'))
+    if d > 6  and d <=9 and lunar_date_d(year, month, day).get("農曆月") != "腊月" and lunar_date_d(year, month, day).get("農曆月") == "冬月"  and tgft in list("戊己庚辛壬癸"):
+        return "{}{}".format(qdict.get('其他排局1'), qdict.get('三元'))
+    if d > 6  and d <=9 and lunar_date_d(year, month, day).get("農曆月") != "腊月" and lunar_date_d(year, month, day).get("農曆月") != "冬月" and lunar_date_d(year, month, day).get("月") <= 9 and lunar_date_d(year, month, day).get("日") >= 15 and tgft in list("戊己庚辛壬癸"):
+        return "{}{}".format(qdict.get('超神接氣正授排局'), qdict.get('三元'))
+    if d > 6  and d <=9 and lunar_date_d(year, month, day).get("農曆月") != "腊月" and lunar_date_d(year, month, day).get("農曆月") != "冬月" and lunar_date_d(year, month, day).get("月") <= 9 and lunar_date_d(year, month, day).get("日") >= 15 and tgft != "己" and tgft != "戊" and tgft != "庚" and tgft != "壬" and tgft != "癸":
+        return "{}{}".format(qdict.get('其他排局1'), qdict.get('三元'))
+    if d > 6  and d <=9 and lunar_date_d(year, month, day).get("農曆月") != "腊月" and lunar_date_d(year, month, day).get("農曆月") != "冬月" and lunar_date_d(year, month, day).get("月") <= 9 and lunar_date_d(year, month, day).get("日") < 15 :
+        return "{}{}".format(qdict.get('超神接氣正授排局'), qdict.get('三元'))
+    if d > 6  and d <=9 and lunar_date_d(year, month, day).get("農曆月") != "腊月" and lunar_date_d(year, month, day).get("農曆月") != "冬月" and lunar_date_d(year, month, day).get("月") <= 9 and lunar_date_d(year, month, day).get("日") >= 20 :
+        return "{}{}".format(qdict.get('其他排局1'), qdict.get('三元'))
+    if d > 6  and d <=9 and lunar_date_d(year, month, day).get("農曆月") != "腊月" and lunar_date_d(year, month, day).get("農曆月") != "冬月" and lunar_date_d(year, month, day).get("月") <= 9 and lunar_date_d(year, month, day).get("日") < 10 :
+        return "{}{}".format(qdict.get('其他排局1'), qdict.get('三元'))
+    
+   #若距節氣差日數等於0或9天
+    if d == 0 and lunar_date_d(year, month, day).get("農曆月") != "腊月" and lunar_date_d(year, month, day).get("農曆月") != "冬月" and lunar_date_d(year, month, day).get("月") > 9:
+        return "{}{}".format(qdict.get('超神接氣正授排局'), qdict.get('三元'))
+    if d == 0 and lunar_date_d(year, month, day).get("農曆月") == "腊月" and lunar_date_d(year, month, day).get("農曆月") != "冬月":
+        return "{}{}".format(qdict.get('超神接氣正授排局'), qdict.get('三元'))
+    if d == 0 and lunar_date_d(year, month, day).get("農曆月") != "腊月" and lunar_date_d(year, month, day).get("農曆月") != "冬月":
+        return "{}{}".format(qdict.get('其他排局'), qdict.get('三元'))
+    #若距節氣差日數介於10至15天
+    if d >= 10 and d <= 15 and lunar_date_d(year, month, day).get("農曆月") != "腊月" and lunar_date_d(year, month, day).get("農曆月") != "冬月" and lunar_date_d(year, month, day).get("月") > 9:
+        return "{}{}".format(qdict.get('其他排局'), qdict.get('三元'))
+    if d >= 10 and d <= 15 and lunar_date_d(year, month, day).get("農曆月") != "腊月" and lunar_date_d(year, month, day).get("農曆月") != "冬月" and lunar_date_d(year, month, day).get("農曆月") != "正月" and lunar_date_d(year, month, day).get("月") <= 9 and lunar_date_d(year, month, day).get("日") < 15 :
+        return "{}{}".format(qdict.get('超神接氣正授排局'), qdict.get('三元'))
+    if d >= 10 and d <= 15 and lunar_date_d(year, month, day).get("農曆月") != "腊月" and lunar_date_d(year, month, day).get("農曆月") != "冬月" and lunar_date_d(year, month, day).get("農曆月") == "正月" and lunar_date_d(year, month, day).get("月") <= 9 and lunar_date_d(year, month, day).get("日") < 15 :
+        return "{}{}".format(qdict.get('當前排局'), qdict.get('三元'))
+    if d >= 10 and d <= 15 and lunar_date_d(year, month, day).get("農曆月") != "腊月" and lunar_date_d(year, month, day).get("農曆月") != "冬月" and lunar_date_d(year, month, day).get("農曆月") != "正月"  and lunar_date_d(year, month, day).get("月") <= 9 and lunar_date_d(year, month, day).get("日") >= 15 :
+        return "{}{}".format(qdict.get('當前排局'), qdict.get('三元'))
+    if d >= 10 and d <= 15 and lunar_date_d(year, month, day).get("農曆月") != "腊月" and lunar_date_d(year, month, day).get("農曆月") != "冬月" and lunar_date_d(year, month, day).get("農曆月") == "正月"  and lunar_date_d(year, month, day).get("月") <= 9 and lunar_date_d(year, month, day).get("日") >= 15 :
+        return "{}{}".format(qdict.get('當前排局'), qdict.get('三元'))
+    if d >= 10 and d <= 15 and lunar_date_d(year, month, day).get("農曆月") == "腊月"  and lunar_date_d(year, month, day).get("農曆月") != "冬月" and jQ == "冬至":
+        return "{}{}".format(qdict.get('其他排局1'), qdict.get('三元'))
+    if d >= 10 and d <= 15 and lunar_date_d(year, month, day).get("農曆月") == "腊月"  and lunar_date_d(year, month, day).get("農曆月") != "冬月" and jQ != "冬至":
+        return "{}{}".format(qdict.get('超神接氣正授排局'), qdict.get('三元'))
+    if d >= 10 and d <= 12 and lunar_date_d(year, month, day).get("農曆月") != "腊月"  and lunar_date_d(year, month, day).get("農曆月") == "冬月":
+        return "{}{}".format(qdict.get('其他排局'), qdict.get('三元'))
+    if d >= 12 and lunar_date_d(year, month, day).get("農曆月") != "腊月"  and lunar_date_d(year, month, day).get("農曆月") == "冬月":
+        return "{}{}".format(qdict.get('超神接氣正授排局'), qdict.get('三元'))
+    #若距節氣差日數少或等於6天
+    if d <= 6 and d != 0 and lunar_date_d(year, month, day).get("農曆月") != "腊月" and lunar_date_d(year, month, day).get("農曆月") != "冬月" and lunar_date_d(year, month, day).get("月") >= 9 and lunar_date_d(year, month, day).get("日") < 15 :
+        return "{}{}".format(qdict.get('其他排局1'), qdict.get('三元'))
+    if d <= 6 and d != 0 and lunar_date_d(year, month, day).get("農曆月") != "腊月" and lunar_date_d(year, month, day).get("農曆月") != "冬月" and lunar_date_d(year, month, day).get("月") >= 9 and lunar_date_d(year, month, day).get("日") >= 15 and tgft in list("戊己庚辛壬癸"):
+        return "{}{}".format(qdict.get('當前排局'), qdict.get('三元'))
+    if d <= 6 and d != 0 and lunar_date_d(year, month, day).get("農曆月") != "腊月" and lunar_date_d(year, month, day).get("農曆月") != "冬月" and lunar_date_d(year, month, day).get("月") >= 9 and lunar_date_d(year, month, day).get("日") >= 15 and tgft not in list("戊己庚辛壬癸"):
+        return "{}{}".format(qdict.get('其他排局'), qdict.get('三元'))
+    if d <= 6 and d != 0 and lunar_date_d(year, month, day).get("農曆月") != "腊月" and lunar_date_d(year, month, day).get("農曆月") != "冬月" and lunar_date_d(year, month, day).get("月") < 9 and lunar_date_d(year, month, day).get("日") >= 15 and tgft in list("戊己庚辛壬癸"):
+        return "{}{}".format(qdict.get('其他排局'), qdict.get('三元'))
+    if d <= 6 and d != 0 and lunar_date_d(year, month, day).get("農曆月") != "腊月" and lunar_date_d(year, month, day).get("農曆月") != "冬月" and lunar_date_d(year, month, day).get("月") < 9 and lunar_date_d(year, month, day).get("日") >= 15 and tgft not in list("戊己庚辛壬癸"):
+        return "{}{}".format(qdict.get('其他排局1'), qdict.get('三元'))
+    if d <= 6 and d != 0 and lunar_date_d(year, month, day).get("農曆月") != "腊月" and lunar_date_d(year, month, day).get("農曆月") != "冬月" and lunar_date_d(year, month, day).get("農曆月") == "正月" and lunar_date_d(year, month, day).get("月") <= 9 and lunar_date_d(year, month, day).get("日") < 10 and tgft not in list("戊己庚辛壬癸"):
+        return "{}{}".format(qdict.get('其他排局'), qdict.get('三元'))
+    
+    if d <= 6 and d != 0 and lunar_date_d(year, month, day).get("農曆月") != "腊月" and lunar_date_d(year, month, day).get("農曆月") != "冬月" and lunar_date_d(year, month, day).get("月") <= 9 and tgft not in list("戊己庚辛壬癸"):
+        return "{}{}".format(qdict.get('其他排局1'), qdict.get('三元'))
+    if d <= 6 and d != 0 and lunar_date_d(year, month, day).get("農曆月") != "腊月" and lunar_date_d(year, month, day).get("農曆月") != "冬月" and lunar_date_d(year, month, day).get("農曆月") == "正月" and tgft in list("戊己庚辛壬癸") and lunar_date_d(year, month, day).get("日") < 20:
+        return "{}{}".format(qdict.get('其他排局'), qdict.get('三元'))
+    if d <= 6 and d != 0 and lunar_date_d(year, month, day).get("農曆月") != "腊月" and lunar_date_d(year, month, day).get("農曆月") != "冬月" and lunar_date_d(year, month, day).get("農曆月") == "正月" and tgft in list("戊己庚辛壬癸") and lunar_date_d(year, month, day).get("日") > 20 and lunar_date_d(year, month, day).get("日") <= 26:
+        return "{}{}".format(qdict.get('其他排局'), qdict.get('三元'))
+    if d <= 6 and d != 0 and lunar_date_d(year, month, day).get("農曆月") != "腊月" and lunar_date_d(year, month, day).get("農曆月") != "冬月" and lunar_date_d(year, month, day).get("農曆月") == "正月" and tgft in list("戊己庚辛壬癸") and lunar_date_d(year, month, day).get("日") > 26:
+        return "{}{}".format(qdict.get('其他排局1'), qdict.get('三元'))
+    
+    if d <= 6 and d != 0 and lunar_date_d(year, month, day).get("農曆月") != "腊月" and lunar_date_d(year, month, day).get("農曆月") == "冬月" and jQ == "冬至" and d <3:
+        return "{}{}".format(qdict.get('其他排局'), qdict.get('三元'))
+    if d <= 6 and d != 0 and lunar_date_d(year, month, day).get("農曆月") != "腊月" and lunar_date_d(year, month, day).get("農曆月") == "冬月" and jQ == "冬至":
+        return "{}{}".format(qdict.get('當前排局'), qdict.get('三元'))
+    if d <= 6 and d != 0 and lunar_date_d(year, month, day).get("農曆月") != "腊月" and lunar_date_d(year, month, day).get("農曆月") != "冬月" and jQ != "冬至":
+        return "{}{}".format(qdict.get('其他排局'), qdict.get('三元'))
+    if d <= 6 and d != 0 and lunar_date_d(year, month, day).get("農曆月") == "腊月" and lunar_date_d(year, month, day).get("農曆月") != "冬月" :
+        return "{}{}".format(qdict.get('其他排局1'), qdict.get('三元'))
+    else:
+        return "{}{}".format(qdict.get('超神接氣正授排局'), qdict.get('三元'))
+        
 #奇門排局刻家
 def qimen_ju_name_ke(year, month, day, hour, minute):
     hgz = gangzhi(year, month, day, hour, minute)[3]
@@ -548,7 +619,7 @@ def qimen_ju_name_ke(year, month, day, hour, minute):
                                    tuple(new_list(jieqi_name,"夏至")[0:12]):"九三六"},
                                   jq(year,month, day,hour, minute))}.get(find_yingyang)
     find_yuen = findyuen_minute(year, month, day, hour, minute)
-    return "{}{}局{}".format(find_yingyang, qu[dict(zip(["上元","中元","下元"],
+    return "{}{}局{}元".format(find_yingyang, qu[dict(zip(["上","中","下"],
                                                        [0,1,2])).get(find_yuen)],
                                                         find_yuen)
 def getgtw():
@@ -829,61 +900,7 @@ def gong_wangzhuai():
     new_dict = new_list(wangzhuai_num, wz)
     return dict(zip(new_dict, wangzhuai))
 
-def ecliptic_lon(jd_utc):
-    s=ephem.Sun(jd_utc)
-    equ=ephem.Equatorial(s.ra,s.dec,epoch=jd_utc)
-    e=ephem.Ecliptic(equ)
-    return e.lon
 
-def sta(jd):
-    e=ecliptic_lon(jd)
-    n=int(e*180.0/math.pi/15)
-    return n
-
-def iteration(jd,sta):
-    s1=sta(jd)
-    s0=s1
-    dt=1.0
-    while True:
-        jd+=dt
-        s=sta(jd)
-        if s0!=s:
-            s0=s
-            dt=-dt/2
-        if abs(dt)<0.0000001 and s!=s1:
-            break
-    return jd
-
-def change(year, month, day, hour, minute):
-    changets = ephem.Date("{}/{}/{} {}:{}:00".format(str(year).zfill(4),
-                                               str(month).zfill(2),
-                                               str(day).zfill(2),
-                                               str(hour).zfill(2),
-                                               str(minute).zfill(2)))
-    return ephem.Date(changets - 24 * ephem.hour *30)
-
-
-def jq_distance(year, month, day, hour, minute):
-    current = "{}/{}/{} {}:{}:00".format(str(year).zfill(4),
-                                         str(month).zfill(2),
-                                         str(day).zfill(2),str(hour).zfill(2),
-                                         str(minute).zfill(2))
-    jd = change(year, month, day, hour, minute)
-    result = {}
-    e=ecliptic_lon(jd)
-    n=int(e*180.0/math.pi/15)+1
-    for i in range(12):
-        if n>=24:
-            n-=24
-        jd=iteration(jd,sta)
-        d=ephem.Date(jd+1/3).tuple()
-        dt = "{}/{}/{} {}:{}:00.00".format(d[0],d[1],d[2],
-                                           str(d[3]).zfill(2),
-                                           str(d[4]).zfill(2)).split(".")[0]
-        time_info = {jieqi_name[n]:dt}
-        n+=1
-        result.update(time_info)
-    return result, current
 
 #刻家奇門 五行旺衰
 def wuxing_strong_week_minute(jq):
@@ -1435,18 +1452,23 @@ angan = {'陰三甲子': ['庚午', '己巳', '戊辰', '乙丑', '丙寅', '丁
 
 
 if __name__ == '__main__':
-    year = 2025
-    month = 4
-    day = 24
-    hour = 10
-    minute = 41
+    year = 1976
+    month = 12
+    day = 28
+    hour = 0
+    minute = 44
     #print(liujiashun_dict())
     #print(qimen_ju_name_zhirun_raw(year, month, day, hour, minute))
+    print(f"{year}-{month}-{day} {hour}:{minute}")
+    #print( get_jieqi_start_date(year, month, day, hour, minute))
+    #print( get_next_jieqi_start_date(year, month, day, hour, minute))
+    #print( get_before_jieqi_start_date(year, month, day, hour, minute))
+    print(jq(year, month, day, hour, minute))
+    #print(findyuen(year, month, day, hour, minute))
     print(qimen_ju_name_zhirun(year, month, day, hour, minute))
-    #print(qimen_ju_name_zhirun(year, month, day, hour, minute))
     #print(gangzhi(year, month, day, hour, minute))
     #print(zhifu_n_zhishi_ke(year, month, day, hour, minute))
-    #print(qimen_ju_name_ke(year, month, day, hour, minute))
+    print(qimen_ju_name_ke(year, month, day, hour, minute))
     #print(pan_sky_minute(year, month, day, hour, minute))
     #print(zhifu_n_zhishi(year, month, day, hour, minute, 2))
     #print(qimen_ju_name_ke(year, month, day, hour, minute))
