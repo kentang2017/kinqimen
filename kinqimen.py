@@ -9,28 +9,10 @@ import itertools
 from itertools import starmap
 from bidict import bidict
 from datetime import datetime, timedelta
+from angan import Angan
 import config
 
-def test_qimen(start_datetime, end_datetime):
-    # Ensure end_datetime is greater than start_datetime
-    if end_datetime <= start_datetime:
-        raise ValueError("End datetime must be greater than start datetime")
-    # Initialize current_datetime to start_datetime
-    current_datetime = start_datetime
-    # Loop through each hour from start_datetime to end_datetime
-    while current_datetime <= end_datetime:
-        year = current_datetime.year
-        month = current_datetime.month
-        day = current_datetime.day
-        hour = current_datetime.hour
-        minute = current_datetime.minute  # Keep it 0 for each hour
-        try:
-            p = Qimen(year, month, day, hour, minute).pan(2)
-            print(f"Successfully executed for {current_datetime}")
-        except Exception as e:
-            print(f"Error at {current_datetime}: {e}")
-        # Move to the next hour
-        current_datetime += timedelta(hours=1)
+
 
 class Qimen:
     """奇門函數"""
@@ -420,8 +402,8 @@ class Qimen:
                 "驛馬": self.hourhorse()
             },
             #"長生運": self.gong_chengsun_minute(option),
-            "暗干": dict(zip(config.angan.get(paiju[0]+paiju[2]+gz[4])[:-1], config.eight_gua)), 
-            "飛干":config.angan.get(paiju[0]+paiju[2]+gz[4])[-1]}
+            "暗干": dict(zip(Angan.get(paiju[0]+paiju[2]+gz[4])[:-1], config.eight_gua)), 
+            "飛干": Angan.get(paiju[0]+paiju[2]+gz[4])[-1]}
 
     def pan_html(self, option):
         """時家奇門html, option 1:拆補 2:置閏"""
@@ -491,27 +473,27 @@ class Qimen:
                              self.day,
                              self.hour,
                              self.minute)[2]
-        dh = config.multi_key_dict_get({tuple(config.new_list(jieqi.jieqi_name, "冬至")[0:12]):"冬至",
-                             tuple(config.new_list(jieqi.jieqi_name, "夏至")[0:12]):"夏至"},j_q)
+        dh = config.multi_key_dict_get({tuple(config.new_list(config.jieqi_name, "冬至")[0:12]):"冬至",
+                             tuple(config.new_list(config.jieqi_name, "夏至")[0:12]):"夏至"},j_q)
         eg = "坎坤震巽乾兌艮離"
         yy = {"冬至":"陽遁", "夏至":"陰遁"}.get(dh)
-        ty_doors = {"冬至": dict(zip(jiazi(),itertools.cycle(list("艮離坎坤震巽中乾兌")))), 
-                "夏至": dict(zip(jiazi(),itertools.cycle(list("坤坎離艮兌乾中巽震"))))}
+        ty_doors = {"冬至": dict(zip(config.jiazi(),itertools.cycle(list("艮離坎坤震巽中乾兌")))), 
+                "夏至": dict(zip(config.jiazi(),itertools.cycle(list("坤坎離艮兌乾中巽震"))))}
         gong = ty_doors.get(dh).get(dgz)
         eight_gua = list("坎坤震巽中乾兌艮離")
         rotate_order = {"陽遁":eight_gua, "陰遁":list(reversed(eight_gua))}.get(yy)
-        a_gong = new_list(rotate_order, gong)
+        a_gong = config.new_list(rotate_order, gong)
         gold_g = re.findall("..","太乙攝提軒轅招搖天符青龍咸池太陰天乙")
         star_pai = dict(zip(a_gong, gold_g))
         triple_list = list(map(lambda x: x + x + x, list(range(0,21))))
-        b = list(starmap(lambda start, end: tuple(jiazi()[start:end]),  zip(triple_list[:-1], triple_list[1:])))
+        b = list(starmap(lambda start, end: tuple(config.jiazi()[start:end]),  zip(triple_list[:-1], triple_list[1:])))
         rest_door_settings = {"陽遁":dict(zip(b, itertools.cycle(eg))),
                               "陰遁":dict(zip(b, itertools.cycle(list(reversed(eg)))))}.get(yy)
         clockwise_eightgua = list("坎艮震巽離坤兌乾")
         door_r = list("休生傷杜景死驚開")
-        rest = multi_key_dict_get(rest_door_settings, dgz)
-        the_doors = {"陽遁": dict(zip(new_list(clockwise_eightgua, rest), door_r)), 
-                     "陰遁": dict(zip(new_list(list(reversed(clockwise_eightgua)), rest), door_r))}.get(yy)
+        rest = config.multi_key_dict_get(rest_door_settings, dgz)
+        the_doors = {"陽遁": dict(zip(config.new_list(clockwise_eightgua, rest), door_r)), 
+                     "陰遁": dict(zip(config.new_list(list(reversed(clockwise_eightgua)), rest), door_r))}.get(yy)
         return {"局": yy+dgz+"日",
                 "鶴神": self.crane_god().get(dgz),
                 "星": star_pai,
@@ -693,17 +675,6 @@ class Qimen:
         except KeyError:
             return {"玉女守門": "沒有"}
 
-    def tianhen(self, option):
-        """天顯時格"""
-        gz = config.gangzhi(self.year,
-                         self.month,
-                         self.day,
-                         self.hour,
-                         self.minute)
-        dgz = gz[2]
-        hgz = gz[3]
-        
-        return 
     
     def overall(self, option):
         """整體奇門起盤綜合, option 1:拆補 2:置閏"""
@@ -719,7 +690,7 @@ if __name__ == '__main__':
     #end_datetime = datetime(2024, 5, 30, 23, 0)  # Adjust as needed
     #print(test_qimen(start_datetime, end_datetime))
 
-    qtext1 = Qimen(2024,1,14,23,20).pan_minute(2)
+    qtext1 = Qimen(2024,1,14,23,20).pan(2)
     #qtext1 = Qimen(2024,7,11,18,0).jade_girl(2)
     #q = list("巽離坤震兌艮坎乾")
     #a = [qtext.get("天盤").get(i) for i in q]
