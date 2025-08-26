@@ -549,9 +549,12 @@ def qimen_ju_name_zhirun(year, month, day, hour, minute):
     if d == 0 and lunar_date_d(year, month, day).get("農曆月") != "腊月" and lunar_date_d(year, month, day).get("農曆月") != "冬月" and lunar_date_d(year, month, day).get("月") > 9:
         return "{}{}".format(qdict.get('超神接氣正授排局'), qdict.get('三元'))
     if d == 0 and lunar_date_d(year, month, day).get("農曆月") == "腊月" and lunar_date_d(year, month, day).get("農曆月") != "冬月":
-        return "{}{}".format(qdict.get('超神接氣正授排局'), qdict.get('三元'))
+        return "{}{}".format(qdict.get('其他排局1'), qdict.get('三元'))
     if d == 0 and lunar_date_d(year, month, day).get("農曆月") != "腊月" and lunar_date_d(year, month, day).get("農曆月") != "冬月":
         return "{}{}".format(qdict.get('其他排局'), qdict.get('三元'))
+    if d == 0 and lunar_date_d(year, month, day).get("農曆月") != "腊月" and lunar_date_d(year, month, day).get("農曆月") == "冬月":
+        return "{}{}".format(qdict.get('當前排局'), qdict.get('三元'))
+    
     #若距節氣差日數介於10至15天
     if d >= 10 and d <= 15 and lunar_date_d(year, month, day).get("農曆月") != "腊月" and lunar_date_d(year, month, day).get("農曆月") != "冬月" and lunar_date_d(year, month, day).get("月") > 9:
         return "{}{}".format(qdict.get('其他排局1'), qdict.get('三元'))
@@ -570,7 +573,7 @@ def qimen_ju_name_zhirun(year, month, day, hour, minute):
     if d >= 10 and d <= 12 and lunar_date_d(year, month, day).get("農曆月") != "腊月"  and lunar_date_d(year, month, day).get("農曆月") == "冬月":
         return "{}{}".format(qdict.get('其他排局1'), qdict.get('三元'))
     if d >= 12 and lunar_date_d(year, month, day).get("農曆月") != "腊月"  and lunar_date_d(year, month, day).get("農曆月") == "冬月":
-        return "{}{}".format(qdict.get('超神接氣正授排局'), qdict.get('三元'))
+        return "{}{}".format(qdict.get('當前排局'), qdict.get('三元'))
     #若距節氣差日數少或等於6天
     if d <= 6 and d != 0 and lunar_date_d(year, month, day).get("農曆月") != "腊月" and lunar_date_d(year, month, day).get("農曆月") != "冬月" and lunar_date_d(year, month, day).get("月") >= 9 and lunar_date_d(year, month, day).get("日") < 15 :
         return "{}{}".format(qdict.get('其他排局1'), qdict.get('三元'))
@@ -588,12 +591,12 @@ def qimen_ju_name_zhirun(year, month, day, hour, minute):
     if d <= 6 and d != 0 and lunar_date_d(year, month, day).get("農曆月") != "腊月" and lunar_date_d(year, month, day).get("農曆月") != "冬月" and lunar_date_d(year, month, day).get("月") <= 9 and tgft not in list("戊己庚辛壬癸"):
         return "{}{}".format(qdict.get('其他排局1'), qdict.get('三元'))
     if d <= 6 and d != 0 and lunar_date_d(year, month, day).get("農曆月") != "腊月" and lunar_date_d(year, month, day).get("農曆月") != "冬月" and lunar_date_d(year, month, day).get("農曆月") == "正月" and tgft in list("戊己庚辛壬癸") and lunar_date_d(year, month, day).get("日") < 20:
-        return "{}{}".format(qdict.get('其他排局'), qdict.get('三元'))
+        return "{}{}".format(qdict.get('其他排局1'), qdict.get('三元'))
     if d <= 6 and d != 0 and lunar_date_d(year, month, day).get("農曆月") != "腊月" and lunar_date_d(year, month, day).get("農曆月") != "冬月" and lunar_date_d(year, month, day).get("農曆月") == "正月" and tgft in list("戊己庚辛壬癸") and lunar_date_d(year, month, day).get("日") > 20 and lunar_date_d(year, month, day).get("日") <= 26:
         return "{}{}".format(qdict.get('其他排局'), qdict.get('三元'))
     if d <= 6 and d != 0 and lunar_date_d(year, month, day).get("農曆月") != "腊月" and lunar_date_d(year, month, day).get("農曆月") != "冬月" and lunar_date_d(year, month, day).get("農曆月") == "正月" and tgft in list("戊己庚辛壬癸") and lunar_date_d(year, month, day).get("日") > 26:
         return "{}{}".format(qdict.get('其他排局1'), qdict.get('三元'))
-    
+
     if d <= 6 and d != 0 and lunar_date_d(year, month, day).get("農曆月") != "腊月" and lunar_date_d(year, month, day).get("農曆月") == "冬月" and jQ == "冬至" and d <3:
         return "{}{}".format(qdict.get('其他排局'), qdict.get('三元'))
     if d <= 6 and d != 0 and lunar_date_d(year, month, day).get("農曆月") != "腊月" and lunar_date_d(year, month, day).get("農曆月") == "冬月" and jQ == "冬至":
@@ -1452,9 +1455,9 @@ angan = {'陰三甲子': ['庚午', '己巳', '戊辰', '乙丑', '丙寅', '丁
 
 
 if __name__ == '__main__':
-    year = 1850
-    month = 1
-    day = 30
+    year = 1757
+    month = 3
+    day = 5
     hour = 13
     minute = 41
     #print(liujiashun_dict())
