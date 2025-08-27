@@ -7,10 +7,8 @@ Created on Wed May 17 11:55:49 2023
 
 import re
 import datetime
-from itertools import cycle, repeat
-from sxtwl import fromSolar
-import ephem
-from jieqi import get_jieqi_start_date, jq
+from itertools import cycle
+from jieqi import get_jieqi_start_date, jq, gangzhi, jiazi, lunar_date_d, repeat_list
 
 cnum = list("一二三四五六七八九十")
 #干支
@@ -59,12 +57,6 @@ def new_list_r(olist, o):
 def gendatetime(year, month, day, hour):
     return "{}年{}月{}日{}時".format(year, month, day, hour)
 
-def repeat_list(n, thelist):
-    return [repetition for i in thelist for repetition in repeat(i,n)]
-
-#%% 甲子平支
-def jiazi():
-    return list(map(lambda x: "{}{}".format(tian_gan[x % len(tian_gan)],di_zhi[x % len(di_zhi)]),list(range(60))))
 
 def Ganzhiwuxing(gangorzhi):
     gz_list = "甲寅乙卯震巽,丙巳丁午離,壬亥癸子坎,庚申辛酉乾兌,未丑戊己未辰戌艮坤".split(",")
@@ -103,84 +95,7 @@ def findyuen_minute(year, month, day, hour, minute):
 def find_wx_relation(zhi1, zhi2):
     combine_zhi = Ganzhiwuxing(zhi1) + Ganzhiwuxing(zhi2)
     return multi_key_dict_get(wuxing_relation_2, combine_zhi)
-#換算干支
-def gangzhi1(year, month, day, hour, minute):
-    if hour == 23:
-        d = ephem.Date(round((ephem.Date("{}/{}/{} {}:00:00.00".format(
-            str(year).zfill(4),
-            str(month).zfill(2),
-            str(day+1).zfill(2),
-            str(0).zfill(2)))),3))
-    else:
-        d = ephem.Date("{}/{}/{} {}:00:00.00".format(
-            str(year).zfill(4),
-            str(month).zfill(2),
-            str(day).zfill(2),
-            str(hour).zfill(2)))
-    dd = list(d.tuple())
-    cdate = fromSolar(dd[0], dd[1], dd[2])
-    yTG,mTG,dTG,hTG = "{}{}".format(
-        tian_gan[cdate.getYearGZ().tg],
-        di_zhi[cdate.getYearGZ().dz]), "{}{}".format(
-            tian_gan[cdate.getMonthGZ().tg],
-            di_zhi[cdate.getMonthGZ().dz]), "{}{}".format(
-                tian_gan[cdate.getDayGZ().tg],
-                di_zhi[cdate.getDayGZ().dz]), "{}{}".format(
-                    tian_gan[cdate.getHourGZ(dd[3]).tg],
-                    di_zhi[cdate.getHourGZ(dd[3]).dz])
-    if year < 1900:
-        mTG1 = find_lunar_month(yTG).get(lunar_date_d(year, month, day).get("月"))
-    else:
-        mTG1 = mTG
-    hTG1 = find_lunar_hour(dTG).get(hTG[1])
-    return [yTG, mTG1, dTG, hTG1]
 
-def gangzhi(year, month, day, hour, minute):
-    if hour == 23:
-        d = ephem.Date(round((ephem.Date("{}/{}/{} {}:00:00.00".format(
-            str(year).zfill(4),
-            str(month).zfill(2),
-            str(day+1).zfill(2),
-            str(0).zfill(2)))),3))
-    else:
-        d = ephem.Date("{}/{}/{} {}:00:00.00".format(
-            str(year).zfill(4),
-            str(month).zfill(2),
-            str(day).zfill(2),
-            str(hour).zfill(2)))
-    dd = list(d.tuple())
-    cdate = fromSolar(dd[0], dd[1], dd[2])
-    yTG,mTG,dTG,hTG = "{}{}".format(
-        tian_gan[cdate.getYearGZ().tg],
-        di_zhi[cdate.getYearGZ().dz]), "{}{}".format(
-            tian_gan[cdate.getMonthGZ().tg],
-            di_zhi[cdate.getMonthGZ().dz]), "{}{}".format(
-                tian_gan[cdate.getDayGZ().tg],
-                di_zhi[cdate.getDayGZ().dz]), "{}{}".format(
-                    tian_gan[cdate.getHourGZ(dd[3]).tg],
-                    di_zhi[cdate.getHourGZ(dd[3]).dz])
-    if year < 1900:
-        mTG1 = find_lunar_month(yTG).get(lunar_date_d(year, month, day).get("月"))
-    else:
-        mTG1 = mTG
-    hTG1 = find_lunar_hour(dTG).get(hTG[1])
-    zi = gangzhi1(year, month, day, 0, 0)[3]
-    if minute < 10 and minute >=0:
-        reminute = "00"
-    if minute < 20 and minute >=10:
-        reminute = "10"
-    if minute < 30 and minute >=20:
-        reminute = "20"
-    if minute < 40 and minute >=30:
-        reminute = "30"
-    if minute < 50 and minute >=40:
-        reminute = "40"
-    if minute < 60 and minute >=50:
-        reminute = "50"
-    hourminute = str(hour)+":"+str(reminute)
-    gangzhi_minute = ke_jiazi_d(zi).get(hourminute)
-    return [yTG, mTG1, dTG, hTG1, gangzhi_minute]
-#旬
 def shun(gz):
     d_value1 = dict(zip(di_zhi, list(range(1,13)))).get(gz[1])
     d_value2 =  dict(zip(tian_gan, list(range(1,11)))).get(gz[0])
@@ -188,50 +103,7 @@ def shun(gz):
     if shun_value < 0:
         shun_value = shun_value+12
     return {0:"戊", 10:"己", 8:"庚", 6:"辛", 4:"壬", 2:"癸"}.get(shun_value)
-#五虎遁，起正月
-def find_lunar_month(year):
-    fivetigers = {
-    tuple(list('甲己')):'丙寅',
-    tuple(list('乙庚')):'戊寅',
-    tuple(list('丙辛')):'庚寅',
-    tuple(list('丁壬')):'壬寅',
-    tuple(list('戊癸')):'甲寅'
-    }
-    if multi_key_dict_get(fivetigers, year[0]) == None:
-        result = multi_key_dict_get(fivetigers, year[1])
-    else:
-        result = multi_key_dict_get(fivetigers, year[0])
-    return dict(zip(range(1,13),new_list(jiazi(), result)[:12]))
 
-#五鼠遁，起子時
-def find_lunar_hour(day):
-    fiverats = {
-    tuple(list('甲己')):'甲子',
-    tuple(list('乙庚')):'丙子',
-    tuple(list('丙辛')):'戊子',
-    tuple(list('丁壬')):'庚子',
-    tuple(list('戊癸')):'壬子'
-    }
-    if multi_key_dict_get(fiverats, day[0]) == None:
-        result = multi_key_dict_get(fiverats, day[1])
-    else:
-        result = multi_key_dict_get(fiverats, day[0])
-    return dict(zip(list(di_zhi), new_list(jiazi(), result)[:12]))
-
-#五馬遁，起子刻
-def find_lunar_ke(hour):
-    fivehourses = {
-    tuple(list('丙辛')):'甲午',
-    tuple(list('丁壬')):'丙午',
-    tuple(list('戊癸')):'戊午',
-    tuple(list('甲己')):'庚午',
-    tuple(list('乙庚')):'壬午'
-    }
-    if multi_key_dict_get(fivehourses, hour[0]) == None:
-        result = multi_key_dict_get(fivehourses, hour[1])
-    else:
-        result = multi_key_dict_get(fivehourses, hour[0])
-    return new_list(jiazi(), result)
 
 def liujiashun_dict():
     jz = jiazi()[0::10]
@@ -251,19 +123,9 @@ def minutes_jiazi_d():
     minutelist = dict(zip(t, cycle(repeat_list(2, jiazi()))))
     return minutelist
 
-def ke_jiazi_d(hour):
-    t = [f"{h}:{m}0" for h in range(24) for m in range(6)]
-    minutelist = dict(zip(t, cycle(repeat_list(1, find_lunar_ke(hour)))))
-    return minutelist
 
-#農曆
-def lunar_date_d(year, month, day):
-    lunar_m = ['占位', '正月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '冬月', '腊月']
-    day = fromSolar(year, month, day)
-    return {"年":day.getLunarYear(),
-            "農曆月": lunar_m[int(day.getLunarMonth())],
-            "月":day.getLunarMonth(),
-            "日":day.getLunarDay()}
+
+
 
 #日空時空
 def daykong_shikong(year, month, day, hour, minute):
