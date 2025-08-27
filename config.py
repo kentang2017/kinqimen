@@ -412,6 +412,9 @@ def qimen_ju_name_zhirun(year, month, day, hour, minute):
                     if 20 < lunar_day <= 26:
                         return "{}{}".format(qdict.get("其他排局"), qdict.get("三元"))
                     return "{}{}".format(qdict.get("其他排局1"), qdict.get("三元"))
+            if lunar_month not in  ["腊月", "冬月", "正月"]:
+                if lunar_day < 15:
+                    return "{}{}".format(qdict.get("當前排局"), qdict.get("三元"))
             if lunar_day >= 15:
                 return "{}{}".format(qdict.get("其他排局1"), qdict.get("三元"))
             return "{}{}".format(qdict.get("超神接氣正授排局"), qdict.get("三元"))
@@ -942,10 +945,10 @@ def pan_sky_minute(year, month, day, hour, minute ):
 
 if __name__ == '__main__':
     year = 2025
-    month = 1
-    day = 15
-    hour = 17
-    minute = 36
+    month = 8
+    day = 27
+    hour = 8
+    minute = 33
     #print(liujiashun_dict())
     print(qimen_ju_name_zhirun_raw(year, month, day, hour, minute))
     print(f"{year}-{month}-{day} {hour}:{minute}")
