@@ -9,8 +9,8 @@ import itertools
 from itertools import starmap
 from bidict import bidict
 from datetime import datetime, timedelta
-from angan import Angan
-import config
+from .angan import Angan
+from . import config
 
 
 

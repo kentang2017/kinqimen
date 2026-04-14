@@ -8,7 +8,7 @@ Created on Wed May 17 11:55:49 2023
 import re
 import datetime
 from itertools import cycle
-from jieqi import get_jieqi_start_date, jq, gangzhi, jiazi, lunar_date_d, repeat_list
+from .jieqi import get_jieqi_start_date, jq, gangzhi, jiazi, lunar_date_d, repeat_list
 
 cnum = list("一二三四五六七八九十")
 #干支

@@ -7,10 +7,10 @@ import datetime, pytz
 from io import StringIO
 from contextlib import contextmanager, redirect_stdout
 
-import kinqimen
+from src import kinqimen
 from kinliuren import kinliuren
-import config
-from cerebras_client import CerebrasClient, DEFAULT_MODEL as DEFAULT_CEREBRAS_MODEL
+from src import config
+from src.cerebras_client import CerebrasClient, DEFAULT_MODEL as DEFAULT_CEREBRAS_MODEL
 
 # ------------------- 工具 -------------------
 @contextmanager
