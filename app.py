@@ -118,6 +118,26 @@ def format_qimen_results_for_prompt(q, gz_str, jq_str, lunar_info, paipan_info, 
 
 # ------------------- 頁面設定 -------------------
 st.set_page_config(page_title="堅奇門 - 奇門排盤", page_icon="🧮", layout="wide")
+
+# ------------------- 固定聊天區域 CSS -------------------
+st.markdown("""
+<style>
+    /* Add padding at bottom so main content is not hidden behind the fixed chat input */
+    .stMainBlockContainer {
+        padding-bottom: 120px !important;
+    }
+
+    /* Ensure the fixed bottom area has a solid background */
+    section[data-testid="stBottom"] {
+        background-color: var(--background-color, #1A1C23);
+        border-top: 1px solid rgba(128, 128, 128, 0.2);
+    }
+    section[data-testid="stBottom"] > div {
+        background-color: var(--background-color, #1A1C23);
+    }
+</style>
+""", unsafe_allow_html=True)
+
 pan, example, guji, log, links = st.tabs(['🧮 排盤', '📜 案例', '📚 古籍', '🆕 更新', '🔗 連結'])
 
 with example:
@@ -586,31 +606,32 @@ with pan:
                     except Exception as e:
                         st.error(f"調用AI時發生錯誤：{e}")
 
-    # ------------------- LLM 聊天 -------------------
-    # --- session state for chat ---
-    if "chat_messages" not in st.session_state:
-        st.session_state.chat_messages = []
-    if "chat_expanded" not in st.session_state:
-        st.session_state.chat_expanded = False
 
-    def _build_chat_system_prompt(chart_params_local):
-        """Build the system prompt for the chat, optionally including chart context."""
-        base = st.session_state.get("qimen_system_prompt", "你是一位奇門遁甲大師。")
-        if chart_params_local:
-            cp = chart_params_local
-            lunar_data = config.lunar_date_d(cp["y"], cp["m"], cp["d"])
-            lunar_info = lunar_data.get("農曆月", "") if lunar_data else ""
-            paipan_info = cp["q"].get("排盤方式", "")
-            chart_text = format_qimen_results_for_prompt(
-                cp["q"], cp["q"].get("干支", ""), cp["jq"],
-                lunar_info, paipan_info, cp["is_shijia"],
-                cp["y"], cp["m"], cp["d"], cp["h"], cp["minute"],
-            )
-            return base + "\n\n以下是當前排盤數據供參考：\n" + chart_text
-        return base
+# ------------------- LLM 聊天（固定在頁面底部） -------------------
+# --- session state for chat ---
+if "chat_messages" not in st.session_state:
+    st.session_state.chat_messages = []
+if "chat_expanded" not in st.session_state:
+    st.session_state.chat_expanded = False
 
-    # --- chat UI ---
-    st.markdown("---")
+def _build_chat_system_prompt(chart_params_local):
+    """Build the system prompt for the chat, optionally including chart context."""
+    base = st.session_state.get("qimen_system_prompt", "你是一位奇門遁甲大師。")
+    if chart_params_local:
+        cp = chart_params_local
+        lunar_data = config.lunar_date_d(cp["y"], cp["m"], cp["d"])
+        lunar_info = lunar_data.get("農曆月", "") if lunar_data else ""
+        paipan_info = cp["q"].get("排盤方式", "")
+        chart_text = format_qimen_results_for_prompt(
+            cp["q"], cp["q"].get("干支", ""), cp["jq"],
+            lunar_info, paipan_info, cp["is_shijia"],
+            cp["y"], cp["m"], cp["d"], cp["h"], cp["minute"],
+        )
+        return base + "\n\n以下是當前排盤數據供參考：\n" + chart_text
+    return base
+
+# --- Fixed chat UI at bottom ---
+with st.container():
     col_title, col_toggle, col_clear = st.columns([6, 2, 2])
     with col_title:
         st.markdown("#### 💬 AI 聊天")
@@ -622,46 +643,46 @@ with pan:
             st.session_state.chat_messages = []
             st.rerun()
 
-    # Show chat history
-    if st.session_state.chat_expanded and st.session_state.chat_messages:
-        history_container = st.container(height=300)
-        with history_container:
-            for msg in st.session_state.chat_messages:
-                with st.chat_message(msg["role"]):
-                    st.markdown(msg["content"])
+# Show chat history in a scrollable container
+if st.session_state.chat_expanded and st.session_state.chat_messages:
+    history_container = st.container(height=300)
+    with history_container:
+        for msg in st.session_state.chat_messages:
+            with st.chat_message(msg["role"]):
+                st.markdown(msg["content"])
 
-    # Chat input
-    user_input = st.chat_input("輸入問題，向AI諮詢奇門遁甲...", key="chat_input")
-    if user_input:
-        st.session_state.chat_messages.append({"role": "user", "content": user_input})
-        # Auto-expand history when a message is sent
-        st.session_state.chat_expanded = True
+# Chat input (at root level, auto-pins to bottom of viewport)
+user_input = st.chat_input("輸入問題，向AI諮詢奇門遁甲...", key="chat_input")
+if user_input:
+    st.session_state.chat_messages.append({"role": "user", "content": user_input})
+    # Auto-expand history when a message is sent
+    st.session_state.chat_expanded = True
 
-        cerebras_api_key = st.secrets.get("CEREBRAS_API_KEY", "") or os.getenv("CEREBRAS_API_KEY", "")
-        if not cerebras_api_key:
-            st.error("CEREBRAS_API_KEY 未設置，請在 .streamlit/secrets.toml 或環境變量中設置。")
-        else:
-            try:
-                client = CerebrasClient(api_key=cerebras_api_key)
-                system_prompt = _build_chat_system_prompt(chart_params or None)
+    cerebras_api_key = st.secrets.get("CEREBRAS_API_KEY", "") or os.getenv("CEREBRAS_API_KEY", "")
+    if not cerebras_api_key:
+        st.error("CEREBRAS_API_KEY 未設置，請在 .streamlit/secrets.toml 或環境變量中設置。")
+    else:
+        try:
+            client = CerebrasClient(api_key=cerebras_api_key)
+            system_prompt = _build_chat_system_prompt(chart_params or None)
 
-                api_messages = [{"role": "system", "content": system_prompt}]
-                # Include recent conversation history (last 20 messages to stay within token limits)
-                for msg in st.session_state.chat_messages[-20:]:
-                    api_messages.append({"role": msg["role"], "content": msg["content"]})
+            api_messages = [{"role": "system", "content": system_prompt}]
+            # Include recent conversation history (last 20 messages to stay within token limits)
+            for msg in st.session_state.chat_messages[-20:]:
+                api_messages.append({"role": msg["role"], "content": msg["content"]})
 
-                with st.spinner("AI 思考中..."):
-                    response = client.get_chat_completion(
-                        messages=api_messages,
-                        model=selected_model,
-                        max_tokens=st.session_state.get("qimen_max_tokens", 8192),
-                        temperature=st.session_state.get("qimen_temperature", 0.7),
-                    )
-                    assistant_reply = response.choices[0].message.content
+            with st.spinner("AI 思考中..."):
+                response = client.get_chat_completion(
+                    messages=api_messages,
+                    model=selected_model,
+                    max_tokens=st.session_state.get("qimen_max_tokens", 8192),
+                    temperature=st.session_state.get("qimen_temperature", 0.7),
+                )
+                assistant_reply = response.choices[0].message.content
 
-                st.session_state.chat_messages.append({"role": "assistant", "content": assistant_reply})
-                st.rerun()
-            except RateLimitError as e:
-                st.error(f"⚠️ {e}")
-            except Exception as e:
-                st.error(f"調用AI時發生錯誤：{e}")
+            st.session_state.chat_messages.append({"role": "assistant", "content": assistant_reply})
+            st.rerun()
+        except RateLimitError as e:
+            st.error(f"⚠️ {e}")
+        except Exception as e:
+            st.error(f"調用AI時發生錯誤：{e}")
