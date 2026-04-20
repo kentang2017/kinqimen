@@ -586,53 +586,30 @@ with pan:
                     except Exception as e:
                         st.error(f"調用AI時發生錯誤：{e}")
 
-# ------------------- 底部固定 LLM 聊天 -------------------
-# CSS: fixed bottom chat bar
-st.markdown("""
-<style>
-.fixed-chat-bar {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    z-index: 9999;
-    background: var(--background-color, #1A1C23);
-    border-top: 2px solid #FF4B4B;
-    padding: 0;
-    box-shadow: 0 -2px 12px rgba(0,0,0,0.3);
-}
-/* push main content up so it isn't hidden behind the chat bar */
-section.main > div.block-container {
-    padding-bottom: 260px !important;
-}
-</style>
-""", unsafe_allow_html=True)
+    # ------------------- LLM 聊天 -------------------
+    # --- session state for chat ---
+    if "chat_messages" not in st.session_state:
+        st.session_state.chat_messages = []
+    if "chat_expanded" not in st.session_state:
+        st.session_state.chat_expanded = False
 
-# --- session state for chat ---
-if "chat_messages" not in st.session_state:
-    st.session_state.chat_messages = []
-if "chat_expanded" not in st.session_state:
-    st.session_state.chat_expanded = False
+    def _build_chat_system_prompt(chart_params_local):
+        """Build the system prompt for the chat, optionally including chart context."""
+        base = st.session_state.get("qimen_system_prompt", "你是一位奇門遁甲大師。")
+        if chart_params_local:
+            cp = chart_params_local
+            lunar_data = config.lunar_date_d(cp["y"], cp["m"], cp["d"])
+            lunar_info = lunar_data.get("農曆月", "") if lunar_data else ""
+            paipan_info = cp["q"].get("排盤方式", "")
+            chart_text = format_qimen_results_for_prompt(
+                cp["q"], cp["q"].get("干支", ""), cp["jq"],
+                lunar_info, paipan_info, cp["is_shijia"],
+                cp["y"], cp["m"], cp["d"], cp["h"], cp["minute"],
+            )
+            return base + "\n\n以下是當前排盤數據供參考：\n" + chart_text
+        return base
 
-def _build_chat_system_prompt(chart_params_local):
-    """Build the system prompt for the chat, optionally including chart context."""
-    base = st.session_state.get("qimen_system_prompt", "你是一位奇門遁甲大師。")
-    if chart_params_local:
-        cp = chart_params_local
-        lunar_data = config.lunar_date_d(cp["y"], cp["m"], cp["d"])
-        lunar_info = lunar_data.get("農曆月", "") if lunar_data else ""
-        paipan_info = cp["q"].get("排盤方式", "")
-        chart_text = format_qimen_results_for_prompt(
-            cp["q"], cp["q"].get("干支", ""), cp["jq"],
-            lunar_info, paipan_info, cp["is_shijia"],
-            cp["y"], cp["m"], cp["d"], cp["h"], cp["minute"],
-        )
-        return base + "\n\n以下是當前排盤數據供參考：\n" + chart_text
-    return base
-
-# --- chat UI in a bottom container ---
-chat_container = st.container()
-with chat_container:
+    # --- chat UI ---
     st.markdown("---")
     col_title, col_toggle, col_clear = st.columns([6, 2, 2])
     with col_title:
