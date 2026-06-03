@@ -4,25 +4,10 @@ import json
 import streamlit as st
 import pendulum as pdlm
 import datetime, pytz
-from io import StringIO
-from contextlib import contextmanager, redirect_stdout
 
 import kinqimen
-from kinliuren import kinliuren
 import config
 from cerebras_client import CerebrasClient, RateLimitError, DEFAULT_MODEL as DEFAULT_CEREBRAS_MODEL
-
-# ------------------- 工具 -------------------
-@contextmanager
-def st_capture(output_func):
-    with StringIO() as stdout, redirect_stdout(stdout):
-        old_write = stdout.write
-        def new_write(string):
-            ret = old_write(string)
-            output_func(stdout.getvalue())
-            return ret
-        stdout.write = new_write
-        yield
 
 def load_local_md(filepath):
     """讀取本地 Markdown 檔案，若檔案不存在則回傳提示訊息。"""
@@ -301,6 +286,11 @@ _SIXWU_POS = {
     "甲子": "辰", "甲戌": "寅", "甲申": "子",
     "甲午": "戌", "甲辰": "申", "甲寅": "午",
 }
+_BRANCH_TO_GONG = {
+    "子": "坎", "丑": "艮", "寅": "艮", "卯": "震",
+    "辰": "巽", "巳": "巽", "午": "離", "未": "坤",
+    "申": "坤", "酉": "兌", "戌": "乾", "亥": "乾",
+}
 
 def generate_closed_sixwu_svg(xun_head: str, version: str = "演義版") -> str:
     """回傳完整的 SVG 字串 for 真人閉六戊法圓形十二地支圈。
@@ -423,63 +413,99 @@ def generate_closed_sixwu_svg(xun_head: str, version: str = "演義版") -> str:
         f'</svg>'
     )
 
+def generate_qimen_pan_svg(q: dict, sixwu_branch: str = "") -> str:
+    """回傳九宮奇門排盤 SVG，並把閉六戊對應宮位著色。"""
+    palace_grid = [
+        ["巽", "離", "坤"],
+        ["震", "中", "兌"],
+        ["艮", "坎", "乾"],
+    ]
+    highlighted_gong = _BRANCH_TO_GONG.get(sixwu_branch, "")
+
+    svg_w, svg_h = 720, 720
+    cell = 200
+    start = 60
+    title_y = 30
+
+    cells = []
+    for row_idx, row in enumerate(palace_grid):
+        for col_idx, gong in enumerate(row):
+            x = start + col_idx * cell
+            y = start + row_idx * cell
+            is_highlight = gong == highlighted_gong and gong != "中"
+            fill = "#46330D" if is_highlight else "#152030"
+            stroke = "#FFB800" if is_highlight else "#5A7399"
+            text_color = "#FFE9A8" if is_highlight else "#E8F0FF"
+
+            if gong == "中":
+                title = f"中宮 | 地盤 {q.get('地盤', {}).get('中', '')}"
+                lines = ["", "", ""]
+            else:
+                title = f"{gong}宮"
+                lines = [
+                    f"神：{q.get('神', {}).get(gong, '')}",
+                    f"門/天：{q.get('門', {}).get(gong, '')} / {q.get('天盤', {}).get(gong, '')}",
+                    f"星/地：{q.get('星', {}).get(gong, '')} / {q.get('地盤', {}).get(gong, '')}",
+                ]
+
+            cells.append(
+                f'<rect x="{x}" y="{y}" width="{cell}" height="{cell}" rx="12" '
+                f'fill="{fill}" stroke="{stroke}" stroke-width="3"/>'
+            )
+            cells.append(
+                f'<text x="{x + 16}" y="{y + 34}" fill="{text_color}" font-size="24" '
+                f'font-weight="bold" font-family="sans-serif">{title}</text>'
+            )
+            if gong != "中":
+                for i, line in enumerate(lines):
+                    cells.append(
+                        f'<text x="{x + 16}" y="{y + 82 + i * 42}" fill="{text_color}" '
+                        f'font-size="28" font-family="sans-serif">{line}</text>'
+                    )
+
+    sixwu_note = ""
+    if highlighted_gong:
+        sixwu_note = f"｜閉六戊著色：{sixwu_branch} → {highlighted_gong}宮"
+
+    return (
+        f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {svg_w} {svg_h}" '
+        f'style="width:100%;height:auto;display:block;margin:0 auto;">'
+        f'<rect width="{svg_w}" height="{svg_h}" rx="18" fill="#0F1726"/>'
+        f'<text x="{svg_w / 2}" y="{title_y}" fill="#F2D084" font-size="24" text-anchor="middle" '
+        f'font-family="sans-serif" font-weight="bold">奇門遁甲九宮 SVG 排盤{sixwu_note}</text>'
+        f'{"".join(cells)}'
+        f'</svg>'
+    )
+
 def render_pan(y, m, d, h, minute, is_shijia=True):
-    gz = config.gangzhi(y, m, d, h, minute)
     jq = config.jq(y, m, d, h,minute)
-    lunar_mon = dict(zip(range(1,13), config.cmonth)).get(config.lunar_date_d(y,m,d)["月"])
 
     if is_shijia:
         q = kinqimen.Qimen(y, m, d, h, minute).pan(pai)
-        lr = kinliuren.Liuren(q["節氣"], lunar_mon, gz[2], gz[3]).result(0)
     else:
         q = kinqimen.Qimen(y, m, d, h, minute).pan_minute(pai)
-        lr = kinliuren.Liuren(q["節氣"], lunar_mon, gz[3], gz[4]).result(0)
 
     # 提取資料
-    qd = [q["地盤"][k] for k in eg]
-    qt = [q.get("天盤", {}).get(k, "") for k in eg]
-    god = [q["神"][k] for k in eg]
-    door = [q["門"][k] for k in eg]
-    star = [q["星"][k] for k in eg]
-    mid = q["地盤"]["中"]
-    es, egod = lr["地轉天盤"], lr["地轉天將"]
     zf_xing = q["值符值使"]["值符星宮"][1]
     zm_men  = q["值符值使"]["值使門宮"][0]
     zm_gong = q["值符值使"]["值使門宮"][1]
-    # 輸出文字盤面
-    print(f"{'時家奇門' if is_shijia else '刻家奇門'} | {q['排盤方式']}")
-    print(f"{y}年{m}月{d}日 {h}時{minute}分\n")
-    print(f"{q['干支']} | {q['排局']} | 節氣：{jq}")
-    print(f"值符星宮：天{zf_xing}宮　　值使門宮：{zm_men}門{zm_gong}宮")
-    print(f"農曆月：{config.lunar_date_d(y,m,d)['農曆月']}  |  "
-          f"距節氣：{config.qimen_ju_name_zhirun_raw(y,m,d,h,minute)['距節氣差日數']}天\n")
-
-    # 九宮格 ASCII 藝術（共用）
-    lines = [
-        f"＼  {es['巳']}{egod['巳']}  　 │  {es['午']}{egod['午']}　 │  {es['未']}{egod['未']}　 │  　 {es['申']}{egod['申']}　 ／",
-        " ＼─────────┴──┬─────┴─────┬──┴──────────／",
-        f" 　│　　{god[0]}　　　 │　　{god[1]}　　　 │　　{god[2]}　　　 │",
-        f" 　│　　{door[0]}　　{qt[0]} │　　{door[1]}　　{qt[1]} │　　{door[2]}　　{qt[2]} │",
-        f" 　│　　{star[0]}　　{qd[0]} │　　{star[1]}　　{qd[1]} │　　{star[2]}　　{qd[2]} │",
-        f" {es['辰']}├───────────┼───────────┼───────────┤{es['酉']}",
-        f" {egod['辰']}│　　{god[3]}　　　 │　　　　　　 │　　{god[4]}　　　 │{egod['酉']}",
-        f"　─┤　　{door[3]}　　{qt[3]} │　　　　　　 │　　{door[4]}　　{qt[4]} ├─",
-        f" 　│　　{star[3]}　　{qd[3]} │　　　　　{mid} │　　{star[4]}　　{qd[4]} │",
-        " 　├───────────┼───────────┼───────────┤",
-        f"　 │　　{god[5]}　　　 │　　{god[6]}　　　 │　　{god[7]}　　　 │",
-        f" {es['卯']}│　　{door[5]}　　{qt[5]} │　　{door[6]}　　{qt[6]} │　　{door[7]}　　{qt[7]} │{es['戌']}",
-        f" {egod['卯']}│　　{star[5]}　　{qd[5]} │　　{star[6]}　　{qd[6]} │　　{star[7]}　　{qd[7]} │{egod['戌']}",
-        " ／─────────┬──┴─────┬─────┴──┬────────＼",
-        f"／  {es['寅']}{egod['寅']}  　 │  {es['丑']}{egod['丑']}　 │  {es['子']}{egod['子']}　 │  　 {es['亥']}{egod['亥']}　 ＼",
-    ]
-    for line in lines:
-        print(line)
+    xun_head_jiazi = _LIUYI_TO_XUN.get(q.get("旬首", ""), "甲子")
+    wu_branch = _SIXWU_POS.get(xun_head_jiazi, "子")
+    pan_svg = generate_qimen_pan_svg(q, wu_branch)
+    st.markdown(
+        f"**{('時家奇門' if is_shijia else '刻家奇門')}｜{q['排盤方式']}**  \n"
+        f"**{y}年{m}月{d}日 {h}時{minute}分**  \n"
+        f"{q['干支']}｜{q['排局']}｜節氣：{jq}  \n"
+        f"值符星宮：天{zf_xing}宮｜值使門宮：{zm_men}門{zm_gong}宮"
+    )
+    st.markdown(
+        f'<div style="max-width:760px;width:100%;margin:0 auto;padding:8px 0 12px">{pan_svg}</div>',
+        unsafe_allow_html=True,
+    )
 
     st.expander("原始資料").write(q)
 
     # ------------------- 閉六戊法 expander -------------------
-    xun_head_jiazi = _LIUYI_TO_XUN.get(q.get("旬首", ""), "甲子")
-    wu_branch = _SIXWU_POS.get(xun_head_jiazi, "子")
     yang_cw = ["子", "寅", "辰", "午", "申", "戌"]
     start_idx = yang_cw.index(wu_branch)
 
@@ -544,30 +570,28 @@ with pan:
     # Track chart parameters for AI analysis
     chart_params = {}
 
-    output = st.empty()
-    with st_capture(output.code):
-        # 即時盤（預設）
-        if instant or (not manual and not instant):  # 頁面初載也顯示即時
-            now = datetime.datetime.now(pytz.timezone('Asia/Hong_Kong'))
-            q_data, jq_str, _shijia = render_pan(now.year, now.month, now.day, now.hour, now.minute, is_shijia=True)
+    # 即時盤（預設）
+    if instant or (not manual and not instant):  # 頁面初載也顯示即時
+        now = datetime.datetime.now(pytz.timezone('Asia/Hong_Kong'))
+        q_data, jq_str, _shijia = render_pan(now.year, now.month, now.day, now.hour, now.minute, is_shijia=True)
+        chart_params = {
+            "q": q_data, "jq": jq_str, "is_shijia": _shijia,
+            "y": now.year, "m": now.month, "d": now.day,
+            "h": now.hour, "minute": now.minute,
+        }
+
+    # 手動盤
+    if manual and pp_time:
+        try:
+            h, mnt = map(int, pp_time.split(':'))
+            q_data, jq_str, _shijia = render_pan(pp_date.year, pp_date.month, pp_date.day, h, mnt, is_shijia)
             chart_params = {
                 "q": q_data, "jq": jq_str, "is_shijia": _shijia,
-                "y": now.year, "m": now.month, "d": now.day,
-                "h": now.hour, "minute": now.minute,
+                "y": pp_date.year, "m": pp_date.month, "d": pp_date.day,
+                "h": h, "minute": mnt,
             }
-
-        # 手動盤
-        if manual and pp_time:
-            try:
-                h, mnt = map(int, pp_time.split(':'))
-                q_data, jq_str, _shijia = render_pan(pp_date.year, pp_date.month, pp_date.day, h, mnt, is_shijia)
-                chart_params = {
-                    "q": q_data, "jq": jq_str, "is_shijia": _shijia,
-                    "y": pp_date.year, "m": pp_date.month, "d": pp_date.day,
-                    "h": h, "minute": mnt,
-                }
-            except Exception:
-                st.error("時間格式錯誤，請輸入如 18:30")
+        except Exception:
+            st.error("時間格式錯誤，請輸入如 18:30")
 
     # ------------------- AI 分析按鈕 -------------------
     if chart_params:
