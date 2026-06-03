@@ -442,7 +442,7 @@ def _element_colored_tspan(char: str, default_color: str) -> str:
     return f'<tspan fill="{color}">{char}</tspan>'
 
 
-def generate_qimen_pan_svg(q: dict, sixwu_branch: str = "") -> str:
+def generate_qimen_pan_svg(q: dict, sixwu_gong: str = "") -> str:
     """回傳九宮奇門排盤 SVG，並把閉六戊對應宮位著色。"""
     # Standard Qimen nine-palace layout: South at top (離9), North at bottom (坎1)
     palace_grid = [
@@ -450,7 +450,7 @@ def generate_qimen_pan_svg(q: dict, sixwu_branch: str = "") -> str:
         ["震", "中", "兌"],
         ["艮", "坎", "乾"],
     ]
-    highlighted_gong = _BRANCH_TO_GONG.get(sixwu_branch, "")
+    highlighted_gong = sixwu_gong
 
     svg_w, svg_h = 720, 720
     cell = 200
@@ -517,7 +517,7 @@ def generate_qimen_pan_svg(q: dict, sixwu_branch: str = "") -> str:
 
     title_text = ""
     if highlighted_gong:
-        title_text = f"閉六戊著色：{sixwu_branch} → {highlighted_gong}宮"
+        title_text = f"閉六戊著色：戊 → {highlighted_gong}宮"
     title_svg = (
         f'<text x="{svg_w / 2}" y="{title_y}" fill="#F2D084" font-size="24" text-anchor="middle" '
         f'font-family="sans-serif" font-weight="bold">{title_text}</text>'
@@ -547,7 +547,9 @@ def render_pan(y, m, d, h, minute, is_shijia=True):
     zm_gong = q["值符值使"]["值使門宮"][1]
     xun_head_jiazi = _LIUYI_TO_XUN.get(q.get("旬首", ""), "甲子")
     wu_branch = _SIXWU_POS.get(xun_head_jiazi, "子")
-    pan_svg = generate_qimen_pan_svg(q, wu_branch)
+    di_pan = q.get("地盤", {})
+    wu_palace = next((gong for gong, val in di_pan.items() if val == "戊"), "")
+    pan_svg = generate_qimen_pan_svg(q, wu_palace)
     st.markdown(
         f"**{('時家奇門' if is_shijia else '刻家奇門')}｜{q['排盤方式']}**  \n"
         f"**{y}年{m}月{d}日 {h}時{minute}分**  \n"
