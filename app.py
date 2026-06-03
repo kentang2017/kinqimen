@@ -416,9 +416,9 @@ def generate_closed_sixwu_svg(xun_head: str, version: str = "演義版") -> str:
 def generate_qimen_pan_svg(q: dict, sixwu_branch: str = "") -> str:
     """回傳九宮奇門排盤 SVG，並把閉六戊對應宮位著色。"""
     palace_grid = [
-        ["巽", "離", "坤"],
-        ["震", "中", "兌"],
-        ["艮", "坎", "乾"],
+        ["乾", "坎", "艮"],
+        ["兌", "中", "震"],
+        ["坤", "離", "巽"],
     ]
     highlighted_gong = _BRANCH_TO_GONG.get(sixwu_branch, "")
 
@@ -463,16 +463,20 @@ def generate_qimen_pan_svg(q: dict, sixwu_branch: str = "") -> str:
                         f'font-size="28" font-family="sans-serif">{line}</text>'
                     )
 
-    sixwu_note = ""
+    title_text = ""
     if highlighted_gong:
-        sixwu_note = f"｜閉六戊著色：{sixwu_branch} → {highlighted_gong}宮"
+        title_text = f"閉六戊著色：{sixwu_branch} → {highlighted_gong}宮"
+    title_svg = (
+        f'<text x="{svg_w / 2}" y="{title_y}" fill="#F2D084" font-size="24" text-anchor="middle" '
+        f'font-family="sans-serif" font-weight="bold">{title_text}</text>'
+        if title_text else ""
+    )
 
     return (
         f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {svg_w} {svg_h}" '
         f'style="width:100%;height:auto;display:block;margin:0 auto;">'
         f'<rect width="{svg_w}" height="{svg_h}" rx="18" fill="#0F1726"/>'
-        f'<text x="{svg_w / 2}" y="{title_y}" fill="#F2D084" font-size="24" text-anchor="middle" '
-        f'font-family="sans-serif" font-weight="bold">奇門遁甲九宮 SVG 排盤{sixwu_note}</text>'
+        f'{title_svg}'
         f'{"".join(cells)}'
         f'</svg>'
     )
