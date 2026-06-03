@@ -466,13 +466,17 @@ def generate_qimen_pan_svg(q: dict, sixwu_branch: str = "") -> str:
     title_text = ""
     if highlighted_gong:
         title_text = f"閉六戊著色：{sixwu_branch} → {highlighted_gong}宮"
+    title_svg = (
+        f'<text x="{svg_w / 2}" y="{title_y}" fill="#F2D084" font-size="24" text-anchor="middle" '
+        f'font-family="sans-serif" font-weight="bold">{title_text}</text>'
+        if title_text else ""
+    )
 
     return (
         f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {svg_w} {svg_h}" '
         f'style="width:100%;height:auto;display:block;margin:0 auto;">'
         f'<rect width="{svg_w}" height="{svg_h}" rx="18" fill="#0F1726"/>'
-        f'<text x="{svg_w / 2}" y="{title_y}" fill="#F2D084" font-size="24" text-anchor="middle" '
-        f'font-family="sans-serif" font-weight="bold">{title_text}</text>'
+        f'{title_svg}'
         f'{"".join(cells)}'
         f'</svg>'
     )
