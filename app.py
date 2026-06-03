@@ -413,12 +413,42 @@ def generate_closed_sixwu_svg(xun_head: str, version: str = "演義版") -> str:
         f'</svg>'
     )
 
+# Five-element color mapping for 星/神/門/干支 characters
+_ELEMENT_COLORS = {
+    # 火 (Fire) - red
+    '蛇': '#FF4444', '雀': '#FF4444', '景': '#FF4444', '英': '#FF4444',
+    '丁': '#FF4444', '丙': '#FF4444', '巳': '#FF4444', '午': '#FF4444',
+    # 土 (Earth) - brown
+    '勾': '#CD853F', '地': '#CD853F', '生': '#CD853F', '死': '#CD853F',
+    '任': '#CD853F', '禽': '#CD853F', '芮': '#CD853F', '己': '#CD853F',
+    '戊': '#CD853F', '丑': '#CD853F', '辰': '#CD853F', '未': '#CD853F', '戌': '#CD853F',
+    # 木 (Wood) - green
+    '合': '#4CAF50', '符': '#4CAF50', '傷': '#4CAF50', '杜': '#4CAF50',
+    '輔': '#4CAF50', '沖': '#4CAF50', '乙': '#4CAF50', '甲': '#4CAF50',
+    '寅': '#4CAF50', '卯': '#4CAF50',
+    # 水 (Water) - blue
+    '蓬': '#4499FF', '休': '#4499FF', '玄': '#4499FF', '壬': '#4499FF',
+    '癸': '#4499FF', '子': '#4499FF', '亥': '#4499FF',
+    # 金 (Metal) - golden
+    '天': '#FFB800', '陰': '#FFB800', '虎': '#FFB800', '開': '#FFB800',
+    '驚': '#FFB800', '柱': '#FFB800', '心': '#FFB800', '辛': '#FFB800',
+    '庚': '#FFB800', '申': '#FFB800', '酉': '#FFB800',
+}
+
+
+def _ctspan(char: str, default: str) -> str:
+    """Return an SVG tspan for char with the appropriate five-element color."""
+    color = _ELEMENT_COLORS.get(char, default)
+    return f'<tspan fill="{color}">{char}</tspan>'
+
+
 def generate_qimen_pan_svg(q: dict, sixwu_branch: str = "") -> str:
     """回傳九宮奇門排盤 SVG，並把閉六戊對應宮位著色。"""
+    # Standard Qimen nine-palace layout: South at top (離9), North at bottom (坎1)
     palace_grid = [
-        ["乾", "坎", "艮"],
-        ["兌", "中", "震"],
-        ["坤", "離", "巽"],
+        ["巽", "離", "坤"],
+        ["震", "中", "兌"],
+        ["艮", "坎", "乾"],
     ]
     highlighted_gong = _BRANCH_TO_GONG.get(sixwu_branch, "")
 
@@ -435,32 +465,54 @@ def generate_qimen_pan_svg(q: dict, sixwu_branch: str = "") -> str:
             is_highlight = gong == highlighted_gong and gong != "中"
             fill = "#46330D" if is_highlight else "#152030"
             stroke = "#FFB800" if is_highlight else "#5A7399"
-            text_color = "#FFE9A8" if is_highlight else "#E8F0FF"
+            lc = "#FFE9A8" if is_highlight else "#E8F0FF"
 
             if gong == "中":
-                title = f"中宮 | 地盤 {q.get('地盤', {}).get('中', '')}"
-                lines = ["", "", ""]
+                di_zhong = q.get('地盤', {}).get('中', '')
+                title_svg = (
+                    f'<tspan fill="{lc}">中宮 | 地盤 </tspan>'
+                    f'{_ctspan(di_zhong, lc)}'
+                )
+                cells.append(
+                    f'<rect x="{x}" y="{y}" width="{cell}" height="{cell}" rx="12" '
+                    f'fill="{fill}" stroke="{stroke}" stroke-width="3"/>'
+                )
+                cells.append(
+                    f'<text x="{x + 16}" y="{y + 34}" font-size="24" '
+                    f'font-weight="bold" font-family="sans-serif">{title_svg}</text>'
+                )
             else:
-                title = f"{gong}宮"
-                lines = [
-                    f"神：{q.get('神', {}).get(gong, '')}",
-                    f"門/天：{q.get('門', {}).get(gong, '')} / {q.get('天盤', {}).get(gong, '')}",
-                    f"星/地：{q.get('星', {}).get(gong, '')} / {q.get('地盤', {}).get(gong, '')}",
+                shen_v = q.get('神', {}).get(gong, '')
+                men_v  = q.get('門', {}).get(gong, '')
+                tian_v = q.get('天盤', {}).get(gong, '')
+                xing_v = q.get('星', {}).get(gong, '')
+                di_v   = q.get('地盤', {}).get(gong, '')
+
+                line_svgs = [
+                    (f'<tspan fill="{lc}">神：</tspan>'
+                     f'{_ctspan(shen_v, lc)}'),
+                    (f'<tspan fill="{lc}">門/天：</tspan>'
+                     f'{_ctspan(men_v, lc)}'
+                     f'<tspan fill="{lc}"> / </tspan>'
+                     f'{_ctspan(tian_v, lc)}'),
+                    (f'<tspan fill="{lc}">星/地：</tspan>'
+                     f'{_ctspan(xing_v, lc)}'
+                     f'<tspan fill="{lc}"> / </tspan>'
+                     f'{_ctspan(di_v, lc)}'),
                 ]
 
-            cells.append(
-                f'<rect x="{x}" y="{y}" width="{cell}" height="{cell}" rx="12" '
-                f'fill="{fill}" stroke="{stroke}" stroke-width="3"/>'
-            )
-            cells.append(
-                f'<text x="{x + 16}" y="{y + 34}" fill="{text_color}" font-size="24" '
-                f'font-weight="bold" font-family="sans-serif">{title}</text>'
-            )
-            if gong != "中":
-                for i, line in enumerate(lines):
+                cells.append(
+                    f'<rect x="{x}" y="{y}" width="{cell}" height="{cell}" rx="12" '
+                    f'fill="{fill}" stroke="{stroke}" stroke-width="3"/>'
+                )
+                cells.append(
+                    f'<text x="{x + 16}" y="{y + 34}" fill="{lc}" font-size="24" '
+                    f'font-weight="bold" font-family="sans-serif">{gong}宮</text>'
+                )
+                for i, line_svg in enumerate(line_svgs):
                     cells.append(
-                        f'<text x="{x + 16}" y="{y + 82 + i * 42}" fill="{text_color}" '
-                        f'font-size="28" font-family="sans-serif">{line}</text>'
+                        f'<text x="{x + 16}" y="{y + 82 + i * 42}" '
+                        f'font-size="28" font-family="sans-serif">{line_svg}</text>'
                     )
 
     title_text = ""
