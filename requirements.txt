@@ -1,5 +1,5 @@
 pendulum==3.0.0
-streamlit==1.34.0
+streamlit==1.58.0
 sxtwl==2.0.6
 ephem==4.1.6
 streamlit-aggrid==1.0.5
