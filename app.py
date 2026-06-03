@@ -436,9 +436,9 @@ _ELEMENT_COLORS = {
 }
 
 
-def _ctspan(char: str, default: str) -> str:
+def _element_colored_tspan(char: str, default_color: str) -> str:
     """Return an SVG tspan for char with the appropriate five-element color."""
-    color = _ELEMENT_COLORS.get(char, default)
+    color = _ELEMENT_COLORS.get(char, default_color)
     return f'<tspan fill="{color}">{char}</tspan>'
 
 
@@ -465,13 +465,13 @@ def generate_qimen_pan_svg(q: dict, sixwu_branch: str = "") -> str:
             is_highlight = gong == highlighted_gong and gong != "中"
             fill = "#46330D" if is_highlight else "#152030"
             stroke = "#FFB800" if is_highlight else "#5A7399"
-            lc = "#FFE9A8" if is_highlight else "#E8F0FF"
+            default_text_color = "#FFE9A8" if is_highlight else "#E8F0FF"
 
             if gong == "中":
                 di_zhong = q.get('地盤', {}).get('中', '')
                 title_svg = (
-                    f'<tspan fill="{lc}">中宮 | 地盤 </tspan>'
-                    f'{_ctspan(di_zhong, lc)}'
+                    f'<tspan fill="{default_text_color}">中宮 | 地盤 </tspan>'
+                    f'{_element_colored_tspan(di_zhong, default_text_color)}'
                 )
                 cells.append(
                     f'<rect x="{x}" y="{y}" width="{cell}" height="{cell}" rx="12" '
@@ -489,16 +489,16 @@ def generate_qimen_pan_svg(q: dict, sixwu_branch: str = "") -> str:
                 di_v   = q.get('地盤', {}).get(gong, '')
 
                 line_svgs = [
-                    (f'<tspan fill="{lc}">神：</tspan>'
-                     f'{_ctspan(shen_v, lc)}'),
-                    (f'<tspan fill="{lc}">門/天：</tspan>'
-                     f'{_ctspan(men_v, lc)}'
-                     f'<tspan fill="{lc}"> / </tspan>'
-                     f'{_ctspan(tian_v, lc)}'),
-                    (f'<tspan fill="{lc}">星/地：</tspan>'
-                     f'{_ctspan(xing_v, lc)}'
-                     f'<tspan fill="{lc}"> / </tspan>'
-                     f'{_ctspan(di_v, lc)}'),
+                    (f'<tspan fill="{default_text_color}">神：</tspan>'
+                     f'{_element_colored_tspan(shen_v, default_text_color)}'),
+                    (f'<tspan fill="{default_text_color}">門/天：</tspan>'
+                     f'{_element_colored_tspan(men_v, default_text_color)}'
+                     f'<tspan fill="{default_text_color}"> / </tspan>'
+                     f'{_element_colored_tspan(tian_v, default_text_color)}'),
+                    (f'<tspan fill="{default_text_color}">星/地：</tspan>'
+                     f'{_element_colored_tspan(xing_v, default_text_color)}'
+                     f'<tspan fill="{default_text_color}"> / </tspan>'
+                     f'{_element_colored_tspan(di_v, default_text_color)}'),
                 ]
 
                 cells.append(
@@ -506,7 +506,7 @@ def generate_qimen_pan_svg(q: dict, sixwu_branch: str = "") -> str:
                     f'fill="{fill}" stroke="{stroke}" stroke-width="3"/>'
                 )
                 cells.append(
-                    f'<text x="{x + 16}" y="{y + 34}" fill="{lc}" font-size="24" '
+                    f'<text x="{x + 16}" y="{y + 34}" fill="{default_text_color}" font-size="24" '
                     f'font-weight="bold" font-family="sans-serif">{gong}宮</text>'
                 )
                 for i, line_svg in enumerate(line_svgs):
