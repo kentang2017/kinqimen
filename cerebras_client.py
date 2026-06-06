@@ -2,7 +2,7 @@ import os
 import time
 from cerebras.cloud.sdk import Cerebras
 
-DEFAULT_MODEL = "qwen-3-235b-a22b-instruct-2507"
+DEFAULT_MODEL = "gpt-oss-120b"
 
 # Maximum number of retries for rate-limit (429) errors
 MAX_RETRIES = 3
