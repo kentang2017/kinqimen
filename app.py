@@ -1,6 +1,8 @@
 import math
 import os
 import json
+from urllib import error as urllib_error
+from urllib import request as urllib_request
 import streamlit as st
 import pendulum as pdlm
 import datetime, pytz
@@ -18,19 +20,26 @@ def load_local_md(filepath):
         return f"⚠️ 找不到檔案：{filepath}"
 
 # ------------------- AI 相關常數與函數 -------------------
-CEREBRAS_MODEL_OPTIONS = [
+CEREBRAS_FREE_MODEL_OPTIONS = [
     "qwen-3-235b-a22b-instruct-2507",
     "llama-4-scout-17b-16e-instruct",
-    "llama3.1-8b",
     "llama-3.3-70b",
     "deepseek-r1-distill-llama-70b",
+    "llama3.1-8b",
 ]
 CEREBRAS_MODEL_DESCRIPTIONS = {
-    "qwen-3-235b-a22b-instruct-2507": "Cerebras: Fast inference, great for rapid iteration.",
-    "llama-4-scout-17b-16e-instruct": "Cerebras: Optimized for guided workflows.",
-    "llama3.1-8b": "Cerebras: Light and fast for quick tasks.",
-    "llama-3.3-70b": "Cerebras: Most capable for complex reasoning.",
-    "deepseek-r1-distill-llama-70b": "Cerebras: DeepSeek distilled model.",
+    "qwen-3-235b-a22b-instruct-2507": "Cerebras 免費模型：推理速度快，適合日常分析。",
+    "llama-4-scout-17b-16e-instruct": "Cerebras 免費模型：指令遵循穩定，整體均衡。",
+    "llama-3.3-70b": "Cerebras 免費模型：能力較強，適合複雜問題。",
+    "deepseek-r1-distill-llama-70b": "Cerebras 免費模型：推理風格偏強。",
+    "llama3.1-8b": "Cerebras 免費模型：輕量低成本。",
+}
+DEFAULT_OPENAI_COMPATIBLE_SERVER = "https://api.openai.com/v1"
+PROVIDER_CEREBRAS = "Cerebras"
+PROVIDER_OPENAI_COMPATIBLE = "OpenAICompatible"
+PROVIDER_LABELS = {
+    PROVIDER_CEREBRAS: "Cerebras 免費模型",
+    PROVIDER_OPENAI_COMPATIBLE: "OpenAI 相容服務（自訂）",
 }
 
 SYSTEM_PROMPTS_FILE = "data/system_prompts.json"
@@ -65,6 +74,88 @@ def save_system_prompts(prompts_data):
     except Exception as e:
         st.error(f"儲存系統提示時發生錯誤：{e}")
         return False
+
+def _extract_message_text(content):
+    """Extract plain text from provider message content formats."""
+    if isinstance(content, str):
+        return content
+    if isinstance(content, list):
+        parts = []
+        for item in content:
+            if isinstance(item, dict):
+                text = item.get("text")
+                if text:
+                    parts.append(text)
+        return "\n".join(parts).strip()
+    return str(content)
+
+def _normalize_base_url(base_url):
+    """Normalize API base URL and strip a trailing chat/completions suffix."""
+    base = (base_url or "").strip().rstrip("/")
+    if not base:
+        raise ValueError("請輸入 Server URL。")
+    if base.endswith("/chat/completions"):
+        return base[: -len("/chat/completions")]
+    return base
+
+def call_openai_compatible_chat_completion(messages, model, api_key, base_url, **kwargs):
+    """Call an OpenAI-compatible Chat Completions endpoint and return response text."""
+    if not api_key:
+        raise ValueError("請輸入 API Key。")
+    if not model:
+        raise ValueError("請輸入模型名稱。")
+
+    endpoint = f"{_normalize_base_url(base_url)}/chat/completions"
+    payload = {
+        "model": model,
+        "messages": messages,
+        "max_tokens": kwargs.get("max_tokens", 8192),
+        "temperature": kwargs.get("temperature", 0.7),
+    }
+    req = urllib_request.Request(
+        endpoint,
+        data=json.dumps(payload).encode("utf-8"),
+        headers={
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + api_key,
+        },
+        method="POST",
+    )
+    try:
+        with urllib_request.urlopen(req, timeout=120) as response:
+            data = json.loads(response.read().decode("utf-8"))
+    except urllib_error.HTTPError as e:
+        raw = e.read().decode("utf-8", errors="ignore")
+        if e.code == 429:
+            raise RateLimitError("已達 API 配額上限，請稍後再試或更換模型。") from e
+        raise Exception(f"調用自訂 LLM 服務失敗（HTTP {e.code}）：{raw}") from e
+    except urllib_error.URLError as e:
+        raise Exception(f"無法連線到自訂 LLM 服務：{e.reason}") from e
+
+    choices = data.get("choices") or []
+    if not choices:
+        raise Exception("自訂 LLM 服務未返回有效內容。")
+    content = ((choices[0] or {}).get("message") or {}).get("content", "")
+    text = _extract_message_text(content)
+    if not text:
+        raise Exception("自訂 LLM 服務返回空白內容。")
+    return text
+
+def request_ai_completion(messages, model, provider, api_key, base_url=None, **kwargs):
+    """Route completion requests to the selected provider implementation."""
+    if provider == PROVIDER_CEREBRAS:
+        client = CerebrasClient(api_key=api_key)
+        response = client.get_chat_completion(messages=messages, model=model, **kwargs)
+        return response.choices[0].message.content
+    if provider == PROVIDER_OPENAI_COMPATIBLE:
+        return call_openai_compatible_chat_completion(
+            messages=messages,
+            model=model,
+            api_key=api_key,
+            base_url=base_url,
+            **kwargs,
+        )
+    raise ValueError(f"不支援的 LLM 服務類型：{provider}")
 
 def format_qimen_results_for_prompt(q, gz_str, jq_str, lunar_info, paipan_info, is_shijia, y, m, d, h, minute):
     """Format Qi Men Dun Jia chart data into a text prompt for AI analysis."""
@@ -160,13 +251,58 @@ with st.sidebar:
     st.markdown("---")
     st.header("🤖 AI設置")
 
-    selected_model = st.selectbox(
-        "AI 模型",
-        options=CEREBRAS_MODEL_OPTIONS,
+    llm_provider = st.selectbox(
+        "LLM 服務",
+        options=[PROVIDER_CEREBRAS, PROVIDER_OPENAI_COMPATIBLE],
+        format_func=lambda p: PROVIDER_LABELS.get(p, p),
         index=0,
-        key="cerebras_model_selector",
-        help="\n".join(f"• {k}: {v}" for k, v in CEREBRAS_MODEL_DESCRIPTIONS.items()),
+        key="llm_provider_selector",
     )
+
+    if llm_provider == PROVIDER_CEREBRAS:
+        cerebras_default_key = st.secrets.get("CEREBRAS_API_KEY", "") or os.getenv("CEREBRAS_API_KEY", "")
+        llm_api_key = st.text_input(
+            "Cerebras API Key",
+            value=cerebras_default_key,
+            type="password",
+            key="cerebras_api_key_input",
+            help="可留空使用 .streamlit/secrets.toml 或環境變數 CEREBRAS_API_KEY。",
+        )
+        selected_model = st.selectbox(
+            "Cerebras 免費模型",
+            options=CEREBRAS_FREE_MODEL_OPTIONS,
+            index=0,
+            key="cerebras_model_selector",
+            help="\n".join(f"• {k}: {v}" for k, v in CEREBRAS_MODEL_DESCRIPTIONS.items()),
+        )
+        custom_cerebras_model = st.text_input(
+            "自訂 Cerebras 模型（可選）",
+            value="",
+            key="custom_cerebras_model_input",
+            placeholder="例如：qwen-3-235b-a22b-instruct-2507",
+        )
+        selected_model = custom_cerebras_model.strip() or selected_model
+        llm_server = None
+    else:
+        llm_api_key = st.text_input(
+            "API Key",
+            value=st.secrets.get("OPENAI_API_KEY", "") or os.getenv("OPENAI_API_KEY", ""),
+            type="password",
+            key="custom_llm_api_key_input",
+        )
+        selected_model = st.text_input(
+            "模型名稱",
+            value=st.secrets.get("OPENAI_MODEL", "") or os.getenv("OPENAI_MODEL", "gpt-4.1-mini"),
+            key="custom_llm_model_input",
+            placeholder="例如：gpt-4.1-mini / qwen-plus / deepseek-chat",
+        )
+        llm_server = st.text_input(
+            "Server URL",
+            value=st.secrets.get("OPENAI_BASE_URL", "") or os.getenv("OPENAI_BASE_URL", DEFAULT_OPENAI_COMPATIBLE_SERVER),
+            key="custom_llm_server_input",
+            placeholder="例如：https://api.openai.com/v1",
+            help="需為 OpenAI Chat Completions 相容 API。",
+        )
 
     system_prompts_data = load_system_prompts()
     prompts_list = system_prompts_data.get("prompts", [])
@@ -648,12 +784,10 @@ with pan:
     if chart_params:
         if st.button("🔍 使用AI分析排盤結果", key="analyze_with_ai"):
             with st.spinner("AI正在分析奇門遁甲排盤結果..."):
-                cerebras_api_key = st.secrets.get("CEREBRAS_API_KEY", "") or os.getenv("CEREBRAS_API_KEY", "")
-                if not cerebras_api_key:
-                    st.error("CEREBRAS_API_KEY 未設置，請在 .streamlit/secrets.toml 或環境變量中設置。")
+                if not llm_api_key:
+                    st.error("請先在左側 AI 設置填入 API Key。")
                 else:
                     try:
-                        client = CerebrasClient(api_key=cerebras_api_key)
                         cp = chart_params
                         lunar_info = config.lunar_date_d(cp["y"], cp["m"], cp["d"]).get("農曆月", "")
                         paipan_info = cp["q"].get("排盤方式", "")
@@ -669,11 +803,13 @@ with pan:
                         api_params = {
                             "messages": messages,
                             "model": selected_model,
+                            "provider": llm_provider,
+                            "api_key": llm_api_key,
+                            "base_url": llm_server,
                             "max_tokens": st.session_state.get("qimen_max_tokens", 8192),
                             "temperature": st.session_state.get("qimen_temperature", 0.7),
                         }
-                        response = client.get_chat_completion(**api_params)
-                        raw_response = response.choices[0].message.content
+                        raw_response = request_ai_completion(**api_params)
                         with st.expander("🤖 AI分析結果", expanded=True):
                             st.markdown(raw_response)
                     except RateLimitError as e:
@@ -733,12 +869,10 @@ if user_input:
     # Auto-expand history when a message is sent
     st.session_state.chat_expanded = True
 
-    cerebras_api_key = st.secrets.get("CEREBRAS_API_KEY", "") or os.getenv("CEREBRAS_API_KEY", "")
-    if not cerebras_api_key:
-        st.error("CEREBRAS_API_KEY 未設置，請在 .streamlit/secrets.toml 或環境變量中設置。")
+    if not llm_api_key:
+        st.error("請先在左側 AI 設置填入 API Key。")
     else:
         try:
-            client = CerebrasClient(api_key=cerebras_api_key)
             system_prompt = _build_chat_system_prompt(chart_params or None)
 
             api_messages = [{"role": "system", "content": system_prompt}]
@@ -747,13 +881,15 @@ if user_input:
                 api_messages.append({"role": msg["role"], "content": msg["content"]})
 
             with st.spinner("AI 思考中..."):
-                response = client.get_chat_completion(
+                assistant_reply = request_ai_completion(
                     messages=api_messages,
                     model=selected_model,
+                    provider=llm_provider,
+                    api_key=llm_api_key,
+                    base_url=llm_server,
                     max_tokens=st.session_state.get("qimen_max_tokens", 8192),
                     temperature=st.session_state.get("qimen_temperature", 0.7),
                 )
-                assistant_reply = response.choices[0].message.content
 
             st.session_state.chat_messages.append({"role": "assistant", "content": assistant_reply})
             st.rerun()
