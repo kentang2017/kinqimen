@@ -35,6 +35,12 @@ CEREBRAS_MODEL_DESCRIPTIONS = {
     "llama3.1-8b": "Cerebras 免費模型：輕量低成本。",
 }
 DEFAULT_OPENAI_COMPATIBLE_SERVER = "https://api.openai.com/v1"
+PROVIDER_CEREBRAS = "Cerebras"
+PROVIDER_OPENAI_COMPATIBLE = "OpenAICompatible"
+PROVIDER_LABELS = {
+    PROVIDER_CEREBRAS: "Cerebras 免費模型",
+    PROVIDER_OPENAI_COMPATIBLE: "OpenAI 相容服務（自訂）",
+}
 
 SYSTEM_PROMPTS_FILE = "data/system_prompts.json"
 
@@ -70,6 +76,7 @@ def save_system_prompts(prompts_data):
         return False
 
 def _extract_message_text(content):
+    """Extract plain text from provider message content formats."""
     if isinstance(content, str):
         return content
     if isinstance(content, list):
@@ -83,6 +90,7 @@ def _extract_message_text(content):
     return str(content)
 
 def _normalize_base_url(base_url):
+    """Normalize API base URL and strip a trailing chat/completions suffix."""
     base = (base_url or "").strip().rstrip("/")
     if not base:
         raise ValueError("請輸入 Server URL。")
@@ -91,6 +99,7 @@ def _normalize_base_url(base_url):
     return base
 
 def call_openai_compatible_chat_completion(messages, model, api_key, base_url, **kwargs):
+    """Call an OpenAI-compatible Chat Completions endpoint and return response text."""
     if not api_key:
         raise ValueError("請輸入 API Key。")
     if not model:
@@ -108,7 +117,7 @@ def call_openai_compatible_chat_completion(messages, model, api_key, base_url, *
         data=json.dumps(payload).encode("utf-8"),
         headers={
             "Content-Type": "application/json",
-            "Authorization": f"******",
+            "Authorization": "Bearer " + api_key,
         },
         method="POST",
     )
@@ -133,17 +142,20 @@ def call_openai_compatible_chat_completion(messages, model, api_key, base_url, *
     return text
 
 def request_ai_completion(messages, model, provider, api_key, base_url=None, **kwargs):
-    if provider == "Cerebras":
+    """Route completion requests to the selected provider implementation."""
+    if provider == PROVIDER_CEREBRAS:
         client = CerebrasClient(api_key=api_key)
         response = client.get_chat_completion(messages=messages, model=model, **kwargs)
         return response.choices[0].message.content
-    return call_openai_compatible_chat_completion(
-        messages=messages,
-        model=model,
-        api_key=api_key,
-        base_url=base_url,
-        **kwargs,
-    )
+    if provider == PROVIDER_OPENAI_COMPATIBLE:
+        return call_openai_compatible_chat_completion(
+            messages=messages,
+            model=model,
+            api_key=api_key,
+            base_url=base_url,
+            **kwargs,
+        )
+    raise ValueError(f"不支援的 LLM 服務類型：{provider}")
 
 def format_qimen_results_for_prompt(q, gz_str, jq_str, lunar_info, paipan_info, is_shijia, y, m, d, h, minute):
     """Format Qi Men Dun Jia chart data into a text prompt for AI analysis."""
@@ -241,12 +253,13 @@ with st.sidebar:
 
     llm_provider = st.selectbox(
         "LLM 服務",
-        options=["Cerebras", "OpenAI 相容服務（自訂）"],
+        options=[PROVIDER_CEREBRAS, PROVIDER_OPENAI_COMPATIBLE],
+        format_func=lambda p: PROVIDER_LABELS.get(p, p),
         index=0,
         key="llm_provider_selector",
     )
 
-    if llm_provider == "Cerebras":
+    if llm_provider == PROVIDER_CEREBRAS:
         cerebras_default_key = st.secrets.get("CEREBRAS_API_KEY", "") or os.getenv("CEREBRAS_API_KEY", "")
         llm_api_key = st.text_input(
             "Cerebras API Key",
@@ -266,7 +279,7 @@ with st.sidebar:
             "自訂 Cerebras 模型（可選）",
             value="",
             key="custom_cerebras_model_input",
-            placeholder="例如：qwen-3-235b-a22b-thinking-2507",
+            placeholder="例如：qwen-3-235b-a22b-instruct-2507",
         )
         selected_model = custom_cerebras_model.strip() or selected_model
         llm_server = None
@@ -790,7 +803,7 @@ with pan:
                         api_params = {
                             "messages": messages,
                             "model": selected_model,
-                            "provider": llm_provider if llm_provider == "Cerebras" else "OpenAICompatible",
+                            "provider": llm_provider,
                             "api_key": llm_api_key,
                             "base_url": llm_server,
                             "max_tokens": st.session_state.get("qimen_max_tokens", 8192),
@@ -871,7 +884,7 @@ if user_input:
                 assistant_reply = request_ai_completion(
                     messages=api_messages,
                     model=selected_model,
-                    provider=llm_provider if llm_provider == "Cerebras" else "OpenAICompatible",
+                    provider=llm_provider,
                     api_key=llm_api_key,
                     base_url=llm_server,
                     max_tokens=st.session_state.get("qimen_max_tokens", 8192),
