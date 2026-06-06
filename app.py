@@ -21,18 +21,14 @@ def load_local_md(filepath):
 
 # ------------------- AI 相關常數與函數 -------------------
 CEREBRAS_FREE_MODEL_OPTIONS = [
-    "qwen-3-235b-a22b-instruct-2507",
-    "llama-4-scout-17b-16e-instruct",
-    "llama-3.3-70b",
-    "deepseek-r1-distill-llama-70b",
-    "llama3.1-8b",
+    "gpt-oss-120b",
+    "zai-glm-4.7",
+
 ]
 CEREBRAS_MODEL_DESCRIPTIONS = {
-    "qwen-3-235b-a22b-instruct-2507": "Cerebras 免費模型：推理速度快，適合日常分析。",
-    "llama-4-scout-17b-16e-instruct": "Cerebras 免費模型：指令遵循穩定，整體均衡。",
-    "llama-3.3-70b": "Cerebras 免費模型：能力較強，適合複雜問題。",
-    "deepseek-r1-distill-llama-70b": "Cerebras 免費模型：推理風格偏強。",
-    "llama3.1-8b": "Cerebras 免費模型：輕量低成本。",
+    "gpt-oss-120b": "gpt-oss-120b",
+    "zai-glm-4.7": "zai-glm-4.7",
+
 }
 DEFAULT_OPENAI_COMPATIBLE_SERVER = "https://api.openai.com/v1"
 PROVIDER_CEREBRAS = "Cerebras"
