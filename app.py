@@ -1,9 +1,13 @@
 import math
 import os
 import json
+import hashlib
+import base64
 from urllib import error as urllib_error
 from urllib import request as urllib_request
 import streamlit as st
+import streamlit.components.v1 as components
+from streamlit.errors import StreamlitSecretNotFoundError
 import pendulum as pdlm
 import datetime, pytz
 
@@ -39,6 +43,7 @@ PROVIDER_LABELS = {
 }
 
 SYSTEM_PROMPTS_FILE = "data/system_prompts.json"
+QIMEN_EXPORT_QRCODE_URL = "https://raw.githubusercontent.com/kentang2017/kintaiyi/refs/heads/master/pic/qrcode_for_gh_561840f80b67_258.jpg"
 
 def load_system_prompts():
     DEFAULT_SYSTEM_PROMPT = (
@@ -70,6 +75,24 @@ def save_system_prompts(prompts_data):
     except Exception as e:
         st.error(f"儲存系統提示時發生錯誤：{e}")
         return False
+
+def get_streamlit_secret(key, default=""):
+    """Read a Streamlit secret safely when secrets.toml may be absent."""
+    try:
+        return st.secrets[key]
+    except (StreamlitSecretNotFoundError, KeyError):
+        return default
+
+
+@st.cache_data(show_spinner=False)
+def load_export_qrcode_data_uri() -> str:
+    """Load the export QR code as a data URI for reliable browser-side PNG export."""
+    try:
+        with urllib_request.urlopen(QIMEN_EXPORT_QRCODE_URL, timeout=30) as response:
+            encoded = base64.b64encode(response.read()).decode("ascii")
+        return f"data:image/jpeg;base64,{encoded}"
+    except Exception:
+        return ""
 
 def _extract_message_text(content):
     """Extract plain text from provider message content formats."""
@@ -256,7 +279,7 @@ with st.sidebar:
     )
 
     if llm_provider == PROVIDER_CEREBRAS:
-        cerebras_default_key = st.secrets.get("CEREBRAS_API_KEY", "") or os.getenv("CEREBRAS_API_KEY", "")
+        cerebras_default_key = get_streamlit_secret("CEREBRAS_API_KEY", "") or os.getenv("CEREBRAS_API_KEY", "")
         llm_api_key = st.text_input(
             "Cerebras API Key",
             value=cerebras_default_key,
@@ -282,19 +305,19 @@ with st.sidebar:
     else:
         llm_api_key = st.text_input(
             "API Key",
-            value=st.secrets.get("OPENAI_API_KEY", "") or os.getenv("OPENAI_API_KEY", ""),
+            value=get_streamlit_secret("OPENAI_API_KEY", "") or os.getenv("OPENAI_API_KEY", ""),
             type="password",
             key="custom_llm_api_key_input",
         )
         selected_model = st.text_input(
             "模型名稱",
-            value=st.secrets.get("OPENAI_MODEL", "") or os.getenv("OPENAI_MODEL", "gpt-4.1-mini"),
+            value=get_streamlit_secret("OPENAI_MODEL", "") or os.getenv("OPENAI_MODEL", "gpt-4.1-mini"),
             key="custom_llm_model_input",
             placeholder="例如：gpt-4.1-mini / qwen-plus / deepseek-chat",
         )
         llm_server = st.text_input(
             "Server URL",
-            value=st.secrets.get("OPENAI_BASE_URL", "") or os.getenv("OPENAI_BASE_URL", DEFAULT_OPENAI_COMPATIBLE_SERVER),
+            value=get_streamlit_secret("OPENAI_BASE_URL", "") or os.getenv("OPENAI_BASE_URL", DEFAULT_OPENAI_COMPATIBLE_SERVER),
             key="custom_llm_server_input",
             placeholder="例如：https://api.openai.com/v1",
             help="需為 OpenAI Chat Completions 相容 API。",
@@ -601,17 +624,18 @@ def generate_qimen_pan_svg(q: dict, sixwu_gong: str = "") -> str:
 
             if gong == "中":
                 di_zhong = q.get('地盤', {}).get('中', '')
-                title_svg = (
-                    f'<tspan fill="{default_text_color}">中宮 | 地盤 </tspan>'
-                    f'{_element_colored_tspan(di_zhong, default_text_color)}'
-                )
                 cells.append(
                     f'<rect x="{x}" y="{y}" width="{cell}" height="{cell}" rx="12" '
                     f'fill="{fill}" stroke="{stroke}" stroke-width="3"/>'
                 )
                 cells.append(
-                    f'<text x="{x + 16}" y="{y + 34}" font-size="24" '
-                    f'font-weight="bold" font-family="sans-serif">{title_svg}</text>'
+                    f'<text x="{x + 16}" y="{y + 34}" fill="{default_text_color}" font-size="24" '
+                    f'font-weight="bold" font-family="sans-serif">中</text>'
+                )
+                cells.append(
+                    f'<text x="{x + cell / 2}" y="{y + 120}" text-anchor="middle" '
+                    f'font-size="52" font-family="sans-serif">'
+                    f'{_element_colored_tspan(di_zhong, default_text_color)}</text>'
                 )
             else:
                 shen_v = q.get('神', {}).get(gong, '')
@@ -620,31 +644,42 @@ def generate_qimen_pan_svg(q: dict, sixwu_gong: str = "") -> str:
                 xing_v = q.get('星', {}).get(gong, '')
                 di_v   = q.get('地盤', {}).get(gong, '')
 
-                line_svgs = [
-                    (f'<tspan fill="{default_text_color}">神：</tspan>'
-                     f'{_element_colored_tspan(shen_v, default_text_color)}'),
-                    (f'<tspan fill="{default_text_color}">門/天：</tspan>'
-                     f'{_element_colored_tspan(men_v, default_text_color)}'
-                     f'<tspan fill="{default_text_color}"> / </tspan>'
-                     f'{_element_colored_tspan(tian_v, default_text_color)}'),
-                    (f'<tspan fill="{default_text_color}">星/地：</tspan>'
-                     f'{_element_colored_tspan(xing_v, default_text_color)}'
-                     f'<tspan fill="{default_text_color}"> / </tspan>'
-                     f'{_element_colored_tspan(di_v, default_text_color)}'),
-                ]
-
                 cells.append(
                     f'<rect x="{x}" y="{y}" width="{cell}" height="{cell}" rx="12" '
                     f'fill="{fill}" stroke="{stroke}" stroke-width="3"/>'
                 )
                 cells.append(
                     f'<text x="{x + 16}" y="{y + 34}" fill="{default_text_color}" font-size="24" '
-                    f'font-weight="bold" font-family="sans-serif">{gong}宮</text>'
+                    f'font-weight="bold" font-family="sans-serif">{gong}</text>'
                 )
-                for i, line_svg in enumerate(line_svgs):
+                cells.append(
+                    f'<text x="{x + 62}" y="{y + 88}" text-anchor="middle" '
+                    f'font-size="30" font-family="sans-serif">'
+                    f'{_element_colored_tspan(xing_v, default_text_color)}</text>'
+                )
+                cells.append(
+                    f'<text x="{x + 138}" y="{y + 88}" text-anchor="middle" '
+                    f'font-size="30" font-family="sans-serif">'
+                    f'{_element_colored_tspan(tian_v, default_text_color)}</text>'
+                )
+                cells.append(
+                    f'<text x="{x + 62}" y="{y + 132}" text-anchor="middle" '
+                    f'font-size="30" font-family="sans-serif">'
+                    f'{_element_colored_tspan(shen_v, default_text_color)}</text>'
+                )
+                pair_rows = [
+                    (men_v, di_v, y + 174),
+                ]
+                for left_v, right_v, line_y in pair_rows:
                     cells.append(
-                        f'<text x="{x + 16}" y="{y + 82 + i * 42}" '
-                        f'font-size="28" font-family="sans-serif">{line_svg}</text>'
+                        f'<text x="{x + 62}" y="{line_y}" text-anchor="middle" '
+                        f'font-size="30" font-family="sans-serif">'
+                        f'{_element_colored_tspan(left_v, default_text_color)}</text>'
+                    )
+                    cells.append(
+                        f'<text x="{x + 138}" y="{line_y}" text-anchor="middle" '
+                        f'font-size="30" font-family="sans-serif">'
+                        f'{_element_colored_tspan(right_v, default_text_color)}</text>'
                     )
 
     title_svg = ""
@@ -658,6 +693,345 @@ def generate_qimen_pan_svg(q: dict, sixwu_gong: str = "") -> str:
         f'</svg>'
     )
 
+
+def _prepare_qimen_svg_markup(svg: str, svg_id: str) -> str:
+    """Attach a stable id/class to the chart SVG so it can be exported in-browser."""
+    stripped = svg.lstrip()
+    if not stripped.startswith("<svg"):
+        raise ValueError("Invalid SVG content provided")
+    return svg.replace(
+        "<svg ",
+        f'<svg id="{svg_id}" class="qimen-svg-root" aria-label="奇門排盤" ',
+        1,
+    )
+
+
+def render_qimen_export_card(svg: str, export_meta: dict) -> None:
+    """Render the chart with a themed toolbar that can annotate and export PNG."""
+    svg_id = "qimen-svg-" + hashlib.md5(svg.encode("utf-8")).hexdigest()[:10]
+    container_id = "qimen-export-" + hashlib.md5(
+        json.dumps(export_meta, ensure_ascii=False, sort_keys=True).encode("utf-8")
+    ).hexdigest()[:10]
+    svg_markup = _prepare_qimen_svg_markup(svg, svg_id)
+    html_content = f"""
+    <div id="{container_id}" class="qimen-shell">
+        <div class="qimen-card">
+            <div class="qimen-stage">{svg_markup}</div>
+            <div class="qimen-toolbar">
+                <button type="button" data-action="add-note">加入文字</button>
+                <button type="button" data-action="download-png">下載盤式</button>
+            </div>
+            <div class="qimen-note" data-role="note" hidden></div>
+        </div>
+    </div>
+    <style>
+    #{container_id} {{
+        --bg-deep: #0d1b2a;
+        --bg-panel: rgba(10, 22, 40, 0.96);
+        --gold: #d4af37;
+        --gold-soft: rgba(212, 175, 55, 0.32);
+        --ivory: #f5f0e1;
+        --line: rgba(212, 175, 55, 0.18);
+        font-family: "Noto Serif TC", "Microsoft JhengHei", "PingFang TC", serif;
+        color: var(--ivory);
+    }}
+    #{container_id} * {{
+        box-sizing: border-box;
+    }}
+    #{container_id} .qimen-card {{
+        max-width: 820px;
+        margin: 0 auto;
+        padding: 14px;
+        border-radius: 24px;
+        border: 1px solid rgba(212, 175, 55, 0.52);
+        background:
+            radial-gradient(circle at 14% 12%, rgba(212, 175, 55, 0.14), transparent 26%),
+            radial-gradient(circle at 88% 10%, rgba(196, 30, 58, 0.12), transparent 22%),
+            linear-gradient(180deg, rgba(18, 33, 52, 0.98), rgba(10, 22, 40, 0.98));
+        box-shadow: 0 18px 48px rgba(0, 0, 0, 0.35);
+    }}
+    #{container_id} .qimen-stage {{
+        position: relative;
+        overflow: hidden;
+        border-radius: 18px;
+        border: 1px solid var(--line);
+        padding: 14px;
+        background:
+            radial-gradient(circle at 12% 18%, rgba(245, 240, 225, 0.05), transparent 28%),
+            linear-gradient(180deg, rgba(8, 22, 40, 0.95), rgba(14, 26, 44, 0.98));
+    }}
+    #{container_id} .qimen-svg-root {{
+        width: 100%;
+        height: auto;
+        display: block;
+        margin: 0 auto;
+    }}
+    #{container_id} .qimen-toolbar {{
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: center;
+        margin-top: 14px;
+    }}
+    #{container_id} .qimen-toolbar button {{
+        appearance: none;
+        border: 1px solid rgba(212, 175, 55, 0.44);
+        background: rgba(12, 26, 45, 0.92);
+        color: var(--ivory);
+        border-radius: 999px;
+        padding: 10px 18px;
+        font-size: 15px;
+        cursor: pointer;
+        transition: transform 0.14s ease, border-color 0.14s ease, background 0.14s ease;
+    }}
+    #{container_id} .qimen-toolbar button:hover {{
+        transform: translateY(-1px);
+        border-color: rgba(212, 175, 55, 0.74);
+        background: rgba(18, 36, 60, 0.98);
+    }}
+    #{container_id} .qimen-note {{
+        margin-top: 12px;
+        padding: 10px 14px;
+        border-radius: 14px;
+        border: 1px solid rgba(212, 175, 55, 0.16);
+        background: rgba(245, 240, 225, 0.06);
+        color: #f7edd1;
+        font-size: 14px;
+        line-height: 1.6;
+        white-space: pre-wrap;
+        word-break: break-word;
+    }}
+    </style>
+    <script>
+    (() => {{
+        const root = document.getElementById({json.dumps(container_id)});
+        if (!root) return;
+        const svg = root.querySelector("svg");
+        const noteBox = root.querySelector('[data-role="note"]');
+        if (!svg || !noteBox) return;
+
+        const exportMeta = {json.dumps(export_meta, ensure_ascii=False)};
+        const storageKey = exportMeta.storageKey || "";
+        const state = {{
+            noteText: storageKey ? (window.localStorage.getItem(storageKey) || "") : ""
+        }};
+
+        const drawRoundedRect = (ctx, x, y, width, height, radius) => {{
+            const r = Math.min(radius, width / 2, height / 2);
+            ctx.beginPath();
+            ctx.moveTo(x + r, y);
+            ctx.arcTo(x + width, y, x + width, y + height, r);
+            ctx.arcTo(x + width, y + height, x, y + height, r);
+            ctx.arcTo(x, y + height, x, y, r);
+            ctx.arcTo(x, y, x + width, y, r);
+            ctx.closePath();
+        }};
+
+        const wrapText = (ctx, text, maxWidth) => {{
+            const chars = Array.from(String(text || ""));
+            const lines = [];
+            let current = "";
+            chars.forEach((char) => {{
+                const probe = current + char;
+                if (ctx.measureText(probe).width > maxWidth && current) {{
+                    lines.push(current);
+                    current = char;
+                }} else {{
+                    current = probe;
+                }}
+            }});
+            if (current) lines.push(current);
+            return lines;
+        }};
+
+        const renderNote = () => {{
+            if (state.noteText) {{
+                noteBox.hidden = false;
+                noteBox.textContent = "附註：" + state.noteText;
+            }} else {{
+                noteBox.hidden = true;
+                noteBox.textContent = "";
+            }}
+        }};
+
+        const saveNote = (nextValue) => {{
+            state.noteText = String(nextValue || "").trim();
+            if (storageKey) {{
+                if (state.noteText) {{
+                    window.localStorage.setItem(storageKey, state.noteText);
+                }} else {{
+                    window.localStorage.removeItem(storageKey);
+                }}
+            }}
+            renderNote();
+        }};
+
+        const addNote = () => {{
+            const nextValue = window.prompt("請輸入要加入到盤式圖片的文字：", state.noteText || "");
+            if (nextValue === null) return;
+            saveNote(nextValue);
+        }};
+
+        const downloadPng = () => {{
+            const viewBox = (svg.getAttribute("viewBox") || "0 0 720 720").split(/[ ,]+/);
+            const svgWidth = parseFloat(viewBox[2]) || 720;
+            const svgHeight = parseFloat(viewBox[3]) || 720;
+            const clone = svg.cloneNode(true);
+            clone.removeAttribute("style");
+            clone.setAttribute("width", String(svgWidth));
+            clone.setAttribute("height", String(svgHeight));
+
+            const serialized = new XMLSerializer().serializeToString(clone);
+            const blob = new Blob([serialized], {{ type: "image/svg+xml;charset=utf-8" }});
+            const url = URL.createObjectURL(blob);
+            const image = new Image();
+            const loadOptionalImage = (src) => new Promise((resolve) => {{
+                if (!src) {{
+                    resolve(null);
+                    return;
+                }}
+                const optionalImage = new Image();
+                optionalImage.onload = () => resolve(optionalImage);
+                optionalImage.onerror = () => resolve(null);
+                optionalImage.src = src;
+            }});
+
+            image.onload = async () => {{
+                const scale = 2;
+                const canvasWidth = 1080 * scale;
+                const canvasHeight = canvasWidth;
+                const sidePadding = 76 * scale;
+                const innerWidth = canvasWidth - sidePadding * 2;
+                const titleSize = 40 * scale;
+                const lineSize = 23 * scale;
+                const noteSize = 24 * scale;
+                const footerSize = 22 * scale;
+                const qrImage = await loadOptionalImage(exportMeta.qrcode || "");
+
+                const probeCanvas = document.createElement("canvas");
+                const probeCtx = probeCanvas.getContext("2d");
+                probeCtx.font = `${{lineSize}}px serif`;
+                const summaryLines = [];
+                (exportMeta.lines || []).forEach((line) => {{
+                    wrapText(probeCtx, line, innerWidth).forEach((wrapped) => summaryLines.push(wrapped));
+                }});
+                probeCtx.font = `${{noteSize}}px serif`;
+                const noteLines = state.noteText
+                    ? wrapText(probeCtx, "附註：" + state.noteText, innerWidth)
+                    : [];
+                probeCtx.font = `${{footerSize}}px serif`;
+                const footerLines = [];
+                (exportMeta.footerLines || []).forEach((line) => {{
+                    wrapText(probeCtx, line, innerWidth - 220 * scale).forEach((wrapped) => footerLines.push(wrapped));
+                }});
+
+                const canvas = document.createElement("canvas");
+                canvas.width = canvasWidth;
+                canvas.height = canvasHeight;
+                const ctx = canvas.getContext("2d");
+
+                ctx.fillStyle = "#0d1b2a";
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+                gradient.addColorStop(0, "rgba(212, 175, 55, 0.18)");
+                gradient.addColorStop(0.36, "rgba(13, 27, 42, 0.02)");
+                gradient.addColorStop(1, "rgba(196, 30, 58, 0.14)");
+                ctx.fillStyle = gradient;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                ctx.strokeStyle = "rgba(212, 175, 55, 0.52)";
+                ctx.lineWidth = 3 * scale;
+                drawRoundedRect(ctx, 24 * scale, 24 * scale, canvas.width - 48 * scale, canvas.height - 48 * scale, 28 * scale);
+                ctx.stroke();
+
+                ctx.textAlign = "center";
+                ctx.fillStyle = "#f5f0e1";
+                ctx.font = `bold ${{titleSize}}px serif`;
+                ctx.fillText(exportMeta.title || "奇門遁甲盤式", canvas.width / 2, 90 * scale);
+
+                let currentY = 146 * scale;
+                ctx.textAlign = "left";
+                ctx.fillStyle = "#f5f0e1";
+                ctx.font = `${{lineSize}}px serif`;
+                summaryLines.forEach((line) => {{
+                    ctx.fillText(line, sidePadding, currentY);
+                    currentY += 32 * scale;
+                }});
+
+                const footerReserve = 170 * scale;
+                const noteReserve = noteLines.length ? (noteLines.length * 34 * scale + 48 * scale) : 0;
+                const chartTop = currentY + 24 * scale;
+                const chartBottomLimit = canvasHeight - footerReserve - noteReserve;
+                const chartMaxWidth = innerWidth;
+                const chartMaxHeight = chartBottomLimit - chartTop;
+                const chartScale = Math.min(chartMaxWidth / svgWidth, chartMaxHeight / svgHeight);
+                const chartWidth = svgWidth * chartScale;
+                const chartHeight = svgHeight * chartScale;
+                const chartX = (canvasWidth - chartWidth) / 2;
+                const chartY = chartTop + Math.max((chartMaxHeight - chartHeight) / 2, 0);
+
+                drawRoundedRect(ctx, chartX - 18 * scale, chartY - 18 * scale, chartWidth + 36 * scale, chartHeight + 36 * scale, 26 * scale);
+                ctx.fillStyle = "rgba(7, 18, 33, 0.82)";
+                ctx.fill();
+                ctx.strokeStyle = "rgba(212, 175, 55, 0.26)";
+                ctx.lineWidth = 2 * scale;
+                ctx.stroke();
+                ctx.drawImage(image, chartX, chartY, chartWidth, chartHeight);
+
+                if (noteLines.length) {{
+                    currentY = chartY + chartHeight + 56 * scale;
+                    ctx.fillStyle = "#d7bd6f";
+                    ctx.font = `${{noteSize}}px serif`;
+                    noteLines.forEach((line) => {{
+                        ctx.fillText(line, sidePadding, currentY);
+                        currentY += 34 * scale;
+                    }});
+                }}
+
+                const footerBaseY = canvasHeight - 92 * scale;
+                ctx.fillStyle = "#f5f0e1";
+                ctx.font = `${{footerSize}}px serif`;
+                ctx.textAlign = "left";
+                footerLines.forEach((line, index) => {{
+                    ctx.fillText(line, sidePadding, footerBaseY + index * 30 * scale);
+                }});
+
+                if (qrImage) {{
+                    const qrSize = 132 * scale;
+                    const qrX = canvasWidth - sidePadding - qrSize;
+                    const qrY = canvasHeight - 150 * scale;
+                    ctx.fillStyle = "#ffffff";
+                    drawRoundedRect(ctx, qrX - 10 * scale, qrY - 10 * scale, qrSize + 20 * scale, qrSize + 20 * scale, 16 * scale);
+                    ctx.fill();
+                    ctx.drawImage(qrImage, qrX, qrY, qrSize, qrSize);
+                }}
+
+                canvas.toBlob((pngBlob) => {{
+                    if (!pngBlob) return;
+                    const link = document.createElement("a");
+                    link.href = URL.createObjectURL(pngBlob);
+                    link.download = exportMeta.filename || "qimen-chart.png";
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    URL.revokeObjectURL(link.href);
+                }}, "image/png");
+
+                URL.revokeObjectURL(url);
+            }};
+
+            image.onerror = () => URL.revokeObjectURL(url);
+            image.src = url;
+        }};
+
+        root.querySelector('[data-action="add-note"]').addEventListener("click", addNote);
+        root.querySelector('[data-action="download-png"]').addEventListener("click", downloadPng);
+        renderNote();
+    }})();
+    </script>
+    """
+    components.html(html_content, height=900, scrolling=False)
+
 def render_pan(y, m, d, h, minute, is_shijia=True):
     jq = config.jq(y, m, d, h,minute)
 
@@ -667,9 +1041,11 @@ def render_pan(y, m, d, h, minute, is_shijia=True):
         q = kinqimen.Qimen(y, m, d, h, minute).pan_minute(pai)
 
     # 提取資料
+    method_label = "時家" if is_shijia else "刻家"
     zf_xing = q["值符值使"]["值符星宮"][1]
     zm_men  = q["值符值使"]["值使門宮"][0]
     zm_gong = q["值符值使"]["值使門宮"][1]
+    lunar_info = config.lunar_date_d(y, m, d).get("農曆月", "")
     xun_head_jiazi = _LIUYI_TO_XUN.get(q.get("旬首", ""), "甲子")
     wu_branch = _SIXWU_POS.get(xun_head_jiazi, "子")
     di_pan = q.get("地盤", {})
@@ -681,9 +1057,25 @@ def render_pan(y, m, d, h, minute, is_shijia=True):
         f"{q['干支']}｜{q['排局']}｜節氣：{jq}  \n"
         f"值符星宮：天{zf_xing}宮｜值使門宮：{zm_men}門{zm_gong}宮"
     )
-    st.markdown(
-        f'<div style="max-width:760px;width:100%;margin:0 auto;padding:8px 0 12px">{pan_svg}</div>',
-        unsafe_allow_html=True,
+    render_qimen_export_card(
+        pan_svg,
+        {
+            "title": f"堅奇門{method_label}計排盤",
+            "lines": [
+                f"{'時家奇門' if is_shijia else '刻家奇門'}｜{q['排盤方式']}",
+                f"{y}年{m}月{d}日 {h:02d}:{minute:02d}",
+                f"{q['干支']}｜{q['排局']}",
+                f"節氣：{jq}" + (f"｜{lunar_info}" if lunar_info else ""),
+                f"值符星宮：天{zf_xing}宮｜值使門宮：{zm_men}門{zm_gong}宮",
+            ],
+            "footerLines": [
+                '關注"探究三式"微信公眾號',
+                "加本人微信帳號 gnatnek",
+            ],
+            "filename": f"kinqimen-{y:04d}{m:02d}{d:02d}-{h:02d}{minute:02d}.png",
+            "storageKey": f"kinqimen-note-{y:04d}{m:02d}{d:02d}-{h:02d}{minute:02d}-{q['排局']}",
+            "qrcode": load_export_qrcode_data_uri(),
+        },
     )
 
     st.expander("原始資料").write(q)
