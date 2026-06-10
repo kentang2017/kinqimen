@@ -250,41 +250,19 @@ def qimen_ju_name_zhirun(year, month, day, hour, minute):
     solar_month = lunar_data.get("月")
     lunar_day = lunar_data.get("日")
     is_wuji = tgft in ["戊", "己", "庚", "辛", "壬", "癸"]
-
-    # ========== d == 0：節氣當日（最關鍵邊界） ==========
+    # d == 0 
     if d == 0:
         if lunar_month in ["腊月", "冬月"]:
-            return "{}{}".format(
-                qdict.get("其他排局1" if lunar_month == "腊月" else "當前排局"),
-                qdict.get("三元")
-            )
-        # 節氣當日：多用「超神接氣正授」或當前（視月份）
-        return "{}{}".format(
-            qdict.get("超神接氣正授排局" if solar_month > 9 else "當前排局"),
-            qdict.get("三元")
-        )
-
-    # ========== d == 1：剛過節氣第一天 ==========
-    if d == 1:
+            return "{}{}".format(qdict.get("其他排局1" if lunar_month == "腊月" else "當前排局"), qdict.get("三元"))
+        return "{}{}".format(qdict.get("超神接氣正授排局" if solar_month > 9 else "當前排局"), qdict.get("三元"))
+    # d <= 6 and d != 0 
+    if d <= 6 and d>1:
         if lunar_month in ["腊月", "冬月"]:
-            return "{}{}".format(qdict.get("當前排局"), qdict.get("三元"))
-        return "{}{}".format(qdict.get("當前排局"), qdict.get("三元"))
-
-    # ========== 2 <= d <= 6：接氣/超神過渡期 ==========
-    if 2 <= d <= 6:
-        if lunar_month in ["腊月", "冬月"]:
-            return "{}{}".format(
-                qdict.get("其他排局1" if lunar_month == "腊月" else 
-                          ("其他排局" if jQ == "冬至" else "當前排局")),
-                qdict.get("三元")
-            )
+            return "{}{}".format(qdict.get("其他排局1" if lunar_month == "腊月" else ("其他排局" if jQ == "冬至" else "當前排局")), qdict.get("三元"))
         if solar_month >= 9:
             if lunar_day < 15:
                 return "{}{}".format(qdict.get("其他排局1"), qdict.get("三元"))
-            return "{}{}".format(
-                qdict.get("當前排局" if is_wuji else "其他排局"),
-                qdict.get("三元")
-            )
+            return "{}{}".format(qdict.get("當前排局" if is_wuji else "其他排局"), qdict.get("三元"))
         if lunar_month == "正月":
             if lunar_day < 10 and not is_wuji:
                 return "{}{}".format(qdict.get("其他排局"), qdict.get("三元"))
@@ -294,67 +272,43 @@ def qimen_ju_name_zhirun(year, month, day, hour, minute):
                 if 20 < lunar_day <= 26:
                     return "{}{}".format(qdict.get("其他排局"), qdict.get("三元"))
                 return "{}{}".format(qdict.get("其他排局1"), qdict.get("三元"))
-            # 正月、非 wuji、10-14 天：接氣用超神
-            return "{}{}".format(qdict.get("超神接氣正授排局"), qdict.get("三元"))
-        # 其他月份
-        if lunar_day < 15:
-            return "{}{}".format(qdict.get("當前排局"), qdict.get("三元"))
-        return "{}{}".format(qdict.get("其他排局1"), qdict.get("三元"))
-
-    # ========== 7 <= d <= 9：中元過渡 ==========
-    if 7 <= d <= 9:
+        if lunar_month not in  ["腊月", "冬月", "正月"]:
+            if lunar_day < 15:
+                return "{}{}".format(qdict.get("當前排局"), qdict.get("三元"))
+        if lunar_day >= 15:
+            return "{}{}".format(qdict.get("其他排局1"), qdict.get("三元"))
+        return "{}{}".format(qdict.get("超神接氣正授排局"), qdict.get("三元"))
+    # d > 6 and d <= 9 
+    if d <= 9 and d > 1:
         if lunar_month in ["腊月", "冬月"]:
-            return "{}{}".format(
-                qdict.get("當前排局" if lunar_month == "腊月" else "其他排局1"),
-                qdict.get("三元")
-            )
+            return "{}{}".format(qdict.get("當前排局" if lunar_month == "腊月" else "其他排局1"), qdict.get("三元"))
         if lunar_month == "正月":
-            return "{}{}".format(
-                qdict.get("其他排局1" if (solar_month <= 9 and lunar_day >= 15) or is_wuji 
-                          else "超神接氣正授排局"),
-                qdict.get("三元")
-            )
+            return "{}{}".format(qdict.get("其他排局1" if solar_month <= 9 and lunar_day >= 15 else "其他排局1" if is_wuji else "超神接氣正授排局" ), qdict.get("三元"))
         if solar_month <= 6:
             if lunar_day <= 10:
                 return "{}{}".format(qdict.get("其他排局1"), qdict.get("三元"))
             if is_wuji:
-                return "{}{}".format(
-                    qdict.get("超神接氣正授排局" if lunar_day < 20 else "其他排局1"),
-                    qdict.get("三元")
-                )
+                return "{}{}".format(qdict.get("超神接氣正授排局" if lunar_day < 20 else "其他排局1"), qdict.get("三元"))
             return "{}{}".format(qdict.get("當前排局"), qdict.get("三元"))
         if solar_month <= 9:
             if lunar_day < 15:
                 return "{}{}".format(qdict.get("超神接氣正授排局"), qdict.get("三元"))
-            return "{}{}".format(
-                qdict.get("其他排局1" if is_wuji or lunar_day >= 20 else "當前排局"),
-                qdict.get("三元")
-            )
+            return "{}{}".format(qdict.get("其他排局1" if is_wuji or lunar_day >= 20 else "當前排局"), qdict.get("三元"))
         return "{}{}".format(qdict.get("超神接氣正授排局"), qdict.get("三元"))
-
-    # ========== 10 <= d <= 15：下元 / 置閏準備 ==========
-    if 10 <= d <= 15:
+    # d >= 10 and d <= 15 
+    if d <= 15 and d > 1:
         if lunar_month in ["腊月", "冬月"]:
-            return "{}{}".format(
-                qdict.get("其他排局1" if lunar_month == "腊月" or jQ != "冬至" 
-                          else ("其他排局1" if d <= 12 else "當前排局")),
-                qdict.get("三元")
-            )
+            return "{}{}".format(qdict.get("其他排局1" if lunar_month == "腊月" or jQ != "冬至" else ("其他排局1" if d <= 12 else "當前排局")), qdict.get("三元"))
         if solar_month > 9:
             return "{}{}".format(qdict.get("其他排局1"), qdict.get("三元"))
         if lunar_month == "正月":
-            return "{}{}".format(
-                qdict.get("當前排局" if lunar_day >= 15 else "當前排局"),
-                qdict.get("三元")
-            )
-        if lunar_month not in ["正月", "腊月", "冬月"]:
-            return "{}{}".format(
-                qdict.get("當前排局" if lunar_day < 15 else "當前排局"),
-                qdict.get("三元")
-            )
+            return "{}{}".format(qdict.get("當前排局" if lunar_day >= 15 else "當前排局"), qdict.get("三元"))
+        if lunar_month not in ["正月","腊月", "冬月"]:
+            return "{}{}".format(qdict.get("當前排局" if lunar_day < 15 else "當前排局"), qdict.get("三元"))
+        if lunar_day < 15:
+            return "{}{}".format(qdict.get("超神接氣正授排局"), qdict.get("三元"))
         return "{}{}".format(qdict.get("超神接氣正授排局"), qdict.get("三元"))
-
-    # ========== 其他（d < 0 或 d > 15）：超神或當前 ==========
+    # Default case
     if d < 0:
         return "{}{}".format(qdict.get("超神接氣正授排局"), qdict.get("三元"))
     else:
@@ -882,6 +836,5 @@ if __name__ == '__main__':
     #print(zhifu_n_zhishi(year, month, day, hour, minute, 2))
     #print(zhifu_pai(year, month, day, hour, minute, 1))
     #print(zhifu_pai(year, month, day, hour, minute, 2))
-
 
 
