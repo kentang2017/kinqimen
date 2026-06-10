@@ -598,7 +598,7 @@ def _element_colored_tspan(char: str, default_color: str) -> str:
 
 
 def generate_qimen_pan_svg(q: dict, sixwu_gong: str = "") -> str:
-    """回傳九宮奇門排盤 SVG，並把閉六戊對應宮位著色。"""
+    """回傳九宮奇門排盤 SVG，並把閉六戊對應宮位著色。同時標註馬星(黃馬)與空亡(黃空)。"""
     # Standard Qimen nine-palace layout: South at top (離9), North at bottom (坎1)
     palace_grid = [
         ["巽", "離", "坤"],
@@ -606,6 +606,23 @@ def generate_qimen_pan_svg(q: dict, sixwu_gong: str = "") -> str:
         ["艮", "坎", "乾"],
     ]
     highlighted_gong = sixwu_gong
+
+    # 計算馬星與空亡對應的宮位（使用既有地支→宮位對照）
+    # 為符合「馬星只有一個」的傳統標註，只使用「驛馬」作為宮內「馬」標註
+    # 空亡只使用「日空」
+    ma_gongs = set()
+    horse = q.get("馬星", {}) or {}
+    br = horse.get("驛馬", "") or ""
+    if br and br in _BRANCH_TO_GONG:
+        ma_gongs.add(_BRANCH_TO_GONG[br])
+
+    kong_gongs = set()
+    kong_info = q.get("旬空", {}) or {}
+    branches = kong_info.get("日空", "") or ""
+    for i in range(0, len(branches), 2):
+        br = branches[i:i+2]
+        if br and br in _BRANCH_TO_GONG:
+            kong_gongs.add(_BRANCH_TO_GONG[br])
 
     svg_w, svg_h = 720, 720
     cell = 200
@@ -652,6 +669,24 @@ def generate_qimen_pan_svg(q: dict, sixwu_gong: str = "") -> str:
                     f'<text x="{x + 16}" y="{y + 34}" fill="{default_text_color}" font-size="24" '
                     f'font-weight="bold" font-family="sans-serif">{gong}</text>'
                 )
+
+                # 馬星 / 空亡 黃色標註（放在宮名旁，加大字體）
+                ann_x = x + 16 + 24
+                ann_y = y + 30
+                has_ma = gong in ma_gongs
+                has_kong = gong in kong_gongs
+                if has_ma:
+                    cells.append(
+                        f'<text x="{ann_x}" y="{ann_y}" fill="#FFD700" font-size="16" '
+                        f'font-weight="bold" font-family="sans-serif">馬</text>'
+                    )
+                if has_kong:
+                    kong_ann_x = ann_x + 16 if has_ma else ann_x
+                    kong_ann_y = ann_y + (14 if has_ma else 0)
+                    cells.append(
+                        f'<text x="{kong_ann_x}" y="{kong_ann_y}" fill="#FFD700" font-size="16" '
+                        f'font-weight="bold" font-family="sans-serif">空</text>'
+                    )
                 cells.append(
                     f'<text x="{x + 62}" y="{y + 88}" text-anchor="middle" '
                     f'font-size="30" font-family="sans-serif">'
@@ -1051,11 +1086,17 @@ def render_pan(y, m, d, h, minute, is_shijia=True, pai=2):
     di_pan = q.get("地盤", {})
     wu_palace = next((gong for gong, val in di_pan.items() if val == "戊"), "")
     pan_svg = generate_qimen_pan_svg(q, wu_palace)
+    horse = q.get("馬星", {}) or {}
+    kong = q.get("旬空", {}) or {}
+    # 文字摘要仍顯示所有馬星類型供參考，宮內標註只用驛馬（見SVG產生函數）
+    horse_str = "｜".join([f"{k}{v}" for k, v in horse.items() if v]) or "無"
+    kong_str = f"日空{kong.get('日空','')} 時空{kong.get('時空','')}" if (kong.get('日空') or kong.get('時空')) else "無"
     st.markdown(
         f"**{('時家奇門' if is_shijia else '刻家奇門')}｜{q['排盤方式']}**  \n"
         f"**{y}年{m}月{d}日 {h}時{minute}分**  \n"
         f"{q['干支']}｜{q['排局']}｜節氣：{jq}  \n"
-        f"值符星宮：天{zf_xing}宮｜值使門宮：{zm_men}門{zm_gong}宮"
+        f"值符星宮：天{zf_xing}宮｜值使門宮：{zm_men}門{zm_gong}宮  \n"
+        f"馬星：{horse_str}　空亡：{kong_str}"
     )
     render_qimen_export_card(
         pan_svg,
