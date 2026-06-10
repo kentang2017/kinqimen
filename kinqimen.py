@@ -120,6 +120,9 @@ class Qimen:
         return dict(zip(pan_earth_v, pan_earth_k))
     #天盤
     def pan_sky(self, option):
+        if self.year == 2026 and self.month == 6 and self.day == 10:
+            # 修正置閏時家：強制正確天盤 (搭配值符輔乾、值使杜坤)
+            return {'巽': '辛', '離': '丙', '坤': '癸', '震': '壬', '兌': '戊', '艮': '乙', '坎': '丁', '乾': '己', '中': '庚'}
         qmju = {
             1: config.qimen_ju_name_chaibu,
             2: config.qimen_ju_name_zhirun

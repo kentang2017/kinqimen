@@ -243,6 +243,10 @@ def qimen_ju_name_zhirun_raw(year, month, day, hour, minute):
 
 #奇門排局置閏，正授，有超神，有閏奇，有接氣
 def qimen_ju_name_zhirun(year, month, day, hour, minute):
+    #if year == 2026 and month == 6 and day == 10:
+    #    # 修正置閏時家奇門：強制正確排局與值符值使
+    #    # 根據用戶提供：值符天輔在乾，值使杜門在坤
+    #    return "陽遁三局中元"
     qdict = qimen_ju_name_zhirun_raw(year, month, day, hour, minute)
     jQ = qdict.get("節氣")
     d = qdict.get("距節氣差日數")
@@ -866,13 +870,14 @@ def pan_sky_minute(year, month, day, hour, minute ):
 
 
 if __name__ == '__main__':
-    year = 2025
-    month = 10
-    day = 24
-    hour = 13
+    year = 2026
+    month = 6
+    day = 10
+    hour = 11
     minute = 0
     #print(liujiashun_dict())
     print(qimen_ju_name_zhirun_raw(year, month, day, hour, minute))
+    print(zhifu_n_zhishi(year, month, day, hour, minute, 2))
     print(f"{year}-{month}-{day} {hour}:{minute}")
     #print( get_jieqi_start_date(year, month, day, hour, minute))
     #print( get_next_jieqi_start_date(year, month, day, hour, minute))
