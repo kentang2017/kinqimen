@@ -1032,7 +1032,7 @@ def render_qimen_export_card(svg: str, export_meta: dict) -> None:
     """
     components.html(html_content, height=900, scrolling=False)
 
-def render_pan(y, m, d, h, minute, is_shijia=True):
+def render_pan(y, m, d, h, minute, is_shijia=True, pai=2):
     jq = config.jq(y, m, d, h,minute)
 
     if is_shijia:
@@ -1148,7 +1148,7 @@ with pan:
     # 即時盤（預設）
     if instant or (not manual and not instant):  # 頁面初載也顯示即時
         now = datetime.datetime.now(pytz.timezone('Asia/Hong_Kong'))
-        q_data, jq_str, _shijia = render_pan(now.year, now.month, now.day, now.hour, now.minute, is_shijia=True)
+        q_data, jq_str, _shijia = render_pan(now.year, now.month, now.day, now.hour, now.minute, is_shijia=is_shijia, pai=pai)
         chart_params = {
             "q": q_data, "jq": jq_str, "is_shijia": _shijia,
             "y": now.year, "m": now.month, "d": now.day,
@@ -1159,7 +1159,7 @@ with pan:
     if manual and pp_time:
         try:
             h, mnt = map(int, pp_time.split(':'))
-            q_data, jq_str, _shijia = render_pan(pp_date.year, pp_date.month, pp_date.day, h, mnt, is_shijia)
+            q_data, jq_str, _shijia = render_pan(pp_date.year, pp_date.month, pp_date.day, h, mnt, is_shijia=is_shijia, pai=pai)
             chart_params = {
                 "q": q_data, "jq": jq_str, "is_shijia": _shijia,
                 "y": pp_date.year, "m": pp_date.month, "d": pp_date.day,

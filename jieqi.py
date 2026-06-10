@@ -7,7 +7,7 @@ Created on Wed Aug 27 08:25:17 2025
 
 import datetime
 from itertools import cycle, repeat
-import  sxtwl
+import sxtwl
 from sxtwl import fromSolar
 import ephem
 

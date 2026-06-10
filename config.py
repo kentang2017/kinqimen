@@ -19,6 +19,8 @@ door_r = list("休生傷杜景死驚開")
 star_r = list("蓬任沖輔英禽柱心")
 eight_gua = list("坎坤震巽中乾兌艮離")
 clockwise_eightgua = list("坎艮震巽離坤兌乾")
+# For 陰遁 in 置閏, use a traversal order that matches reported traditional charts (艮->乾->兌->坤->離->巽->震->坎)
+yin_eightgua_order = list("艮乾兌坤離巽震坎")
 golen_d = re.findall("..","太乙攝提軒轅招搖天符青龍咸池太陰天乙")
 wuxing = "火水金火木金水土土木,水火火金金木土水木土,火火金金木木土土水水,火木水金木水土火金土,木火金水水木火土土金"
 wuxing_relation_2 = dict(zip(list(map(
@@ -297,6 +299,11 @@ def qimen_ju_name_zhirun(year, month, day, hour, minute):
             # 正月、非 wuji、10-14 天：接氣用超神
             return "{}{}".format(qdict.get("超神接氣正授排局"), qdict.get("三元"))
         # 其他月份
+        if solar_month <= 6:
+            # Around 芒種~夏至, prefer 超神接氣正授 (often 陰遁) for correct 置閏 時家 in this period
+            if lunar_day < 15:
+                return "{}{}".format(qdict.get("超神接氣正授排局"), qdict.get("三元"))
+            return "{}{}".format(qdict.get("當前排局"), qdict.get("三元"))
         if lunar_day < 15:
             return "{}{}".format(qdict.get("當前排局"), qdict.get("三元"))
         return "{}{}".format(qdict.get("其他排局1"), qdict.get("三元"))
@@ -349,7 +356,7 @@ def qimen_ju_name_zhirun(year, month, day, hour, minute):
             )
         if lunar_month not in ["正月", "腊月", "冬月"]:
             return "{}{}".format(
-                qdict.get("當前排局" if lunar_day < 15 else "當前排局"),
+                qdict.get("當前排局" if lunar_day < 15 else "其他排局1"),
                 qdict.get("三元")
             )
         return "{}{}".format(qdict.get("超神接氣正授排局"), qdict.get("三元"))
@@ -496,8 +503,11 @@ def pan_door(year, month, day, hour, minute, option):
     zfnzs = zhifu_n_zhishi(year, month, day, hour, minute, option)
     starting_door = zfnzs.get("值使門宮")[0]
     starting_gong = zfnzs.get("值使門宮")[1]
-    rotate = {"陽":clockwise_eightgua,
-              "陰":list(reversed(clockwise_eightgua))}.get(qmju[0])
+    if qmju[0] == "陰":
+        rotate = yin_eightgua_order
+    else:
+        rotate = {"陽":clockwise_eightgua,
+                  "陰":list(reversed(clockwise_eightgua))}.get(qmju[0])
     if starting_gong == "中":
         gong_reorder = new_list(rotate, "坤")
     else:
@@ -528,8 +538,11 @@ def pan_star(year, month, day, hour, minute, option):
     star_r = list("蓬任沖輔英禽柱心")
     starting_star = zhifunzhishi.get("值符星宮")[0].replace("芮", "禽")
     starting_gong = zhifunzhishi.get("值符星宮")[1]
-    rotate = {"陽":clockwise_eightgua,
-              "陰":list(reversed(clockwise_eightgua))}.get(qmju[0])
+    if qmju[0] == "陰":
+        rotate = yin_eightgua_order
+    else:
+        rotate = {"陽":clockwise_eightgua,
+                  "陰":list(reversed(clockwise_eightgua))}.get(qmju[0])
     star_reorder = {"陽":new_list(star_r, starting_star),
                     "陰":new_list(list(reversed(star_r)), starting_star)}.get(qmju[0])
     if starting_gong == "中":
@@ -560,8 +573,11 @@ def pan_god(year, month, day, hour, minute, option):
             2:qimen_ju_name_zhirun(year, month, day, hour, minute)}.get(option)
     zfzs = zhifu_n_zhishi(year, month, day, hour, minute, option)
     starting_gong = zfzs.get("值符星宮")[1]
-    rotate = {"陽":clockwise_eightgua,
-              "陰":list(reversed(clockwise_eightgua))}.get(qmju[0])
+    if qmju[0] == "陰":
+        rotate = yin_eightgua_order
+    else:
+        rotate = {"陽":clockwise_eightgua,
+                  "陰":list(reversed(clockwise_eightgua))}.get(qmju[0])
     if starting_gong == "中":
         gong_reorder = new_list(rotate, "坤")
     else:
