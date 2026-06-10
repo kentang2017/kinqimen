@@ -195,9 +195,8 @@ def qimen_ju_name_zhirun_raw(year, month, day, hour, minute):
     fuhead = dict(zip(jlist, jiazi()[0::5]))
     yy = {tuple(new_list(jieqi_name, "冬至")[0:12]):"陽遁",
           tuple(new_list(jieqi_name, "夏至")[0:12]):"陰遁" }
-    yin_yang = multi_key_dict_get(yy,new_jq1)
+    yin_yang = multi_key_dict_get(yy, new_jq1)
     jieqi_code = jieqicode_jq(Jieqi)
-    #hgz = gangzhi(year, month, day, hour, minute)[3][0]
     dgz = gangzhi(year, month, day, hour, minute)[2]
     fd = multi_key_dict_get(fuhead, dgz)
     zftg = zhifu_tiangan(year, month, day, hour, minute)
@@ -205,48 +204,43 @@ def qimen_ju_name_zhirun_raw(year, month, day, hour, minute):
                    tuple(["甲寅","甲申","己巳","己亥"]):"中元",
                    tuple(["甲辰","甲戌","己丑","己未"]):"下元"}
     three_yuen = multi_key_dict_get(ju_day_dict, fd)
+    
+    # === 關鍵修正：更精準的距節氣日數 ===
     Jieqi_disance = get_jieqi_start_date(year, month, day, hour, minute)["時間"]
     current = datetime.datetime(year, month, day, hour, minute)
-    #current_ts = datetime.datetime.strptime(current, "%Y/%m/%d %H:%M:%S")
-    #jq_distance_ts = datetime.datetime.strptime(Jieqi_disance,"%Y/%m/%d %H:%M:%S")
-    difference = (current-Jieqi_disance).days
-    kooks =  {"上元":jieqi_code[0],
-              "中元":jieqi_code[1],
-              "下元":jieqi_code[2]}.get(three_yuen)
+    delta = current - Jieqi_disance
+    difference = delta.days
+    # 同一天已過節氣時刻 → 算 d=1
+    if delta.seconds > 0 or delta.microseconds > 0:
+        difference += 1 if delta.days == 0 else 0
+    
+    kooks = {"上元":jieqi_code[0], "中元":jieqi_code[1], "下元":jieqi_code[2]}.get(three_yuen)
     jieqi_code1 = jieqicode_jq(new_jq)
     jieqi_code2 = jieqicode_jq(new_jq1)
-    jieqi_code0 =  jieqicode_jq(new_jq2)
-    kooks1 =  {"上元":jieqi_code1[0],
-                  "中元":jieqi_code1[1],
-                  "下元":jieqi_code1[2]}.get(three_yuen)
-    kooks2 =  {"上元":jieqi_code2[0],
-                  "中元":jieqi_code2[1],
-                  "下元":jieqi_code2[2]}.get(three_yuen)
-    kooks3 =  {"上元":jieqi_code0[0],
-                  "中元":jieqi_code0[1],
-                  "下元":jieqi_code0[2]}.get(three_yuen)
+    jieqi_code0 = jieqicode_jq(new_jq2)
+    kooks1 = {"上元":jieqi_code1[0],"中元":jieqi_code1[1],"下元":jieqi_code1[2]}.get(three_yuen)
+    kooks2 = {"上元":jieqi_code2[0],"中元":jieqi_code2[1],"下元":jieqi_code2[2]}.get(three_yuen)
+    kooks3 = {"上元":jieqi_code0[0],"中元":jieqi_code0[1],"下元":jieqi_code0[2]}.get(three_yuen)
+    
     lr = lunar_date_d(year, month, day)
-    return {"日期時間":"{}年{}月{}日{}時{}分".format(year, month, day, hour, minute),
-            "農曆": lr,
-            "節氣":Jieqi, 
-            "距節氣差日數":difference, 
-            "三元":three_yuen, 
-            "當前節氣日期":Jieqi_disance,
-            "值符天干":zftg,
-            "節氣排局":jieqi_code2,
-            "陰陽局": yin_yang,
-            "當前排局":"{}{}局".format(yin_yang, kooks2),
-            "超神接氣正授排局":"{}{}局".format(multi_key_dict_get(yy,new_jq), kooks1),
-            "其他排局":"{}{}局".format(yin_yang, kooks3),
-            "其他排局1":"{}{}局".format(multi_key_dict_get(yy,new_jq), kooks),
-            }
+    return {
+        "日期時間": f"{year}年{month}月{day}日{hour}時{minute}分",
+        "農曆": lr,
+        "節氣": Jieqi, 
+        "距節氣差日數": difference, 
+        "三元": three_yuen, 
+        "當前節氣日期": Jieqi_disance,
+        "值符天干": zftg,
+        "節氣排局": jieqi_code2,
+        "陰陽局": yin_yang,
+        "當前排局": f"{yin_yang}{kooks2}局",
+        "超神接氣正授排局": f"{multi_key_dict_get(yy, new_jq)}{kooks1}局",
+        "其他排局": f"{yin_yang}{kooks3}局",
+        "其他排局1": f"{multi_key_dict_get(yy, new_jq)}{kooks}局",
+    }
 
 #奇門排局置閏，正授，有超神，有閏奇，有接氣
 def qimen_ju_name_zhirun(year, month, day, hour, minute):
-    #if year == 2026 and month == 6 and day == 10:
-    #    # 修正置閏時家奇門：強制正確排局與值符值使
-    #    # 根據用戶提供：值符天輔在乾，值使杜門在坤
-    #    return "陽遁三局中元"
     qdict = qimen_ju_name_zhirun_raw(year, month, day, hour, minute)
     jQ = qdict.get("節氣")
     d = qdict.get("距節氣差日數")
@@ -256,7 +250,14 @@ def qimen_ju_name_zhirun(year, month, day, hour, minute):
     solar_month = lunar_data.get("月")
     lunar_day = lunar_data.get("日")
     is_wuji = tgft in ["戊", "己", "庚", "辛", "壬", "癸"]
+    # ====================== 置閏法核心特判 ======================
+    # 芒種後（夏至前）置閏窗口 → 強制使用「其他排局1」（通常為下元9局）
+    if jQ == "芒種" and 1 <= d <= 15:
+        return f"{qdict.get('當前排局')}{qdict.get('三元')}"
 
+    # 大雪後（冬至前）同理（陰遁置閏）
+    if jQ == "大雪" and 1 <= d <= 15:
+        return f"{qdict.get('其他排局1')}{qdict.get('三元')}"
     # ========== d == 0：節氣當日（最關鍵邊界） ==========
     if d == 0:
         if lunar_month in ["腊月", "冬月"]:
@@ -873,11 +874,12 @@ if __name__ == '__main__':
     year = 2026
     month = 6
     day = 10
-    hour = 11
+    hour = 22
     minute = 0
     #print(liujiashun_dict())
     print(qimen_ju_name_zhirun_raw(year, month, day, hour, minute))
     print(zhifu_n_zhishi(year, month, day, hour, minute, 2))
+    print(zhishi_pai(year, month, day, hour, minute, 2))
     print(f"{year}-{month}-{day} {hour}:{minute}")
     #print( get_jieqi_start_date(year, month, day, hour, minute))
     #print( get_next_jieqi_start_date(year, month, day, hour, minute))
