@@ -126,9 +126,6 @@ def minutes_jiazi_d():
     return minutelist
 
 
-
-
-
 #日空時空
 def daykong_shikong(year, month, day, hour, minute):
     guxu = {'甲子':{'孤':'戌亥', '虛':'辰巳'},
@@ -345,7 +342,7 @@ def qimen_ju_name_zhirun(year, month, day, hour, minute):
         return "{}{}".format(qdict.get("超神接氣正授排局"), qdict.get("三元"))
 
     # ========== 10 <= d <= 15：下元 / 置閏準備 ==========
-    if 10 <= d <= 15:
+    if 10 <= d < 15:
         if lunar_month in ["腊月", "冬月"]:
             return "{}{}".format(
                 qdict.get("其他排局1" if lunar_month == "腊月" or jQ != "冬至" 
@@ -361,11 +358,13 @@ def qimen_ju_name_zhirun(year, month, day, hour, minute):
             )
         if lunar_month not in ["正月", "腊月", "冬月"]:
             return "{}{}".format(
-                qdict.get("當前排局" if lunar_day < 15 else "其他排局1"),
+                qdict.get("當前排局" if lunar_day <=15 else "其他排局1"),
                 qdict.get("三元")
             )
         return "{}{}".format(qdict.get("超神接氣正授排局"), qdict.get("三元"))
-
+   
+    if d == 15:
+        return "{}{}".format(qdict.get("超神接氣正授排局"), qdict.get("三元"))
     # ========== 其他（d < 0 或 d > 15）：超神或當前 ==========
     if d < 0:
         return "{}{}".format(qdict.get("超神接氣正授排局"), qdict.get("三元"))
@@ -872,9 +871,9 @@ def pan_sky_minute(year, month, day, hour, minute ):
 
 if __name__ == '__main__':
     year = 2026
-    month = 6
-    day = 10
-    hour = 22
+    month = 9
+    day = 7
+    hour = 21
     minute = 0
     #print(liujiashun_dict())
     print(qimen_ju_name_zhirun_raw(year, month, day, hour, minute))
