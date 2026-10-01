@@ -132,7 +132,7 @@ result = kinqimen.Qimen(year, month, day, hour, minute).overall()
 
 <div align="center">
 
-![WeChat QR](https://raw.githubusercontent.com/kentang2017/kinliuren/refs/heads/master/pic/%E5%9C%96%E7%89%87_20260316084147.jpg)
+![WeChat QR](https://raw.githubusercontent.com/kentang2017/kinliuren/refs/heads/master/pic/%E5%9C%96%E7%89%87_20260316084148.jpg)
 
 *掃碼關注，獲取更多玄學資訊 · Scan to follow for more metaphysics content*
 
