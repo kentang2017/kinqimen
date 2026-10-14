@@ -181,6 +181,10 @@ def qimen_ju_name_chaibu(year, month, day, hour, minute):
         find_yuen)
 
 
+def _calendar_days_since_jieqi(current, jieqi_start):
+    return (current.date() - jieqi_start.date()).days
+
+
 #奇門排局置閏除虫用
 def qimen_ju_name_zhirun_raw(year, month, day, hour, minute):
     Jieqi = jq(year, month, day, hour, minute)
@@ -205,11 +209,7 @@ def qimen_ju_name_zhirun_raw(year, month, day, hour, minute):
     # === 關鍵修正：更精準的距節氣日數 ===
     Jieqi_disance = get_jieqi_start_date(year, month, day, hour, minute)["時間"]
     current = datetime.datetime(year, month, day, hour, minute)
-    delta = current - Jieqi_disance
-    difference = delta.days
-    # 同一天已過節氣時刻 → 算 d=1
-    if delta.seconds > 0 or delta.microseconds > 0:
-        difference += 1 if delta.days == 0 else 0
+    difference = _calendar_days_since_jieqi(current, Jieqi_disance)
     
     kooks = {"上元":jieqi_code[0], "中元":jieqi_code[1], "下元":jieqi_code[2]}.get(three_yuen)
     jieqi_code1 = jieqicode_jq(new_jq)
@@ -903,5 +903,4 @@ if __name__ == '__main__':
     #print(zhifu_n_zhishi(year, month, day, hour, minute, 2))
     #print(zhifu_pai(year, month, day, hour, minute, 1))
     #print(zhifu_pai(year, month, day, hour, minute, 2))
-
 
